@@ -4,8 +4,13 @@ import (
 	"fmt"
 	"net/http"
 )
+
 func Root(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Hello, I am home controller!")
+
+	const routes = "/filter/{studijskiProgram}/{studijskaGrupa}/{semestar}/{predmet}/{vrstaNastave}\n" +
+				   "/classes?[predmet, vrstaNastave, semestar, studijskaGrupa, studijskiProgram, vremeOdPre, vremeOdPosle, vremeDoPre, vremeDoPosle, grupa]+"
+
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Hello, I am home controller!")
+	fmt.Fprintln(w,"API v0.1")
+	fmt.Fprintln(w,routes)
 }
