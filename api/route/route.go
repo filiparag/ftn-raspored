@@ -1,8 +1,8 @@
 package route
 
 import (
+	"github.com/filiparag/ftn-raspored/api/controller"
 	"github.com/gorilla/mux"
-	"raspored/controller"
 )
 
 func Router() *mux.Router {
@@ -10,7 +10,7 @@ func Router() *mux.Router {
 
 	routes.HandleFunc("/", controller.Root).Methods("GET")
 
-	routes.HandleFunc("/classes", controller.Classes).Methods("GET")
+	routes.HandleFunc("/casovi", controller.Classes).Methods("GET")
 
 	routes.HandleFunc("/filter", controller.GetStudyPrograms).Methods("GET")
 	routes.HandleFunc("/filter/{studijskiProgram}", controller.GetStudyGroups).Methods("GET")

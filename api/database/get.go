@@ -1,8 +1,8 @@
 package database
 
 import (
+	"github.com/filiparag/ftn-raspored/api/model"
 	"log"
-	"raspored/model"
 )
 
 func GetStudyPrograms() []model.StudijskiProgram {

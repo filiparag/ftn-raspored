@@ -8,8 +8,8 @@ import (
 
 var db sql.DB
 
-func Open() {
-	conn, err := sql.Open("sqlite3", "/home/filiparag/.syncthing/documents/Faculty/raspored/baza/raspored.db")
+func Open(database string) {
+	conn, err := sql.Open("sqlite3", database)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -17,5 +17,8 @@ func Open() {
 }
 
 func Close() {
-	db.Close()
+	err := db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

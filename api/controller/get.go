@@ -2,10 +2,10 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/filiparag/ftn-raspored/api/database"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"raspored/database"
 	"strconv"
 )
 

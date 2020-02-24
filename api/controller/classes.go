@@ -3,9 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/filiparag/ftn-raspored/api/database"
 	"log"
 	"net/http"
-	"raspored/database"
 )
 
 func Classes(w http.ResponseWriter, r *http.Request) {

@@ -1,5 +1,7 @@
-*
+/*
 !*/
 .*/
 !.gitignore
-!*.go
+!LICENSE
+backend/storage/*.pdf
+backend/database/*.db
