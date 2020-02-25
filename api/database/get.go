@@ -30,7 +30,8 @@ func GetStudyPrograms() []model.StudijskiProgram {
 
 func GetStudyGroups(studyProgram int) []model.StudijskaGrupa {
 
-	rows, err := db.Query("SELECT id, studijska_grupa FROM studijska_grupa WHERE studijski_program_id = ?", studyProgram)
+	rows, err := db.Query("SELECT id, studijska_grupa FROM studijska_grupa WHERE studijski_program_id = ?",
+								studyProgram)
 	if err != nil {
 		log.Println(err)
 		return nil
