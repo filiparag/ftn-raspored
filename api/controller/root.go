@@ -7,7 +7,7 @@ import (
 
 func Root(w http.ResponseWriter, r *http.Request) {
 
-	const routes = "/filter/{studijskiProgram}/{studijskaGrupa}/{semestar}/{predmet}/{vrstaNastave}\n" +
+	const routes = "/filter/{studijskiProgram}/{studijskaGrupa}/{semestar}/{predmet}\n" +
 				   "/casovi?[predmet, vrstaNastave, semestar, studijskaGrupa, studijskiProgram, vremeOdPre, vremeOdPosle, vremeDoPre, vremeDoPosle, grupa]+"
 
 	w.WriteHeader(http.StatusOK)

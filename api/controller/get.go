@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"github.com/filiparag/ftn-raspored/api/database"
+	"github.com/filiparag/ftn-raspored/api/model"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -92,6 +93,51 @@ func GetTypes(w http.ResponseWriter, r *http.Request) {
 	}
 	response := database.GetTypes(predmet)
 	if len(response) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		err := json.NewEncoder(w).Encode(response)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}
+}
+
+func GetGroups(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	predmet, err := strconv.Atoi(vars["predmet"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+	response := database.GetGroups(predmet)
+	if len(response) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		err := json.NewEncoder(w).Encode(response)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}
+}
+
+func GetCTypesGroups(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	predmet, err := strconv.Atoi(vars["predmet"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+	response := model.CFilterPredmet{
+		database.GetTypes(predmet),
+		database.GetGroups(predmet),
+	}
+	if len(response.VrstaNastave) == 0 || len(response.Grupa) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)

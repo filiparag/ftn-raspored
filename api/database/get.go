@@ -103,10 +103,10 @@ func GetSubjects(semester int) []model.Predmet {
 func GetTypes(subject int) []model.VrstaNastave {
 
 	rows, err := db.Query(`SELECT DISTINCT vn.id, vn.vrsta_nastave
-								FROM cas AS c
-								INNER JOIN vrsta_nastave vn on c.vrsta_nastave_id = vn.id
-								INNER JOIN predmet p on c.predmet_id = p.id
-								WHERE p.id = ?`, subject)
+								 FROM cas AS c
+								 INNER JOIN vrsta_nastave vn on c.vrsta_nastave_id = vn.id
+								 INNER JOIN predmet p on c.predmet_id = p.id
+								 WHERE p.id = ?`, subject)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -118,6 +118,33 @@ func GetTypes(subject int) []model.VrstaNastave {
 	for rows.Next() {
 		var row model.VrstaNastave
 		err = rows.Scan(&row.Id, &row.Name)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+		response = append(response, row)
+	}
+
+	return response
+}
+
+func GetGroups(subject int) []model.Grupa {
+
+	rows, err := db.Query(`SELECT DISTINCT c.grupa
+								 FROM cas AS c
+								 INNER JOIN predmet p on c.predmet_id = p.id
+								 WHERE p.id = ?`, subject)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	response := make([]model.Grupa, 0)
+
+	for rows.Next() {
+		var row model.Grupa
+		err = rows.Scan(&row)
 		if err != nil {
 			log.Println(err)
 			return nil
