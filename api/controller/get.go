@@ -15,6 +15,7 @@ func GetStudyPrograms(w http.ResponseWriter, r *http.Request) {
 	err := json.NewEncoder(w).Encode(response)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 }
 
@@ -34,6 +35,7 @@ func GetStudyGroups(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(response)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 	}
 }
@@ -54,6 +56,7 @@ func GetSemesters(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(response)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 	}
 }
@@ -74,6 +77,7 @@ func GetSubjects(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(response)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 	}
 }
@@ -94,6 +98,7 @@ func GetTypes(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(response)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 	}
 }

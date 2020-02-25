@@ -10,6 +10,7 @@ func GetStudyPrograms() []model.StudijskiProgram {
 	rows, err := db.Query("SELECT id, studijski_program FROM studijski_program")
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
 	defer rows.Close()
 
@@ -32,6 +33,7 @@ func GetStudyGroups(studyProgram int) []model.StudijskaGrupa {
 	rows, err := db.Query("SELECT id, studijska_grupa FROM studijska_grupa WHERE studijski_program_id = ?", studyProgram)
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
 	defer rows.Close()
 
@@ -42,6 +44,7 @@ func GetStudyGroups(studyProgram int) []model.StudijskaGrupa {
 		err = rows.Scan(&row.Id, &row.Name)
 		if err != nil {
 			log.Println(err)
+			return nil
 		}
 		response = append(response, row)
 	}
@@ -54,6 +57,7 @@ func GetSemesters(studyGroup int) []model.Semestar {
 	rows, err := db.Query("SELECT id, semestar FROM semestar WHERE studijska_grupa_id = ?", studyGroup)
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
 	defer rows.Close()
 
@@ -64,6 +68,7 @@ func GetSemesters(studyGroup int) []model.Semestar {
 		err = rows.Scan(&row.Id, &row.Number)
 		if err != nil {
 			log.Println(err)
+			return nil
 		}
 		response = append(response, row)
 	}
@@ -76,6 +81,7 @@ func GetSubjects(semester int) []model.Predmet {
 	rows, err := db.Query("SELECT id, predmet FROM predmet WHERE semestar_id = ?", semester)
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
 	defer rows.Close()
 
@@ -86,6 +92,7 @@ func GetSubjects(semester int) []model.Predmet {
 		err = rows.Scan(&row.Id, &row.Name)
 		if err != nil {
 			log.Println(err)
+			return nil
 		}
 		response = append(response, row)
 	}
@@ -102,6 +109,7 @@ func GetTypes(subject int) []model.VrstaNastave {
 								WHERE p.id = ?`, subject)
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
 	defer rows.Close()
 
@@ -112,6 +120,7 @@ func GetTypes(subject int) []model.VrstaNastave {
 		err = rows.Scan(&row.Id, &row.Name)
 		if err != nil {
 			log.Println(err)
+			return nil
 		}
 		response = append(response, row)
 	}
@@ -119,13 +128,25 @@ func GetTypes(subject int) []model.VrstaNastave {
 	return response
 }
 
-func GetClasses(query string) []model.Cas {
+func GetClasses(query string, args []string) []model.Cas {
 
-	rows, err := db.Query(query)
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Println(err)
+		return nil
 	}
-	defer rows.Close()
+
+	argsInterface := make([]interface{}, len(args))
+	for in, val := range args {
+		argsInterface[in] = val
+	}
+
+	rows, err := stmt.Query(argsInterface...)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer stmt.Close()
 
 	response := make([]model.Cas, 0)
 
@@ -135,6 +156,7 @@ func GetClasses(query string) []model.Cas {
 			&row.TimeStart, &row.TimeEnd, &row.Classroom, &row.Lecturer)
 		if err != nil {
 			log.Println(err)
+			return nil
 		}
 		response = append(response, row)
 	}

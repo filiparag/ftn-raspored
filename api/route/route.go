@@ -19,5 +19,5 @@ func Router() *mux.Router {
 	routes.HandleFunc("/filter/{studijskiProgram}/{studijskaGrupa}/{semestar}/{predmet}", controller.GetTypes).Methods("GET")
 	routes.HandleFunc("/filter/{studijskiProgram}/{studijskaGrupa}/{semestar}/{predmet}/{vrstaNastave}", controller.GetTypes).Methods("GET")
 
-	return routes;
+	return routes
 }
