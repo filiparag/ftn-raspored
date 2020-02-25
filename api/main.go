@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/filiparag/ftn-raspored/api/database"
+	"github.com/filiparag/ftn-raspored/api/middleware"
 	"github.com/filiparag/ftn-raspored/api/route"
 	"log"
 	"net/http"
@@ -14,7 +15,8 @@ func main() {
 	defer database.Close()
 
 	router := route.Router()
-	http.Handle("/", router)
+	mRouter := middleware.Middleware(router)
+	http.Handle("/", mRouter)
 	log.Fatal(http.ListenAndServe(":10000", nil))
 
 }
