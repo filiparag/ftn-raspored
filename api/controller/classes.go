@@ -29,7 +29,8 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 					INNER JOIN predmet p on c.predmet_id = p.id
 					INNER JOIN semestar s on p.semestar_id = s.id
 					INNER JOIN studijska_grupa sg on s.studijska_grupa_id = sg.id
-					INNER JOIN studijski_program sp on sg.studijski_program_id = sp.id`
+					INNER JOIN studijski_program sp on sg.studijski_program_id = sp.id
+					WHERE`
 	var sqlArgs = make([]string, 0)
 	var whereAnd = false
 	for key, val := range r.URL.Query() {
@@ -37,21 +38,28 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNotAcceptable)
 			return
 		}
+		sqlQuery += " "
 		if ident, ok := keywords[key]; ok {
 			var whereOr = false
 			for v := range val {
 				var value = val[v]
+				if len(val) > 1 && v == 0 {
+					sqlQuery += "("
+				}
 				if !whereAnd {
-					sqlQuery += fmt.Sprintf(" WHERE %s %s ?", ident[0], ident[1])
 					whereAnd = true
 					whereOr = true
 				} else if !whereOr {
-					sqlQuery += fmt.Sprintf(" AND %s %s ?", ident[0], ident[1])
+					sqlQuery += "AND "
 					whereOr = true
 				} else {
-					sqlQuery += fmt.Sprintf(" OR %s %s ?", ident[0], ident[1])
+					sqlQuery += " OR "
 				}
+				sqlQuery += fmt.Sprintf("%s %s ?", ident[0], ident[1])
 				sqlArgs = append(sqlArgs, value)
+				if len(val) > 1 && v == len(val) - 1 {
+					sqlQuery += ")"
+				}
 			}
 		} else {
 			w.WriteHeader(http.StatusBadRequest)
