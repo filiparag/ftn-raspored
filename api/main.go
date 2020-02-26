@@ -11,7 +11,13 @@ import (
 
 func main() {
 
-	database.Open(os.Getenv("GOPATH") + "/src/github.com/filiparag/ftn-raspored/backend/database/raspored.db")
+	var dbPath = os.Getenv("GOPATH") + "/src/github.com/filiparag/ftn-raspored/backend/database/raspored.db"
+
+	if len(os.Args) == 2 {
+		dbPath = os.Args[1]
+	}
+
+	database.Open(dbPath)
 	defer database.Close()
 
 	router := route.Router()
