@@ -1,20 +1,29 @@
-import React from 'react';
+import React from 'react'
+import { Provider } from 'react-redux'
+import { Store } from 'redux'
+import { ApplicationState } from './store'
+import Menu from './components/Menu'
+import Page from './components/Page'
+import Loader from './components/Loader'
 import 'semantic-ui-css/semantic.min.css'
-import { Button } from 'semantic-ui-react'
+import './style/App.css';
 
-import './App.css';
+interface AppProps {
+  store: Store<ApplicationState>
+}
 
-function App() {
+const App: React.FC<AppProps> = ({ store }) => {
   return (
-    <div className="App">
-      <header className="App-header">
-          <Button class="ui button">Learn React</Button>
-      </header>
-      <body>
-        
-      </body>
-    </div>
-  );
+    <Provider store={store}>
+      <Loader />
+      <div className='Page'>
+        <Page />
+      </div>
+      <div className='Menu'>
+        <Menu />
+      </div>
+    </Provider>
+  )
 }
 
 export default App;
