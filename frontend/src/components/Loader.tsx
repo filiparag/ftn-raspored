@@ -8,11 +8,11 @@ import '../style/Loader.css'
 
 type LoaderProps = 
 ReturnType<typeof mapStateToProps> & {
-  loader: boolean
+  loader: number
 }
 
 export const Loader: React.FC<LoaderProps> = ({loader}) => {
-  if (loader) {
+  if (loader > 0) {
     return (
       <div className='Loader'>
       <Dimmer inverted active>

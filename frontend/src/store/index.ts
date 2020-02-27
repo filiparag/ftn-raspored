@@ -13,7 +13,7 @@ import { fetchFilters } from './filters/actions'
 export interface ApplicationState {
   menu: MenuState,
   timetable: TimetableList
-  loader: boolean
+  loader: number
   filter: Filter
 }
 
@@ -22,7 +22,7 @@ export const initialState: ApplicationState = {
     page: PageName.FILTERS
   },
   timetable: [],
-  loader: true,
+  loader: 0,
   filter: []
 }
 

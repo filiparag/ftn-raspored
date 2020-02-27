@@ -9,65 +9,64 @@ type TimetableEntryProps = {
   entry: Entry
 }
 
+const timeString = (time: number): string => {
+  let hour = '0' + Math.floor(time)
+  let minute = '0' + Math.round((time - Math.floor(time)) * 60)
+  return hour.substr(hour.length - 2) + ':' + minute.substr(minute.length - 2)
+}
+
+const typeColor = (type: string): SemanticCOLORS => {
+  switch (type) {
+    case 'Pred.':
+      return 'blue'
+    case 'rač.vežbe':
+      return 'green'
+    case 'aud.vežbe':
+      return 'orange'
+    case 'lab.vežbe':
+      return 'red'
+    case 'arh.vežbe':
+      return 'brown'
+    default:
+      return 'grey'
+  }
+}
+
+const typeIcon = (type: string): SemanticICONS => {
+  switch (type) {
+    case 'Pred.':
+      return 'graduation cap'
+    case 'rač.vežbe':
+      return 'keyboard'
+    case 'aud.vežbe':
+      return 'pencil'
+    case 'lab.vežbe':
+      return 'eye dropper'
+    case 'arh.vežbe':
+      return 'spoon'
+    default:
+      return 'book'
+  }
+}
+
+export const typeName = (type: string): string => {
+  switch (type) {
+    case 'Pred.':
+      return 'Predavanje'
+    case 'rač.vežbe':
+      return 'Računarske vežbe'
+    case 'aud.vežbe':
+      return 'Auditorne vežbe'
+    case 'lab.vežbe':
+      return 'Laboratorijske vežbe'
+    case 'arh.vežbe':
+      return 'Arhitekturne vežbe'
+    default:
+      return type
+  }
+}
+
 export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry}: {entry: Entry}) => {
-
-  const timeString = (time: number): string => {
-    let hour = '0' + Math.floor(time)
-    let minute = '0' + Math.round((time - Math.floor(time)) * 60)
-    return hour.substr(hour.length - 2) + ':' + minute.substr(minute.length - 2)
-  }
-
-  const typeColor = (type: string): SemanticCOLORS => {
-    switch (type) {
-      case 'Pred.':
-        return 'blue'
-      case 'rač.vežbe':
-        return 'green'
-      case 'aud.vežbe':
-        return 'orange'
-      case 'lab.vežbe':
-        return 'red'
-      case 'arh.vežbe':
-        return 'brown'
-      default:
-        return 'grey'
-    }
-  }
-
-  const typeIcon = (type: string): SemanticICONS => {
-    switch (type) {
-      case 'Pred.':
-        return 'graduation cap'
-      case 'rač.vežbe':
-        return 'keyboard'
-      case 'aud.vežbe':
-        return 'pencil'
-      case 'lab.vežbe':
-        return 'eye dropper'
-      case 'arh.vežbe':
-        return 'spoon'
-      default:
-        return 'book'
-    }
-  }
-
-  const typeName = (type: string): string => {
-    switch (type) {
-      case 'Pred.':
-        return 'Predavanje'
-      case 'rač.vežbe':
-        return 'Računarske vežbe'
-      case 'aud.vežbe':
-        return 'Auditorne vežbe'
-      case 'lab.vežbe':
-        return 'Laboratorijske vežbe'
-      case 'arh.vežbe':
-        return 'Arhitekturne vežbe'
-      default:
-        return type
-    }
-  }
-
   return (
       <List.Item key={entry.id}>
           <Icon name='triangle right' />

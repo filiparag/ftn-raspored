@@ -1,7 +1,9 @@
 export enum FilterAction {
-  FETCH = 'FILTER_FETCH',
   UPDATE = 'FILTER_UPDATE',
-  ADD = 'FILTER_ADD'
+  NEW_SHOW = 'FILTER_NEW_SHOW',
+  NEW_CLOSE = 'FILTER_NEW_CLOSE',
+  NEW_ADD = 'FILTER_NEW_ADD',
+  NEW_UPDATE = 'FILTER_NEW_UPDATE',
 }
 
 export interface FilterChild {

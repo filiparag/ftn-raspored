@@ -2,13 +2,13 @@ import { Reducer } from 'redux'
 import { LoaderAction } from './types'
 import { initialState } from '..'
 
-export const loaderReducer: Reducer<boolean> = (state: boolean = initialState.loader, action): boolean => {
+export const loaderReducer: Reducer<number> = (state: number = initialState.loader, action): number => {
   switch (action.type) {
     case LoaderAction.SHOW: {
-      return true
+      return state + 1
     }
     case LoaderAction.HIDE: {
-      return false
+      return Math.max(state - 1, 0)
     }
     default: {
       return state

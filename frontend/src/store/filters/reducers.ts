@@ -5,13 +5,9 @@ import { types } from 'util'
 
 export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filter, action): Filter => {
   switch (action.type) {
-    case FilterAction.UPDATE: {
-        
+    case FilterAction.UPDATE: {        
       const filters: Filter = []
-
-      const pld = action.payload
-      
-      for (const sp of pld) {
+      for (const sp of action.payload) {
         const studyProgram = {
           id: sp['studijski_program']['id'],
           name: sp['studijski_program']['studijski_program'],
@@ -52,13 +48,12 @@ export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filt
         filters.push(studyProgram)
       }
       return filters
-
     }
-    case FilterAction.ADD: {
-      return {
-        ...state,
-      }
-    }
+    // case FilterAction.ADD: {
+    //   return {
+    //     ...state,
+    //   }
+    // }
     default: {
       return state
     }
