@@ -2,11 +2,12 @@ import fetch from 'cross-fetch'
 import { action } from 'typesafe-actions'
 import { TimetableAction, TimetableList } from './types'
 import { hideLoader } from '../loader/actions'
+import { Dispatch } from 'react'
 
 export const updateTimetable = (entries: TimetableList) => action(TimetableAction.UPDATE, entries)
 
-export const fetchTimetable = (store: any) => {
-  fetch(`http://localhost:10000/api/devel/casovi?semestar=707518054557943745&grupa=SVI&grupa=10`)
+export const fetchTimetable = (dispatch: Dispatch<any>) => {
+  fetch(`http://localhost:10000/api/devel/casovi?semestar=549345731136785969&grupa=SVI&grupa=8`)
     .then(response => response.json())
-    .then(json => store.dispatch(updateTimetable(json))).finally(() => store.dispatch(hideLoader()))
+    .then(json => dispatch(updateTimetable(json))).finally(() => dispatch(hideLoader()))
 }

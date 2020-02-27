@@ -1,6 +1,5 @@
 .Page {
   width: 100%;
-  max-width: 50em;
-  margin-bottom: 8em;
-  /* background: #ffdddd; */
+  max-width: 50rem;
+  margin-bottom: 5rem;
 }

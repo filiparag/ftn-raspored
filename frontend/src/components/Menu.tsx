@@ -17,7 +17,7 @@ ReturnType<typeof mapDispatchToProps> & {
 
 export const Menu: React.FC<MenuProps> = ({page, changePage}) => {
   return (
-    <MenuSemantic icon='labeled' fluid widths={3} primary='true' size='large'>
+    <MenuSemantic fluid widths={3} primary='true' size='large'>
       <MenuItem 
         name='Raspored'
         icon={'calendar alternate'}

@@ -5,7 +5,7 @@ import { PageName } from '../store/menu/types'
 import { viewPage } from '../store/menu/actions'
 import { connect } from 'react-redux'
 import { Action } from 'typesafe-actions'
-import { Header, Dropdown, Divider, Button, Segment } from 'semantic-ui-react'
+import { Header, Dropdown, Divider, Button, Segment, Label } from 'semantic-ui-react'
 
 type FiltersProps = 
 ReturnType<typeof mapStateToProps> &
@@ -17,16 +17,30 @@ export const Filters: React.FC<FiltersProps> = ({page, changePage}) => {
   return (
     <div>
       <Header size='huge'>Filteri</Header>
-      <Segment color='blue' raised padded>
-        <Header size='medium'>Uputstvo</Header>
-        <p>
-          Filteri služe za prilagođavanje rasporeda pojedinačnim potrebama.
-          Svaki filter čini presek pojedinačnih pravila.
-        </p>
-        <Button fluid color='blue'>U redu</Button>
-      </Segment>
       <Segment color='green' padded>
         <Header size='medium'>Novi filter</Header>
+        <Header size='medium'>Studijski program</Header>
+        <Dropdown
+            placeholder='Studijski program'
+            fluid
+            selection
+            options={undefined}
+        />
+        <Header size='medium'>Studijska grupa</Header>
+        <Dropdown
+            placeholder='Studijska grupa'
+            fluid
+            selection
+            options={undefined}
+        />
+        <Header size='medium'>Semestar</Header>
+        <Dropdown
+            placeholder='Studijska grupa'
+            fluid
+            selection
+            options={undefined}
+        />
+        <Divider hidden />
         <Header size='small'>Predmet</Header>
         <Dropdown placeholder='Predmet' fluid multiple selection options={undefined} />
         <Header size='small'>Vrsta nastave</Header>

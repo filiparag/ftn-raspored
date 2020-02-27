@@ -6,7 +6,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
   switch (action.type) {
     case TimetableAction.UPDATE: {
 
-      var timetable: TimetableList = new Array(7);
+      var timetable: TimetableList = new Array(7)
 
       const search = (array: TimetableEntry[], entry: TimetableEntry): number => {
         if(array[0].timeStart > entry.timeStart) {
