@@ -1,9 +1,5 @@
 export enum FilterAction {
   UPDATE = 'FILTER_UPDATE',
-  NEW_SHOW = 'FILTER_NEW_SHOW',
-  NEW_CLOSE = 'FILTER_NEW_CLOSE',
-  NEW_ADD = 'FILTER_NEW_ADD',
-  NEW_UPDATE = 'FILTER_NEW_UPDATE',
 }
 
 export interface FilterChild {
@@ -29,3 +25,23 @@ export interface FilterStudyProgram extends FilterChild{
 }
 
 export type Filter = FilterStudyProgram[]
+
+export interface NewFilter {
+  studyPrograms: Array<number>,
+  studyGroups: Array<number>,
+  semesters: Array<number>,
+  subjects: Array<number>,
+  groups: Array<string>,
+  types: Array<number>,
+  timeStart: number,
+  timeEnd: number,
+  visible: boolean
+}
+
+export enum NewFilterAction {
+  SHOW = 'FILTER_NEW_SHOW',
+  CLOSE = 'FILTER_NEW_CLOSE',
+  ADD = 'FILTER_NEW_ADD',
+  UPDATE_ADD = 'FILTER_NEW_UPDATE_ADD',
+  UPDATE_RESET = 'FILTER_NEW_UPDATE_RESET'
+}

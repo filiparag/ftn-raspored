@@ -1,17 +1,19 @@
 import { action } from 'typesafe-actions'
-import { FilterAction, Filter } from './types'
+import { FilterAction, Filter, NewFilterAction } from './types'
 import { Dispatch } from 'redux'
 import { showLoader, hideLoader } from '../loader/actions'
 
 export const updateFilters = (filters: Filter) => action(FilterAction.UPDATE, filters)
 
-export const showNewFilter = () => action(FilterAction.NEW_SHOW)
+export const showNewFilter = () => action(NewFilterAction.SHOW)
 
-export const closeNewFilter = () => action(FilterAction.NEW_CLOSE)
+export const closeNewFilter = () => action(NewFilterAction.CLOSE)
 
-export const updateNewFilter = (group: string, value: any) => action(FilterAction.NEW_UPDATE)
+export const updateResetNewFilter = (group?: string, value?: any) => action(NewFilterAction.UPDATE_RESET, {group: group})
 
-export const addNewFilter = () => action(FilterAction.NEW_ADD)
+export const updateAddNewFilter = (group?: string, value?: any) => action(NewFilterAction.UPDATE_ADD, {group: group, value: value})
+
+export const addNewFilter = () => action(NewFilterAction.ADD)
 
 export const fetchFilters = (dispatch: Dispatch) => {
   dispatch(showLoader())

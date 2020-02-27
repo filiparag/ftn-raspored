@@ -11,9 +11,7 @@ import '../style/Menu.css'
 
 type MenuProps = 
 ReturnType<typeof mapStateToProps> &
-ReturnType<typeof mapDispatchToProps> & {
-  page: PageName
-}
+ReturnType<typeof mapDispatchToProps>
 
 export const Menu: React.FC<MenuProps> = ({page, changePage}) => {
   return (
@@ -42,11 +40,11 @@ export const Menu: React.FC<MenuProps> = ({page, changePage}) => {
 
 const mapStateToProps = (state: ApplicationState) => ({
   page: state.menu.page
-});
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => bindActionCreators({
-    changePage: viewPage,
-}, dispatch);
+  changePage: viewPage,
+}, dispatch)
 
 export default connect(
   mapStateToProps,

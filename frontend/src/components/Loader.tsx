@@ -1,5 +1,3 @@
-
-
 import React from 'react'
 import { ApplicationState } from '../store'
 import { connect } from 'react-redux'
@@ -7,9 +5,7 @@ import { Loader as Loading, Dimmer } from 'semantic-ui-react'
 import '../style/Loader.css'
 
 type LoaderProps = 
-ReturnType<typeof mapStateToProps> & {
-  loader: number
-}
+ReturnType<typeof mapStateToProps>
 
 export const Loader: React.FC<LoaderProps> = ({loader}) => {
   if (loader > 0) {
@@ -27,7 +23,7 @@ export const Loader: React.FC<LoaderProps> = ({loader}) => {
 
 const mapStateToProps = (state: ApplicationState) => ({
   loader: state.loader
-});
+})
 
 export default connect(
   mapStateToProps,

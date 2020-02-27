@@ -3,9 +3,9 @@ import thunkMiddleware from 'redux-thunk'
 import menuReducer from './menu/reducers'
 import timetableReducer from './timetable/reducers'
 import loaderReducer from './loader/reducers'
-import filterReducer from './filters/reducers'
+import { filterReducer, newFilterReducer } from './filters/reducers'
 import { MenuState, PageName } from './menu/types';
-import { Filter } from './filters/types';
+import { Filter, NewFilter } from './filters/types';
 import { TimetableList } from './timetable/types';
 import { fetchTimetable } from './timetable/actions'
 import { fetchFilters } from './filters/actions'
@@ -15,6 +15,7 @@ export interface ApplicationState {
   timetable: TimetableList
   loader: number
   filter: Filter
+  newFilter: NewFilter
 }
 
 export const initialState: ApplicationState = {
@@ -23,7 +24,18 @@ export const initialState: ApplicationState = {
   },
   timetable: [],
   loader: 0,
-  filter: []
+  filter: [],
+  newFilter: {
+    studyPrograms: [] as Array<number>,
+    studyGroups: [] as Array<number>,
+    semesters: [] as Array<number>,
+    subjects: [] as Array<number>,
+    groups: [] as Array<string>,
+    types: [] as Array<number>,
+    timeStart: 0.0,
+    timeEnd: 23.5,
+    visible: false
+  }
 }
 
 export function configureStore(initialState?: ApplicationState): Store<ApplicationState> {
@@ -32,7 +44,8 @@ export function configureStore(initialState?: ApplicationState): Store<Applicati
     menu: menuReducer,
     timetable: timetableReducer,
     loader: loaderReducer,
-    filter: filterReducer
+    filter: filterReducer,
+    newFilter: newFilterReducer
   })
 
   const middlewareEnhancer = applyMiddleware(
@@ -41,7 +54,7 @@ export function configureStore(initialState?: ApplicationState): Store<Applicati
 
   const enchancers = compose(
     middlewareEnhancer,
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__()
+    // (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__()
   )
 
   const store = createStore(

@@ -68,40 +68,40 @@ export const typeName = (type: string): string => {
 
 export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry}: {entry: Entry}) => {
   return (
-      <List.Item key={entry.id}>
-          <Icon name='triangle right' />
-          <List.Content>
-            <span>{timeString(entry.timeStart)} - {timeString(entry.timeEnd)}</span>
-            <List.Header as='h2'>{entry.subject}</List.Header>
-            <List.Description>
-              <Label
-                size='medium'
-                icon={typeIcon(entry.type)}
-                content={typeName(entry.type)}
-                color={typeColor(entry.type)}
-                className='Label'
-              />
-              <Label
-                size='medium'
-                icon='map marker alternate'
-                content={entry.classroom}
-                className='Label'
-              />
-              <Label
-                size='medium'
-                icon='group'
-                content={entry.group}
-                className='Label'
-              />
-              <Label
-                size='medium'
-                icon='male'
-                content={entry.lecturer}
-                className='Label Lecturer'
-              />
-            </List.Description>
-          </List.Content>
-      </List.Item>
+    <List.Item key={entry.id}>
+      <Icon name='triangle right' />
+      <List.Content>
+        <span>{timeString(entry.timeStart)} - {timeString(entry.timeEnd)}</span>
+        <List.Header as='h2'>{entry.subject}</List.Header>
+        <List.Description>
+          <Label
+            size='medium'
+            icon={typeIcon(entry.type)}
+            content={typeName(entry.type)}
+            color={typeColor(entry.type)}
+            className='Label'
+          />
+          <Label
+            size='medium'
+            icon='map marker alternate'
+            content={entry.classroom}
+            className='Label'
+          />
+          <Label
+            size='medium'
+            icon='group'
+            content={entry.group}
+            className='Label'
+          />
+          <Label
+            size='medium'
+            icon='male'
+            content={entry.lecturer}
+            className='Label Lecturer'
+          />
+        </List.Description>
+      </List.Content>
+    </List.Item>
   )
 }
 

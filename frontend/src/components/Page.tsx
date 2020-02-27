@@ -8,9 +8,7 @@ import Preferences from '../pages/Preferences'
 import '../style/Page.css'
 
 type PageProps = 
-ReturnType<typeof mapStateToProps> & {
-  page: PageName
-}
+ReturnType<typeof mapStateToProps>
 
 const Page: React.FC<PageProps> = ({page}) => {
   switch (page) {

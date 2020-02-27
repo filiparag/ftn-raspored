@@ -1,15 +1,12 @@
 import React from 'react'
 import { ApplicationState } from '../store'
 import { connect } from 'react-redux'
-import { TimetableList } from '../store/timetable/types'
 import TimetableEntry from '../components/TimetableEntry'
 import { List, Header } from 'semantic-ui-react'
 import '../style/Timetable.css'
 
 type TimetableProps = 
-ReturnType<typeof mapStateToProps> & {
-  timetable: TimetableList
-}
+ReturnType<typeof mapStateToProps>
 
 export const Timetable: React.FC<TimetableProps> = ({timetable}) => {
 
@@ -37,7 +34,7 @@ export const Timetable: React.FC<TimetableProps> = ({timetable}) => {
 
 const mapStateToProps = (state: ApplicationState) => ({
   timetable: state.timetable
-});
+})
 
 export default connect(
   mapStateToProps
