@@ -26,7 +26,7 @@ export interface FilterStudyProgram extends FilterChild{
 
 export type Filter = FilterStudyProgram[]
 
-export interface NewFilter {
+export interface FilterEntry {
   studyPrograms: Array<number>,
   studyGroups: Array<number>,
   semesters: Array<number>,
@@ -34,7 +34,10 @@ export interface NewFilter {
   groups: Array<string>,
   types: Array<number>,
   timeStart: number,
-  timeEnd: number,
+  timeEnd: number
+}
+
+export interface NewFilter extends FilterEntry {
   visible: boolean
 }
 

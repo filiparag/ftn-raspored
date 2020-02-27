@@ -1,5 +1,5 @@
 import { Reducer } from 'redux'
-import { FilterAction, Filter, FilterStudyProgram, FilterStudyGroup, FilterSemester, FilterSubject, FilterChild, NewFilter, NewFilterAction } from './types'
+import { FilterAction, Filter, FilterStudyProgram, FilterStudyGroup, FilterSemester, FilterSubject, FilterChild, NewFilter, NewFilterAction, FilterEntry } from './types'
 import { initialState } from '..'
 
 export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filter, action): Filter => {
@@ -63,6 +63,12 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
       }
     }
     case NewFilterAction.CLOSE: {
+      return {
+        ...initialState.newFilter,
+        visible: false
+      }
+    }
+    case NewFilterAction.ADD: {
       return {
         ...initialState.newFilter,
         visible: false
@@ -172,6 +178,18 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
           break
         }
       }
+      return state
+    }
+    default: {
+      return state
+    }
+  }
+}
+
+export const existingFiltersReducer: Reducer<FilterEntry[]> = (state: FilterEntry[] = initialState.existingFilters, action): FilterEntry[] => {
+  switch (action.type) {
+    case NewFilterAction.ADD: {
+      state.push(action.payload)
       return state
     }
     default: {

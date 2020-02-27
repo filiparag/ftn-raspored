@@ -41,8 +41,24 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 
   const naturalSortEntries = (array: DropdownEntry[]) => {
     array.sort((a, b) => {
-      return a.text.localeCompare(b.text, undefined, {numeric: true, sensitivity: 'base'});
+      return a.text.localeCompare(
+        b.text, undefined,
+        {numeric: true, sensitivity: 'base'}
+      );
     });
+  }
+
+  var abbrevateName = (name: string): string => {
+    const words = name.split('-')[0].split(' ')
+    var abbr = ''
+    for (const w of words) {
+      if (w === 'i') {
+        continue
+      } else if (w[0] !== undefined) {
+        abbr += w[0].toLocaleUpperCase()
+      }
+    }
+    return abbr
   }
 
   naturalSortEntries(studyPrograms)
@@ -62,7 +78,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             for (const sg of sp.studyGroups) {
               studyGroups.push({
                 key: sg.id,
-                text: (sg.name === 'SVI') ? sp.name + ' - ' + sg.name : sg.name,
+                text: sg.name === 'SVI' ? sp.name : 
+                      sg.name + ' (' + abbrevateName(sp.name) + ')',
                 value: sg.id
               })
             }
@@ -82,7 +99,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                 for (const sm of sg.semesters) {
                   semesters.push({
                     key: sm.id,
-                    text: ((sg.name === 'SVI') ? sp.name : sg.name) + ' - ' + sm.name + ' semestar',
+                    text: sm.name + ' semestar' + ' (' + 
+                          (sg.name === 'SVI' ? abbrevateName(sp.name) :
+                          abbrevateName(sp.name) + ' ' + 
+                          abbrevateName(sg.name)) + ')',
                     value: sm.id
                   })
                 }
@@ -106,7 +126,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                     for (const su of sm.subjects) {
                       subjects.push({
                         key: su.id,
-                        text: ((sg.name === 'SVI') ? sp.name : sg.name) + ' - ' + su.name,
+                        text: su.name + ' (' +
+                              (sg.name === 'SVI' ? abbrevateName(sp.name) :
+                              abbrevateName(sp.name) + ' ' + 
+                              abbrevateName(sg.name)) + ')',
                         value: su.id
                       })
                     }
@@ -241,7 +264,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         options={groups}
         onChange={(e, {value}) => updateSelection('gr', value)}
       />
-      <Header size='medium'>Vremenski period</Header>
+      {/* <Header size='medium'>Vremenski period</Header>
       <Grid columns={2} stackable>
         <Grid.Column>
           <Button.Group fluid>
@@ -257,13 +280,14 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             <Button icon='right chevron' onClick={() => dispatch(updateAddNewFilter('te', 'add'))} />
           </Button.Group>
         </Grid.Column>
-      </Grid>
+      </Grid> */}
+      <Divider hidden />
       <Grid columns={2}>
         <Grid.Column>
           <Button fluid color='red' onClick={() => dispatch(closeNewFilter())}>Nazad</Button>
         </Grid.Column>
         <Grid.Column>
-          <Button fluid color='green' onClick={() => dispatch(addNewFilter())}>Dodaj</Button>
+          <Button fluid color='green' onClick={() => dispatch(addNewFilter(newFilter))}>Dodaj</Button>
         </Grid.Column>
       </Grid>
     </Segment>

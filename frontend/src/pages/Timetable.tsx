@@ -2,7 +2,7 @@ import React from 'react'
 import { ApplicationState } from '../store'
 import { connect } from 'react-redux'
 import TimetableEntry from '../components/TimetableEntry'
-import { List, Header } from 'semantic-ui-react'
+import { List, Header, Message } from 'semantic-ui-react'
 import '../style/Timetable.css'
 
 type TimetableProps = 
@@ -24,10 +24,14 @@ export const Timetable: React.FC<TimetableProps> = ({timetable}) => {
     }
   }
 
+  const NoEntriesMessage = (
+    <Header size='medium'>Raspored je prazan</Header>
+  )
+
 
   return (
     <List size='big' relaxed>
-      {rows}
+      {rows.length > 0 ? NoEntriesMessage : NoEntriesMessage}
     </List>
   )
 }

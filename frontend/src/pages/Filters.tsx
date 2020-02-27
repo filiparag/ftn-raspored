@@ -1,22 +1,40 @@
 import React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
 import { ApplicationState } from '../store'
-import { viewPage } from '../store/menu/actions'
-import { connect, useSelector, useDispatch } from 'react-redux'
-import { Action } from 'typesafe-actions'
-import { Header, Divider, Button, Segment, Grid } from 'semantic-ui-react'
+import { Header, Button, Grid, Message } from 'semantic-ui-react'
 import { NewFilter } from '../components/NewFilter'
-import { showNewFilter, closeNewFilter } from '../store/filters/actions'
+import ExistingFilter from '../components/ExistingFilter'
+import { showNewFilter } from '../store/filters/actions'
+import { useDispatch, useSelector } from 'react-redux'
 
-type FiltersProps = 
-ReturnType<typeof mapStateToProps> &
-ReturnType<typeof mapDispatchToProps>
+type FiltersProps = {}
 
-export const Filters: React.FC<FiltersProps> = ({filters, changePage}) => {
+export const Filters: React.FC<FiltersProps> = () => {
   
   const dispatch = useDispatch()
-  const newFilterVisible = useSelector((state: ApplicationState) => state.newFilter.visible)
-  
+  const newFilterVisible = useSelector(
+    (state: ApplicationState) => state.newFilter.visible
+  )
+  const filters = useSelector(
+    (state: ApplicationState) => state.existingFilters
+  )
+
+  const rows = []
+  for (const fi in filters) {
+    rows.push(<ExistingFilter entry={filters[fi]} key={parseInt(fi)} />)
+  }
+
+  const NoFiltersMessage = (
+    <Message warning>
+      <Message.Header>
+        Nije pronađen nijedan filter
+      </Message.Header>
+      <p>
+        Kako bi se u rasporedu prikazivali časovi, potrebno je dodati
+        barem jedan filter.
+      </p>
+    </Message>
+  )
+
   return (
     <div>
       <Grid columns={2}>
@@ -25,23 +43,19 @@ export const Filters: React.FC<FiltersProps> = ({filters, changePage}) => {
         </Grid.Column>
         <Grid.Column>
           {newFilterVisible ? null : 
-          <Button floated='right' color='green' icon='plus' content='Dodaj' labelPosition='right' onClick={() => dispatch(showNewFilter())}/>}
+          <Button
+            floated='right'
+            color='green'
+            icon='plus'
+            content='Dodaj'
+            labelPosition='right'
+            onClick={() => dispatch(showNewFilter())}
+          />}
         </Grid.Column>
       </Grid>
-      {newFilterVisible ? <NewFilter /> : null}
+      {newFilterVisible ? <NewFilter /> : (rows.length > 0 ? rows : NoFiltersMessage)}
     </div>
   )
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-  filters: state.filter,
-})
-
-const mapDispatchToProps = (dispatch: Dispatch<Action>) => bindActionCreators({
-    changePage: viewPage,
-}, dispatch)
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Filters)
+export default Filters

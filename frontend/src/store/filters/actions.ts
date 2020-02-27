@@ -1,5 +1,5 @@
 import { action } from 'typesafe-actions'
-import { FilterAction, Filter, NewFilterAction } from './types'
+import { FilterAction, Filter, NewFilterAction, FilterEntry } from './types'
 import { Dispatch } from 'redux'
 import { showLoader, hideLoader } from '../loader/actions'
 
@@ -13,7 +13,7 @@ export const updateResetNewFilter = (group?: string, value?: any) => action(NewF
 
 export const updateAddNewFilter = (group?: string, value?: any) => action(NewFilterAction.UPDATE_ADD, {group: group, value: value})
 
-export const addNewFilter = () => action(NewFilterAction.ADD)
+export const addNewFilter = (filter: FilterEntry) => action(NewFilterAction.ADD, filter)
 
 export const fetchFilters = (dispatch: Dispatch) => {
   dispatch(showLoader())
