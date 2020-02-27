@@ -37,6 +37,7 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 					INNER JOIN studijska_grupa sg on s.studijska_grupa_id = sg.id
 					INNER JOIN studijski_program sp on sg.studijski_program_id = sp.id
 					WHERE`
+
 	var sqlArgs = make([]string, 0)
 	var whereAnd = false
 	
@@ -47,17 +48,15 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 		}
 		sqlQuery += " "
 		if ident, ok := keywords[key]; ok {
+			if whereAnd {
+				sqlQuery += "AND "
+			}
+			whereAnd = true
+			sqlQuery += "("
 			var whereOr = false
 			for v := range val {
 				var value = val[v]
-				if len(val) > 1 && v == 0 {
-					sqlQuery += "("
-				}
-				if !whereAnd {
-					whereAnd = true
-					whereOr = true
-				} else if !whereOr {
-					sqlQuery += "AND "
+				if !whereOr {
 					whereOr = true
 				} else {
 					sqlQuery += " OR "
@@ -69,10 +68,8 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 					sqlQuery += fmt.Sprintf("%s %s ?", ident[0], ident[1])
 					sqlArgs = append(sqlArgs, value)
 				}
-				if len(val) > 1 && v == len(val) - 1 {
-					sqlQuery += ")"
-				}
 			}
+			sqlQuery += ")"
 		} else {
 			w.WriteHeader(http.StatusBadRequest)
 			return
