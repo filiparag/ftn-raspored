@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS cas (
     vreme_od INTEGER NOT NULL,
     vreme_do INTEGER NOT NULL,
     ucionica TEXT NOT NULL,
-    izvodjaci TEXT,
+    izvodjac TEXT,
     FOREIGN KEY (predmet_id)
     REFERENCES predmet (id)
         ON INSERT RESTRICT
@@ -29,12 +29,12 @@ CREATE TABLE IF NOT EXISTS cas (
 );
 
 CREATE TABLE IF NOT EXISTS vrsta_nastave (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY UNIQUE,
     vrsta_nastave TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS predmet (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY UNIQUE,
     predmet TEXT NOT NULL,
     semestar_id INTEGER NOT NULL,
     FOREIGN KEY (semestar_id)
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS predmet (
 );
 
 CREATE TABLE IF NOT EXISTS semestar (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY UNIQUE,
     semestar INTEGER NOT NULL,
     studijska_grupa_id INTEGER NOT NULL,
     FOREIGN KEY (studijska_grupa_id)
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS semestar (
 );
 
 CREATE TABLE IF NOT EXISTS studijska_grupa (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY UNIQUE,
     studijska_grupa TEXT DEFAULT NULL,
     studijski_program_id INTEGER NOT NULL,
     FOREIGN KEY (studijski_program_id)
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS studijska_grupa (
 );
 
 CREATE TABLE IF NOT EXISTS studijski_program (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY UNIQUE,
     studijski_program TEXT NOT NULL UNIQUE,
     izvorni_dokument_id INTEGER NOT NULL,
     FOREIGN KEY (izvorni_dokument_id)
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS studijski_program (
 );
 
 CREATE TABLE IF NOT EXISTS izvorni_dokument (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY UNIQUE,
     url TEXT NOT NULL UNIQUE,
     naziv TEXT NOT NULL UNIQUE,
     dopremljeno INTEGER DEFAULT 0,

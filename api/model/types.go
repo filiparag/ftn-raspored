@@ -36,5 +36,5 @@ type Cas struct {
 	TimeStart	float32	`json:"vreme_od"`
 	TimeEnd		float32	`json:"vreme_do"`
 	Classroom	string	`json:"ucionica"`
-	Lecturer	string	`json:"izvodjaci"`
+	Lecturer	string	`json:"izvodjac"`
 }

@@ -33,7 +33,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
           timeStart: action.payload[c]['vreme_od'],
           timeEnd: action.payload[c]['vreme_do'],
           classroom: action.payload[c]['ucionica'],
-          lecturer: action.payload[c]['izvodjaci']
+          lecturer: action.payload[c]['izvodjac']
         }
 
         const day = action.payload[c]['dan']

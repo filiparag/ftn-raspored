@@ -191,11 +191,15 @@ def parseDocument(filename):
 
 def checksum(filename):
 
-    hasher = hashlib.sha1()
+    hasher = hashlib.sha256()
     with open(filename, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             hasher.update(chunk)
-    return int(hasher.hexdigest()[:8], 16)
+    return int(hasher.hexdigest()[:15], base=16)
+
+def getID(*words):
+    hasher = hashlib.sha256(''.join(words).encode('utf8'))
+    return int(hasher.hexdigest()[:15], base=16)
 
 
 def listGenerator(lst):
@@ -239,7 +243,7 @@ sql_db.execute("SELECT id, naziv, checksum FROM izvorni_dokument")
 files = sql_db.fetchall()
 
 sql_db.executemany("INSERT OR IGNORE INTO vrsta_nastave \
-(vrsta_nastave) VALUES (?)", listGenerator(clas))
+(id, vrsta_nastave) VALUES (?, ?)", listGenerator([(getID(c), c) for c in clas]))
 
 if len(sys.argv) == 2:
     files = [files[int(sys.argv[1])]]
@@ -270,8 +274,9 @@ for f in files:
     for studijski_program in getUnique(db_entries, 0):
 
         sql_db.execute(f"INSERT INTO studijski_program \
-            ( studijski_program, izvorni_dokument_id ) VALUES \
-            ('{studijski_program}', {f[0]})")
+            ( id, studijski_program, izvorni_dokument_id ) VALUES \
+            ( {getID(f[1], studijski_program)}, \
+            '{studijski_program}', {f[0]} )")
 
         studijski_program_id = sql_db.lastrowid
 
@@ -279,8 +284,9 @@ for f in files:
             [studijski_program]):
 
             sql_db.execute(f"INSERT INTO studijska_grupa \
-            ( studijska_grupa, studijski_program_id ) VALUES \
-            ('{studijska_grupa}', {studijski_program_id})")
+            ( id, studijska_grupa, studijski_program_id ) VALUES \
+            ( {getID(f[1], studijski_program, studijska_grupa)}, \
+            '{studijska_grupa}', {studijski_program_id})")
 
             studijska_grupa_id = sql_db.lastrowid
 
@@ -288,8 +294,9 @@ for f in files:
                 [studijski_program, studijska_grupa]):
 
                 sql_db.execute(f"INSERT INTO semestar \
-                ( semestar, studijska_grupa_id ) VALUES \
-                ({semestar}, {studijska_grupa_id})")
+                ( id, semestar, studijska_grupa_id ) VALUES \
+                ( {getID(f[1], studijski_program, studijska_grupa, str(semestar))}, \
+                {semestar}, {studijska_grupa_id})")
 
                 semestar_id = sql_db.lastrowid
 
@@ -297,8 +304,9 @@ for f in files:
                     [studijski_program, studijska_grupa, semestar]):
 
                     sql_db.execute(f"INSERT INTO predmet \
-                    ( predmet, semestar_id ) VALUES \
-                    ('{predmet}', {semestar_id})")
+                    ( id, predmet, semestar_id ) VALUES \
+                    ( {getID(f[1], studijski_program, studijska_grupa, str(semestar), predmet)}, \
+                    '{predmet}', {semestar_id})")
 
                     predmet_id = sql_db.lastrowid
 
@@ -309,7 +317,7 @@ for f in files:
                         sql_db.execute(f"INSERT INTO cas \
                         ( vrsta_nastave_id, predmet_id, grupa, \
                         dan, vreme_od, vreme_do, ucionica, \
-                        izvodjaci ) VALUES \
+                        izvodjac ) VALUES \
                         ((SELECT id FROM vrsta_nastave WHERE \
                         vrsta_nastave = '{cas[0]}'),\
                         {predmet_id}, '{cas[2]}', {cas[1]}, \
