@@ -7,7 +7,7 @@ import { FilterEntry } from '../filters/types'
 
 export const updateTimetable = (entries: TimetableList) => action(TimetableAction.UPDATE, entries)
 
-export const fetchTimetable = (dispatch: Dispatch<any>, filters: FilterEntry[]) => {
+export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEntry[]) => {
 
   dispatch(showLoader())
 
@@ -44,8 +44,9 @@ export const fetchTimetable = (dispatch: Dispatch<any>, filters: FilterEntry[]) 
     query.push(`vremeDoPre=${filter.timeEnd}`)
   })
 
-  fetch(`http://localhost:10000/api/devel/casovi?${query.join('&')}`)
-    .then(response => response.json())
-    .then(json => dispatch(updateTimetable(json))).finally(() => dispatch(hideLoader()))
+  const response = await fetch(`http://localhost:10000/api/devel/casovi?${query.join('&')}`)
+  const json = await response.json()
+  dispatch(updateTimetable(json))
+  dispatch(hideLoader())
 
 }

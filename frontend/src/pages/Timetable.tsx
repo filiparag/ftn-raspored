@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, createRef } from 'react'
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import TimetableEntry from '../components/TimetableEntry'
@@ -8,6 +8,7 @@ import { randomKey } from '../App'
 import { viewPage } from '../store/menu/actions'
 import { PageName } from '../store/menu/types'
 import { showNewFilter } from '../store/filters/actions'
+import { fetchTimetable } from '../store/timetable/actions'
 
 type TimetableProps = {}
 
@@ -16,6 +17,11 @@ export const Timetable: React.FC<TimetableProps> = () => {
   const timetable = useSelector(
     (state: ApplicationState) => state.timetable
   )
+
+  const existingFilters = useSelector(
+    (state: ApplicationState) => state.existingFilters
+  )
+
   const dispatch = useDispatch()
 
   const dayNames = [
@@ -23,12 +29,29 @@ export const Timetable: React.FC<TimetableProps> = () => {
     'Petak', 'Subota', 'Nedelja'
   ]
 
+  // const dayRefs = dayNames.map(() => {
+  //   return createRef()
+  // })
+
+  useEffect(() => {
+    fetchTimetable(dispatch, existingFilters)
+    // window.scrollTo(0, (dayRefs as any)[2].current.offsetTop)
+  }, [existingFilters, dispatch])
+
   const rows = []
 
   for (const day in timetable) {
-    rows.push(<Header size='large' key={randomKey()}>{dayNames[day]}</Header>)
+    rows.push(
+        <Header size='large' key={dayNames[day]}>
+          {dayNames[day]}
+        </Header>
+    )
     for (const entry of timetable[day]) {
-      rows.push(<TimetableEntry entry={entry} key={randomKey()} />)
+      rows.push(
+        <TimetableEntry
+          entry={entry}
+          key={randomKey()}
+        />)
     }
   }
 
@@ -55,7 +78,7 @@ export const Timetable: React.FC<TimetableProps> = () => {
     </Message>
   )
 
-  if (rows.length === 0)
+  if (rows.length === 0 && existingFilters.length === 0)
     return NoEntriesMessage
   else
     return (

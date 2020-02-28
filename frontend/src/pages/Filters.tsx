@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ApplicationState } from '../store'
 import { Header, Button, Grid, Message } from 'semantic-ui-react'
 import { NewFilter } from '../components/NewFilter'
@@ -20,6 +20,10 @@ export const Filters: React.FC<FiltersProps> = () => {
   const existingFilters = useSelector(
     (state: ApplicationState) => state.existingFilters
   )
+
+  useEffect(() => {
+    fetchFilters(dispatch)
+  }, [dispatch])
   
   const NoFiltersMessage = (
     <Message warning>
