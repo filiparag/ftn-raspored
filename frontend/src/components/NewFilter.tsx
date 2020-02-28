@@ -7,23 +7,45 @@ import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter 
 
 type NewFilterProps = {}
 
+interface DropdownEntry {
+  key: number | string,
+  text: string,
+  value: number | string
+}
+
+export const timeString = (time: number): string => {
+  let hour = '0' + Math.floor(time)
+  let minute = '0' + Math.round((time - Math.floor(time)) * 60)
+  return hour.substr(hour.length - 2) + ' : ' + minute.substr(minute.length - 2)
+}
+
+export const naturalSortEntries = (array: DropdownEntry[]) => {
+  array.sort((a, b) => {
+    return a.text.localeCompare(
+      b.text, undefined,
+      {numeric: true, sensitivity: 'base'}
+    );
+  });
+}
+
+export const abbrevateName = (name: string): string => {
+  const words = name.split('-')[0].split(' ')
+  var abbr = ''
+  for (const w of words) {
+    if (w === 'i') {
+      continue
+    } else if (w[0] !== undefined) {
+      abbr += w[0].toLocaleUpperCase()
+    }
+  }
+  return abbr
+}
+
 export const NewFilter: React.FC<NewFilterProps> = () => {
 
   const newFilter = useSelector((state: ApplicationState) => state.newFilter)
   const filters = useSelector((state: ApplicationState) => state.filter)
   const dispatch = useDispatch()
-
-  const timeString = (time: number): string => {
-    let hour = '0' + Math.floor(time)
-    let minute = '0' + Math.round((time - Math.floor(time)) * 60)
-    return hour.substr(hour.length - 2) + ' : ' + minute.substr(minute.length - 2)
-  }
-
-  interface DropdownEntry {
-    key: number | string,
-    text: string,
-    value: number | string
-  }  
 
   const studyPrograms = [] as DropdownEntry[]
   for (const sp of filters) {
@@ -39,34 +61,13 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const groups = [] as DropdownEntry[]
   const types = [] as DropdownEntry[]
 
-  const naturalSortEntries = (array: DropdownEntry[]) => {
-    array.sort((a, b) => {
-      return a.text.localeCompare(
-        b.text, undefined,
-        {numeric: true, sensitivity: 'base'}
-      );
-    });
-  }
-
-  var abbrevateName = (name: string): string => {
-    const words = name.split('-')[0].split(' ')
-    var abbr = ''
-    for (const w of words) {
-      if (w === 'i') {
-        continue
-      } else if (w[0] !== undefined) {
-        abbr += w[0].toLocaleUpperCase()
-      }
-    }
-    return abbr
-  }
-
   naturalSortEntries(studyPrograms)
 
   const updateSelection = (group: string, value: any) => {
     const dispatchPayload = {
       group: '',
-      values: [] as number[]
+      values: [] as number[],
+      string: ''
     }
     switch (group) {
       case 'sp': {
@@ -75,11 +76,14 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         for (const sp of filters) {
           if (value.includes(sp.id)) {
             dispatchPayload.values.push(sp.id)
+            dispatchPayload.string += `${dispatchPayload.string.length === 0
+                                       ? '' : ', '}${sp.name}`
             for (const sg of sp.studyGroups) {
+              const name = sg.name === 'SVI' ? sp.name : 
+                           `${sg.name} (${abbrevateName(sp.name)})`
               studyGroups.push({
                 key: sg.id,
-                text: sg.name === 'SVI' ? sp.name : 
-                      sg.name + ' (' + abbrevateName(sp.name) + ')',
+                text: name,
                 value: sg.id
               })
             }
@@ -90,19 +94,23 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       }
       case 'sg': {
         dispatchPayload.group='sg'
-        semesters.splice(0, studyGroups.length)
+        semesters.splice(0, semesters.length)
         for (const sp of filters) {
           if (newFilter.studyPrograms.includes(sp.id)) {
             for (const sg of sp.studyGroups) {
               if (value.includes(sg.id)) {
                 dispatchPayload.values.push(sg.id)
+                dispatchPayload.string += `${dispatchPayload.string.length === 0
+                                           ? '' : ', '}${sg.name === 'SVI'
+                                           ? sp.name : sg.name + ' (' 
+                                           + abbrevateName(sp.name)})`
                 for (const sm of sg.semesters) {
+                  const name = `${sm.name} semestar (${sg.name === 'SVI' ? 
+                                abbrevateName(sp.name) : abbrevateName(sp.name)
+                                + ' ' + abbrevateName(sg.name)})`
                   semesters.push({
                     key: sm.id,
-                    text: sm.name + ' semestar' + ' (' + 
-                          (sg.name === 'SVI' ? abbrevateName(sp.name) :
-                          abbrevateName(sp.name) + ' ' + 
-                          abbrevateName(sg.name)) + ')',
+                    text: name,
                     value: sm.id
                   })
                 }
@@ -123,13 +131,19 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                 for (const sm of sg.semesters) {
                   if (value.includes(sm.id)) {
                     dispatchPayload.values.push(sm.id)
+                    dispatchPayload.string += `${dispatchPayload.string.length === 0
+                                               ? '' : ', '}${sm.name} semestar (${
+                                               sg.name === 'SVI'
+                                               ? abbrevateName(sp.name)
+                                               : abbrevateName(sp.name) + ' '
+                                               + abbrevateName(sg.name)})`
                     for (const su of sm.subjects) {
+                      const name = `${su.name} (${sg.name === 'SVI' ? 
+                                    abbrevateName(sp.name) : abbrevateName(sp.name)
+                                    + ' ' + abbrevateName(sg.name)})`
                       subjects.push({
                         key: su.id,
-                        text: su.name + ' (' +
-                              (sg.name === 'SVI' ? abbrevateName(sp.name) :
-                              abbrevateName(sp.name) + ' ' + 
-                              abbrevateName(sg.name)) + ')',
+                        text: name,
                         value: su.id
                       })
                     }
@@ -157,6 +171,12 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                     for (const su of sm.subjects) {
                       if (value.includes(su.id)) {
                         dispatchPayload.values.push(su.id)
+                        dispatchPayload.string += `${dispatchPayload.string.length === 0
+                                                   ? '' : ', '}${su.name} (${
+                                                   sg.name === 'SVI'
+                                                   ? abbrevateName(sp.name)
+                                                   : abbrevateName(sp.name) + ' '
+                                                   + abbrevateName(sg.name)})`
                         for (const gr of su.groups) {
                           if (!cachedGroups.includes(gr)) {
                             cachedGroups.push(gr)
@@ -194,16 +214,27 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       case 'gr': {
         dispatchPayload.group='gr'
         dispatchPayload.values = value
+        value.forEach((v: string) => {
+          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
+                                     '' : ', '}${v}`
+        });
         break
       }
       case 'ty': {
         dispatchPayload.group='ty'
         dispatchPayload.values = value
+        value.forEach((v: number) => {
+          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
+                                     '' : ', '}${types[
+                                     types.findIndex(el => el.value === v)].text}`
+        });
         break
       }
     }
     dispatch(updateResetNewFilter(dispatchPayload.group))
-    dispatch(updateAddNewFilter(dispatchPayload.group, dispatchPayload.values))
+    dispatch(updateAddNewFilter(dispatchPayload.group, {
+      id: dispatchPayload.values, string: dispatchPayload.string
+    }))
   }
 
   return (
@@ -284,10 +315,19 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       <Divider hidden />
       <Grid columns={2}>
         <Grid.Column>
-          <Button fluid color='red' onClick={() => dispatch(closeNewFilter())}>Nazad</Button>
+          <Button
+            fluid
+            color='red'
+            onClick={() => dispatch(closeNewFilter())}
+          >Nazad</Button>
         </Grid.Column>
         <Grid.Column>
-          <Button fluid color='green' onClick={() => dispatch(addNewFilter(newFilter))}>Dodaj</Button>
+          <Button
+            disabled={false}
+            fluid
+            color='green'
+            onClick={() => dispatch(addNewFilter(newFilter))}
+          >Dodaj</Button>
         </Grid.Column>
       </Grid>
     </Segment>

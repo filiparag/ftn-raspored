@@ -9,13 +9,13 @@ type TimetableEntryProps = {
   entry: Entry
 }
 
-const timeString = (time: number): string => {
+export const timeString = (time: number): string => {
   let hour = '0' + Math.floor(time)
   let minute = '0' + Math.round((time - Math.floor(time)) * 60)
   return hour.substr(hour.length - 2) + ':' + minute.substr(minute.length - 2)
 }
 
-const typeColor = (type: string): SemanticCOLORS => {
+export const typeColor = (type: string): SemanticCOLORS => {
   switch (type) {
     case 'Pred.':
       return 'blue'
@@ -32,7 +32,7 @@ const typeColor = (type: string): SemanticCOLORS => {
   }
 }
 
-const typeIcon = (type: string): SemanticICONS => {
+export const typeIcon = (type: string): SemanticICONS => {
   switch (type) {
     case 'Pred.':
       return 'graduation cap'

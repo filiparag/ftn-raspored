@@ -5,6 +5,8 @@ import { showLoader, hideLoader } from '../loader/actions'
 
 export const updateFilters = (filters: Filter) => action(FilterAction.UPDATE, filters)
 
+export const removeExistingFilter = (id: number) => action(FilterAction.REMOVE, id)
+
 export const showNewFilter = () => action(NewFilterAction.SHOW)
 
 export const closeNewFilter = () => action(NewFilterAction.CLOSE)

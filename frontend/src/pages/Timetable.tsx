@@ -1,14 +1,17 @@
 import React from 'react'
 import { ApplicationState } from '../store'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import TimetableEntry from '../components/TimetableEntry'
-import { List, Header, Message } from 'semantic-ui-react'
+import { List, Header } from 'semantic-ui-react'
 import '../style/Timetable.css'
 
-type TimetableProps = 
-ReturnType<typeof mapStateToProps>
+type TimetableProps = {}
 
-export const Timetable: React.FC<TimetableProps> = ({timetable}) => {
+export const Timetable: React.FC<TimetableProps> = () => {
+
+  const timetable = useSelector(
+    (state: ApplicationState) => state.timetable
+  )
 
   const dayNames = [
     'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak',
@@ -18,9 +21,9 @@ export const Timetable: React.FC<TimetableProps> = ({timetable}) => {
   const rows = []
 
   for (const day in timetable) {
-    rows.push(<Header size='large'>{dayNames[day]}</Header>)
-    for (const c in timetable[day]) {
-      rows.push(<TimetableEntry entry={timetable[day][c]} />)
+    rows.push(<Header size='large' key={day}>{dayNames[day]}</Header>)
+    for (const entry of timetable[day]) {
+      rows.push(<TimetableEntry entry={entry} key={day + entry.id} />)
     }
   }
 
@@ -31,15 +34,9 @@ export const Timetable: React.FC<TimetableProps> = ({timetable}) => {
 
   return (
     <List size='big' relaxed>
-      {rows.length > 0 ? NoEntriesMessage : NoEntriesMessage}
+      {rows.length > 0 ? rows : NoEntriesMessage}
     </List>
   )
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-  timetable: state.timetable
-})
-
-export default connect(
-  mapStateToProps
-)(Timetable)
+export default Timetable

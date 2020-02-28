@@ -1,6 +1,7 @@
 import { Reducer } from 'redux'
 import { FilterAction, Filter, FilterStudyProgram, FilterStudyGroup, FilterSemester, FilterSubject, FilterChild, NewFilter, NewFilterAction, FilterEntry } from './types'
 import { initialState } from '..'
+import { timeString } from '../../components/TimetableEntry'
 
 export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filter, action): Filter => {
   switch (action.type) {
@@ -83,34 +84,42 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
       }
       switch (action.payload.group) {
         case 'sp': {
+          state.spString = ''
           state.studyPrograms.splice(0, state.studyPrograms.length)
           break
         }
         case 'sg': {
+          state.sgString = ''
           state.studyGroups.splice(0, state.studyGroups.length)
           break
         }
         case 'sm': {
+          state.smString = ''
           state.semesters.splice(0, state.semesters.length)
           break
         }
         case 'su': {
+          state.suString = ''
           state.subjects.splice(0, state.subjects.length)
           break
         }
         case 'gr': {
+          state.grString = ''
           state.groups.splice(0, state.groups.length)
           break
         }
         case 'ty': {
+          state.tyString = ''
           state.types.splice(0, state.types.length)
           break
         }
         case 'ts': {
+          state.tsString = ''
           state.timeStart = initialState.newFilter.timeStart
           break
         }
         case 'te': {
+          state.teString = ''
           state.timeEnd = initialState.newFilter.timeEnd
           break
         }
@@ -120,56 +129,63 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
     case NewFilterAction.UPDATE_ADD: {
       switch (action.payload.group) {
         case 'sp': {
-          if (Array.isArray(action.payload.value)) {
-            state.studyPrograms.push(...action.payload.value)
+          if (Array.isArray(action.payload.value.id)) {
+            state.studyPrograms.push(...action.payload.value.id)
           } else {
-            state.studyPrograms.push(action.payload.value)
+            state.studyPrograms.push(action.payload.value.id)
           }
+          state.spString += action.payload.value.string
           break
         }
         case 'sg': {
-          if (Array.isArray(action.payload.value)) {
-            state.studyGroups.push(...action.payload.value)
+          if (Array.isArray(action.payload.value.id)) {
+            state.studyGroups.push(...action.payload.value.id)
           } else {
-            state.studyGroups.push(action.payload.value)
+            state.studyGroups.push(action.payload.value.id)
           }
+          state.sgString += action.payload.value.string
           break
         }
         case 'sm': {
-          if (Array.isArray(action.payload.value)) {
-            state.semesters.push(...action.payload.value)
+          if (Array.isArray(action.payload.value.id)) {
+            state.semesters.push(...action.payload.value.id)
           } else {
-            state.semesters.push(action.payload.value)
+            state.semesters.push(action.payload.value.id)
           }
+          state.smString += action.payload.value.string
           break
         }
         case 'su': {
-          if (Array.isArray(action.payload.value)) {
-            state.subjects.push(...action.payload.value)
+          if (Array.isArray(action.payload.value.id)) {
+            state.subjects.push(...action.payload.value.id)
           } else {
-            state.subjects.push(action.payload.value)
+            state.subjects.push(action.payload.value.id)
           }
+          state.suString += action.payload.value.string
           break
         }
         case 'gr': {
-          if (Array.isArray(action.payload.value)) {
-            state.groups.push(...action.payload.value)
+          if (Array.isArray(action.payload.value.id)) {
+            state.groups.push(...action.payload.value.id)
           } else {
-            state.groups.push(action.payload.value)
+            state.groups.push(action.payload.value.id)
           }
+          state.grString += action.payload.value.string
           break
         }
         case 'ty': {
-          if (Array.isArray(action.payload.value)) {
-            state.types.push(...action.payload.value)
+          if (Array.isArray(action.payload.value.id)) {
+            state.types.push(...action.payload.value.id)
           } else {
-            state.types.push(action.payload.value)
+            state.types.push(action.payload.value.id)
           }
+          state.tyString += action.payload.value.string
           break
         }
         case 'ts': {
           const delta = (action.payload.value === 'add') ? 0.5 : -0.5
           state.timeStart = ((state.timeStart + delta % 24) + 24) % 24
+          state.tsString = timeString(state.timeStart)
           break
         }
         case 'te': {
@@ -190,6 +206,10 @@ export const existingFiltersReducer: Reducer<FilterEntry[]> = (state: FilterEntr
   switch (action.type) {
     case NewFilterAction.ADD: {
       state.push(action.payload)
+      return state
+    }
+    case FilterAction.REMOVE: {
+      state.splice(action.payload)
       return state
     }
     default: {

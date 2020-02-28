@@ -14,13 +14,13 @@ export const Filters: React.FC<FiltersProps> = () => {
   const newFilterVisible = useSelector(
     (state: ApplicationState) => state.newFilter.visible
   )
-  const filters = useSelector(
+  const existingFilters = useSelector(
     (state: ApplicationState) => state.existingFilters
   )
 
   const rows = []
-  for (const fi in filters) {
-    rows.push(<ExistingFilter entry={filters[fi]} key={parseInt(fi)} />)
+  for (const fi in existingFilters) {
+    rows.push(<ExistingFilter entry={existingFilters[fi]} id ={parseInt(fi)} key={fi} />)
   }
 
   const NoFiltersMessage = (

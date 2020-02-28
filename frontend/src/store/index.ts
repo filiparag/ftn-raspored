@@ -35,6 +35,14 @@ export const initialState: ApplicationState = {
     types: [] as Array<number>,
     timeStart: 0.0,
     timeEnd: 23.5,
+    spString: '',
+    sgString: '',
+    smString: '',
+    suString: '',
+    grString: '',
+    tyString: '',
+    tsString: '',
+    teString: '',
     visible: false
   },
   existingFilters: [] as FilterEntry[]

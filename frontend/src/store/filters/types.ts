@@ -1,5 +1,6 @@
 export enum FilterAction {
   UPDATE = 'FILTER_UPDATE',
+  REMOVE = 'FILER_REMOVE_EXISTING'
 }
 
 export interface FilterChild {
@@ -34,7 +35,15 @@ export interface FilterEntry {
   groups: Array<string>,
   types: Array<number>,
   timeStart: number,
-  timeEnd: number
+  timeEnd: number,
+  spString: string,
+  sgString: string,
+  smString: string,
+  suString: string,
+  grString: string,
+  tyString: string,
+  tsString: string,
+  teString: string
 }
 
 export interface NewFilter extends FilterEntry {
