@@ -132,6 +132,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             types: []
           }
         }
+        case 'da': {
+          return {
+            ...state,
+            daString: '',
+            days: []
+          }
+        }
         case 'ts': {
           return {
             ...state,
@@ -204,6 +211,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             ...state,
             types: [...state.types, ...ids],
             tyString: state.tyString + action.payload.value.string
+          }
+        }
+        case 'da': {
+          return {
+            ...state,
+            days: [...state.days, ...ids],
+            daString: state.daString + action.payload.value.string
           }
         }
         case 'ts': {

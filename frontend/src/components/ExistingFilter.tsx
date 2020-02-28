@@ -23,7 +23,11 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
           <Header size='large'>Filter #{id + 1}</Header>
         </Grid.Column>
         <Grid.Column textAlign='right'>
-          <Label as='a' basic color='red' onClick={() => dispatch(removeExistingFilter(id))}>
+          <Label
+            as='a'
+            basic
+            color='red'
+            onClick={() => dispatch(removeExistingFilter(id))}>
             <Icon name='trash alternate' />
             Obriši
           </Label>

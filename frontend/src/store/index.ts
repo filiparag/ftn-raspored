@@ -32,6 +32,7 @@ export const initialState: ApplicationState = {
     semesters: [] as Array<number>,
     subjects: [] as Array<number>,
     groups: [] as Array<string>,
+    days: [] as Array<number>,
     types: [] as Array<number>,
     timeStart: 0.0,
     timeEnd: 23.5,
@@ -41,6 +42,7 @@ export const initialState: ApplicationState = {
     suString: '',
     grString: '',
     tyString: '',
+    daString: '',
     tsString: '',
     teString: '',
     visible: false

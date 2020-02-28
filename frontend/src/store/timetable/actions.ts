@@ -9,10 +9,13 @@ export const updateTimetable = (entries: TimetableList) => action(TimetableActio
 
 export const fetchTimetable = (dispatch: Dispatch<any>, filters: FilterEntry[]) => {
 
-  if (filters.length === 0)
-    return
-
   dispatch(showLoader())
+
+  if (filters.length === 0) {
+    updateTimetable([])
+    dispatch(hideLoader())
+    return
+  }
   
   var query = [] as string[]
   filters.forEach(filter => {
@@ -34,6 +37,9 @@ export const fetchTimetable = (dispatch: Dispatch<any>, filters: FilterEntry[]) 
     filter.types.forEach(val => {
       query.push(`vrstaNastave=${val}`)
     })
+    filter.days.forEach(val => {
+      query.push(`dan=${val}`)
+    })
     query.push(`vremeOdPosle=${filter.timeStart}`)
     query.push(`vremeDoPre=${filter.timeEnd}`)
   })
@@ -41,5 +47,5 @@ export const fetchTimetable = (dispatch: Dispatch<any>, filters: FilterEntry[]) 
   fetch(`http://localhost:10000/api/devel/casovi?${query.join('&')}`)
     .then(response => response.json())
     .then(json => dispatch(updateTimetable(json))).finally(() => dispatch(hideLoader()))
-    
+
 }

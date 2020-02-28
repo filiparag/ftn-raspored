@@ -199,7 +199,7 @@ def checksum(filename):
 
 def getID(*words):
     hasher = hashlib.sha256(''.join(words).encode('utf8'))
-    return int(hasher.hexdigest()[:15], base=16)
+    return int(hasher.hexdigest()[:12], base=16)
 
 
 def listGenerator(lst):
@@ -245,10 +245,14 @@ files = sql_db.fetchall()
 sql_db.executemany("INSERT OR IGNORE INTO vrsta_nastave \
 (id, vrsta_nastave) VALUES (?, ?)", listGenerator([(getID(c), c) for c in clas]))
 
-if len(sys.argv) == 2:
-    files = [files[int(sys.argv[1])]]
-elif len(sys.argv) == 3:
-    files = files[int(sys.argv[1]):int(sys.argv[2])+1]
+
+args = list(filter(lambda arg: arg[0] != '-', sys.argv))
+opts = list(filter(lambda arg: arg[0] == '-', sys.argv))
+
+if len(args) == 2:
+    files = [files[int(args[1])]]
+elif len(args) == 3:
+    files = files[int(args[1]):int(args[2])+1]
 
 for f in files:
 
@@ -258,7 +262,7 @@ for f in files:
 
     csum = checksum(f'storage/{f[1]}.pdf')
 
-    if csum == f[2]:
+    if csum == f[2] and not '--force' in opts:
         print('skip')
         continue
     

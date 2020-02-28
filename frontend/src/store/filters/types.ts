@@ -34,6 +34,7 @@ export interface FilterEntry {
   subjects: Array<number>,
   groups: Array<string>,
   types: Array<number>,
+  days: Array<number>
   timeStart: number,
   timeEnd: number,
   spString: string,
@@ -42,6 +43,7 @@ export interface FilterEntry {
   suString: string,
   grString: string,
   tyString: string,
+  daString: string,
   tsString: string,
   teString: string
 }

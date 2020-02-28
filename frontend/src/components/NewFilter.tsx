@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
 import { typeName } from '../components/TimetableEntry'
 import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter } from '../store/filters/actions'
-import { fetchTimetable } from '../store/timetable/actions'
 
 type NewFilterProps = {}
 
@@ -46,7 +45,6 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 
   const newFilter = useSelector((state: ApplicationState) => state.newFilter)
   const filters = useSelector((state: ApplicationState) => state.filter)
-  const existingFilters = useSelector((state: ApplicationState) => state.existingFilters)
   const dispatch = useDispatch()
 
   const dropdownObject = (text: string, key: number | string): DropdownEntry => {
@@ -60,6 +58,14 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   var spArray = [] as DropdownEntry[]
   for (const sp of filters)
     spArray.push(dropdownObject(sp.name, sp.id))
+
+  const dayStrings = [
+    'Ponedeljak', 'Utorak', 'Sreda', 
+    'Četvrtak', 'Petak', 'Subota', 'Nedelja'
+  ]
+  var days = [] as DropdownEntry[]
+    for (const day in dayStrings)
+      days.push(dropdownObject(dayStrings[day], day))
 
   const [studyPrograms] = useState(naturalSortEntries(spArray))
   const [studyGroups, sgSet] = useState([] as DropdownEntry[])
@@ -77,7 +83,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
     switch (group) {
       case 'sp': {
         dispatchPayload.group='sp'
-        var sgArray = [] as DropdownEntry[]
+        const sgArray = [] as DropdownEntry[]
         for (const sp of filters) {
           if (value.includes(sp.id)) {
             dispatchPayload.values.push(sp.id)
@@ -95,7 +101,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       }
       case 'sg': {
         dispatchPayload.group='sg'
-        var smArray = [] as DropdownEntry[]
+        const smArray = [] as DropdownEntry[]
         for (const sp of filters) {
           if (newFilter.studyPrograms.includes(sp.id)) {
             for (const sg of sp.studyGroups) {
@@ -120,9 +126,9 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       }
       case 'sm': {
         dispatchPayload.group='sm'
-        var suArray = [] as DropdownEntry[]
-        var grArray = [] as DropdownEntry[]
-        var tyArray = [] as DropdownEntry[]
+        const suArray = [] as DropdownEntry[]
+        const grArray = [] as DropdownEntry[]
+        const tyArray = [] as DropdownEntry[]
         const cachedGroups = [] as string[]
         const cachedTypes = [] as number[]
         for (const sp of filters) {
@@ -169,8 +175,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       }
       case 'su': {
         dispatchPayload.group='su'
-        var grArray = [] as DropdownEntry[]
-        var tyArray = [] as DropdownEntry[]
+        const grArray = [] as DropdownEntry[]
+        const tyArray = [] as DropdownEntry[]
         const cachedGroups = [] as string[]
         const cachedTypes = [] as number[]
         for (const sp of filters) {
@@ -232,6 +238,16 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
                                      '' : ', '}${typeName(types[
                                      types.findIndex(el => el.value === v)].text)}`
+        });
+        break
+      }
+      case 'da': {
+        dispatchPayload.group='da'
+        dispatchPayload.values = value
+        value.forEach((v: number) => {
+          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
+                                     '' : ', '}${dayStrings[
+                                     days.findIndex(el => el.value === v)]}`
         });
         break
       }
@@ -319,6 +335,16 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         options={groups}
         onChange={(e, {value}) => updateSelection('gr', value)}
       />
+      <Header size='medium'>Dan</Header>
+      <Dropdown
+        placeholder='Dan'
+        disabled={newFilter.semesters.length === 0}
+        fluid
+        multiple
+        selection
+        options={days}
+        onChange={(e, {value}) => updateSelection('da', value)}
+      />
       <Header size='medium'>Vremenski period</Header>
       <Grid columns={2} stackable>
         <Grid.Column>
@@ -350,7 +376,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             disabled={newFilter.semesters.length === 0}
             fluid
             color='green'
-            onClick={() => {dispatch(addNewFilter(newFilter)); fetchTimetable(dispatch, [...existingFilters, newFilter])}}
+            onClick={() => {dispatch(addNewFilter(newFilter))}}
           >Dodaj</Button>
         </Grid.Column>
       </Grid>
