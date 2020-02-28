@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { constructor } from 'react'
 import { ApplicationState } from '../store'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import TimetableEntry from '../components/TimetableEntry'
 import { List, Header } from 'semantic-ui-react'
 import '../style/Timetable.css'
+import { randomKey } from '../App'
+import { fetchTimetable } from '../store/timetable/actions'
 
 type TimetableProps = {}
 
@@ -13,6 +15,18 @@ export const Timetable: React.FC<TimetableProps> = () => {
     (state: ApplicationState) => state.timetable
   )
 
+  const existingFilters = useSelector(
+    (state: ApplicationState) => state.existingFilters
+  )
+
+  const loader = useSelector(
+    (state: ApplicationState) => state.loader
+  )
+
+  const dispatch = useDispatch()
+
+  // fetchTimetable(dispatch, existingFilters)
+  
   const dayNames = [
     'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak',
     'Petak', 'Subota', 'Nedelja'
@@ -21,9 +35,9 @@ export const Timetable: React.FC<TimetableProps> = () => {
   const rows = []
 
   for (const day in timetable) {
-    rows.push(<Header size='large' key={day}>{dayNames[day]}</Header>)
+    rows.push(<Header size='large' key={randomKey()}>{dayNames[day]}</Header>)
     for (const entry of timetable[day]) {
-      rows.push(<TimetableEntry entry={entry} key={day + entry.id} />)
+      rows.push(<TimetableEntry entry={entry} key={randomKey()} />)
     }
   }
 

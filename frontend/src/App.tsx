@@ -12,6 +12,10 @@ interface AppProps {
   store: Store<ApplicationState>
 }
 
+export const randomKey = (): string => {
+  return (Math.floor(Math.random() * 100000000)).toString()
+}
+
 const App: React.FC<AppProps> = ({ store }) => {
   return (
     <Provider store={store}>

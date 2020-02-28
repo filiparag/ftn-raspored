@@ -4,23 +4,27 @@ import { ApplicationState } from '../store'
 import { Menu as MenuSemantic } from 'semantic-ui-react'
 import { PageName } from '../store/menu/types'
 import { viewPage } from '../store/menu/actions'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import { Action } from 'typesafe-actions'
 import MenuItem from './MenuItem'
 import '../style/Menu.css'
+import { fetchTimetable } from '../store/timetable/actions'
 
 type MenuProps = 
 ReturnType<typeof mapStateToProps> &
 ReturnType<typeof mapDispatchToProps>
 
 export const Menu: React.FC<MenuProps> = ({page, changePage}) => {
+
+  const dispatch = useDispatch()
+
   return (
     <MenuSemantic fluid widths={3} primary='true' size='large'>
       <MenuItem 
         name='Raspored'
         icon={'calendar alternate'}
         active={page === PageName.TIMETABLE}
-        handleClick={() => changePage(PageName.TIMETABLE)}
+        handleClick={() => {changePage(PageName.TIMETABLE)}}
       />
       <MenuItem 
         name='Filteri' 

@@ -3,12 +3,43 @@ import { action } from 'typesafe-actions'
 import { TimetableAction, TimetableList } from './types'
 import { hideLoader, showLoader } from '../loader/actions'
 import { Dispatch } from 'react'
+import { FilterEntry } from '../filters/types'
 
 export const updateTimetable = (entries: TimetableList) => action(TimetableAction.UPDATE, entries)
 
-export const fetchTimetable = (dispatch: Dispatch<any>) => {
+export const fetchTimetable = (dispatch: Dispatch<any>, filters: FilterEntry[]) => {
+
+  if (filters.length === 0)
+    return
+
   dispatch(showLoader())
-  fetch(`http://localhost:10000/api/devel/casovi?semestar=549345731136785969&grupa=SVI&grupa=8`)
+  
+  var query = [] as string[]
+  filters.forEach(filter => {
+    filter.studyPrograms.forEach(val => {
+      query.push(`studijskiProgram=${val}`)
+    })
+    filter.studyGroups.forEach(val => {
+      query.push(`studijskaGrupa=${val}`)
+    })
+    filter.semesters.forEach(val => {
+      query.push(`semestar=${val}`)
+    })
+    filter.subjects.forEach(val => {
+      query.push(`predmet=${val}`)
+    })
+    filter.groups.forEach(val => {
+      query.push(`grupa=${val}`)
+    })
+    filter.types.forEach(val => {
+      query.push(`vrstaNastave=${val}`)
+    })
+    query.push(`vremeOdPosle=${filter.timeStart}`)
+    query.push(`vremeDoPre=${filter.timeEnd}`)
+  })
+
+  fetch(`http://localhost:10000/api/devel/casovi?${query.join('&')}`)
     .then(response => response.json())
     .then(json => dispatch(updateTimetable(json))).finally(() => dispatch(hideLoader()))
+    
 }

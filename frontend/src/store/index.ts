@@ -21,7 +21,7 @@ export interface ApplicationState {
 
 export const initialState: ApplicationState = {
   menu: {
-    page: PageName.FILTERS
+    page: PageName.TIMETABLE
   },
   timetable: [] as TimetableList,
   loader: 0,
@@ -48,7 +48,7 @@ export const initialState: ApplicationState = {
   existingFilters: [] as FilterEntry[]
 }
 
-export function configureStore(initialState?: ApplicationState): Store<ApplicationState> {
+export function configureStore(initialState: ApplicationState): Store<ApplicationState> {
 
   const rootReducer = combineReducers({
     menu: menuReducer,
@@ -74,7 +74,7 @@ export function configureStore(initialState?: ApplicationState): Store<Applicati
     enchancers
   )
 
-  fetchTimetable(store.dispatch)
+  fetchTimetable(store.dispatch, initialState.existingFilters)
   fetchFilters(store.dispatch)
 
   return store

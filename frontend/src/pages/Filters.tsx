@@ -5,24 +5,22 @@ import { NewFilter } from '../components/NewFilter'
 import ExistingFilter from '../components/ExistingFilter'
 import { showNewFilter } from '../store/filters/actions'
 import { useDispatch, useSelector } from 'react-redux'
+import { FilterEntry } from '../store/filters/types'
 
 type FiltersProps = {}
 
 export const Filters: React.FC<FiltersProps> = () => {
   
   const dispatch = useDispatch()
+
   const newFilterVisible = useSelector(
     (state: ApplicationState) => state.newFilter.visible
   )
+
   const existingFilters = useSelector(
     (state: ApplicationState) => state.existingFilters
   )
-
-  const rows = []
-  for (const fi in existingFilters) {
-    rows.push(<ExistingFilter entry={existingFilters[fi]} id ={parseInt(fi)} key={fi} />)
-  }
-
+  
   const NoFiltersMessage = (
     <Message warning>
       <Message.Header>
@@ -34,6 +32,18 @@ export const Filters: React.FC<FiltersProps> = () => {
       </p>
     </Message>
   )
+
+  const ExistingFilters = existingFilters.map((
+    filter: FilterEntry, index: number
+  ) => {
+    return (
+      <ExistingFilter
+        entry={filter}
+        id={index}
+        key={(Math.floor(Math.random() * 1000000)).toString()}
+      />
+    )
+  })
 
   return (
     <div>
@@ -53,7 +63,8 @@ export const Filters: React.FC<FiltersProps> = () => {
           />}
         </Grid.Column>
       </Grid>
-      {newFilterVisible ? <NewFilter /> : (rows.length > 0 ? rows : NoFiltersMessage)}
+      {newFilterVisible ? <NewFilter /> :
+      existingFilters.length === 0 ? NoFiltersMessage : ExistingFilters}
     </div>
   )
 }

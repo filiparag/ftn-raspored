@@ -2,6 +2,7 @@ import { Reducer } from 'redux'
 import { FilterAction, Filter, FilterStudyProgram, FilterStudyGroup, FilterSemester, FilterSubject, FilterChild, NewFilter, NewFilterAction, FilterEntry } from './types'
 import { initialState } from '..'
 import { timeString } from '../../components/TimetableEntry'
+import { PageAction } from '../menu/types'
 
 export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filter, action): Filter => {
   switch (action.type) {
@@ -75,6 +76,12 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
         visible: false
       }
     }
+    case PageAction.CHANGE: {
+      return {
+        ...initialState.newFilter,
+        visible: false
+      }
+    }
     case NewFilterAction.UPDATE_RESET: {
       if (action.payload.group === undefined) {
         return {
@@ -84,117 +91,141 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
       }
       switch (action.payload.group) {
         case 'sp': {
-          state.spString = ''
-          state.studyPrograms.splice(0, state.studyPrograms.length)
-          break
+          return {
+            ...state,
+            spString: '',
+            studyPrograms: []
+          }
         }
         case 'sg': {
-          state.sgString = ''
-          state.studyGroups.splice(0, state.studyGroups.length)
-          break
+          return {
+            ...state,
+            sgString: '',
+            studyGroups: []
+          }
         }
         case 'sm': {
-          state.smString = ''
-          state.semesters.splice(0, state.semesters.length)
-          break
+          return {
+            ...state,
+            smString: '',
+            semesters: []
+          }
         }
         case 'su': {
-          state.suString = ''
-          state.subjects.splice(0, state.subjects.length)
-          break
+          return {
+            ...state,
+            suString: '',
+            subjects: []
+          }
         }
         case 'gr': {
-          state.grString = ''
-          state.groups.splice(0, state.groups.length)
-          break
+          return {
+            ...state,
+            grString: '',
+            groups: []
+          }
         }
         case 'ty': {
-          state.tyString = ''
-          state.types.splice(0, state.types.length)
-          break
+          return {
+            ...state,
+            tyString: '',
+            types: []
+          }
         }
         case 'ts': {
-          state.tsString = ''
-          state.timeStart = initialState.newFilter.timeStart
-          break
+          return {
+            ...state,
+            tsString: '',
+            timeStart: initialState.newFilter.timeStart
+          }
         }
         case 'te': {
-          state.teString = ''
-          state.timeEnd = initialState.newFilter.timeEnd
-          break
+          return {
+            ...state,
+            teString: '',
+            timeEnd: initialState.newFilter.timeEnd
+          }
+        }
+        default: {
+          return state
         }
       }
-      return state
     }
     case NewFilterAction.UPDATE_ADD: {
+      var ids = [] as Array<number>
+      if (!['gr', 'ts', 'te'].includes(action.payload.group))
+        if (Array.isArray(action.payload.value.id))
+          ids = action.payload.value.id
+        else
+          ids = [action.payload.value.id]
       switch (action.payload.group) {
         case 'sp': {
-          if (Array.isArray(action.payload.value.id)) {
-            state.studyPrograms.push(...action.payload.value.id)
-          } else {
-            state.studyPrograms.push(action.payload.value.id)
+          return {
+            ...state,
+            studyPrograms: [...state.studyPrograms, ...ids],
+            spString: state.spString + action.payload.value.string
           }
-          state.spString += action.payload.value.string
-          break
         }
         case 'sg': {
-          if (Array.isArray(action.payload.value.id)) {
-            state.studyGroups.push(...action.payload.value.id)
-          } else {
-            state.studyGroups.push(action.payload.value.id)
+          return {
+            ...state,
+            studyGroups: [...state.studyGroups, ...ids],
+            sgString: state.sgString + action.payload.value.string
           }
-          state.sgString += action.payload.value.string
-          break
         }
         case 'sm': {
-          if (Array.isArray(action.payload.value.id)) {
-            state.semesters.push(...action.payload.value.id)
-          } else {
-            state.semesters.push(action.payload.value.id)
+          return {
+            ...state,
+            semesters: [...state.semesters, ...ids],
+            smString: state.smString + action.payload.value.string
           }
-          state.smString += action.payload.value.string
-          break
         }
         case 'su': {
-          if (Array.isArray(action.payload.value.id)) {
-            state.subjects.push(...action.payload.value.id)
-          } else {
-            state.subjects.push(action.payload.value.id)
+          return {
+            ...state,
+            subjects: [...state.subjects, ...ids],
+            suString: state.suString + action.payload.value.string
           }
-          state.suString += action.payload.value.string
-          break
         }
         case 'gr': {
-          if (Array.isArray(action.payload.value.id)) {
-            state.groups.push(...action.payload.value.id)
-          } else {
-            state.groups.push(action.payload.value.id)
+          var groups = [] as Array<string>
+          if (Array.isArray(action.payload.value.id))
+            groups = action.payload.value.id
+          else
+            groups = [action.payload.value.id]
+          return {
+            ...state,
+            groups: [...state.groups, ...groups],
+            grString: state.grString + action.payload.value.string
           }
-          state.grString += action.payload.value.string
-          break
         }
         case 'ty': {
-          if (Array.isArray(action.payload.value.id)) {
-            state.types.push(...action.payload.value.id)
-          } else {
-            state.types.push(action.payload.value.id)
+          return {
+            ...state,
+            types: [...state.types, ...ids],
+            tyString: state.tyString + action.payload.value.string
           }
-          state.tyString += action.payload.value.string
-          break
         }
         case 'ts': {
           const delta = (action.payload.value === 'add') ? 0.5 : -0.5
-          state.timeStart = ((state.timeStart + delta % 24) + 24) % 24
-          state.tsString = timeString(state.timeStart)
-          break
+          return {
+            ...state,
+            timeStart: ((state.timeStart + delta % 24) + 24) % 24,
+            tsString: timeString(state.timeStart)
+          }
         }
         case 'te': {
           const delta = (action.payload.value === 'add') ? 0.5 : -0.5
-          state.timeEnd = ((state.timeEnd + delta % 24) + 24) % 24
-          break
+          return {
+            ...state,
+            timeEnd: ((state.timeEnd + delta % 24) + 24) % 24,
+            teString: timeString(state.timeEnd)
+          }
+        }
+        default: {
+          return state
         }
       }
-      return state
     }
     default: {
       return state
@@ -205,11 +236,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
 export const existingFiltersReducer: Reducer<FilterEntry[]> = (state: FilterEntry[] = initialState.existingFilters, action): FilterEntry[] => {
   switch (action.type) {
     case NewFilterAction.ADD: {
-      state.push(action.payload)
-      return state
+      return [
+        ...state,
+        action.payload
+      ]
     }
     case FilterAction.REMOVE: {
-      state.splice(action.payload)
+      state.splice(action.payload, 1)
       return state
     }
     default: {
