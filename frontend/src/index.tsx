@@ -7,10 +7,10 @@ import './index.css';
 
 // const initialState = (window as any).INITIAL_REDUX_STATE
 
-const store = configureStore(initialState)
+const { store, persistor } = configureStore(initialState)
 
 render(
-  <App store={store} />,
+  <App store={store} persistor={persistor} />,
   document.getElementById('root')
 )
 

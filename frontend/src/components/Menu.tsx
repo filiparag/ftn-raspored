@@ -1,21 +1,19 @@
 import React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
 import { ApplicationState } from '../store'
 import { Menu as MenuSemantic } from 'semantic-ui-react'
 import { PageName } from '../store/menu/types'
 import { viewPage } from '../store/menu/actions'
-import { connect, useSelector, useDispatch } from 'react-redux'
-import { Action } from 'typesafe-actions'
+import { useSelector, useDispatch } from 'react-redux'
 import MenuItem from './MenuItem'
 import '../style/Menu.css'
 import { fetchTimetable } from '../store/timetable/actions'
+import { fetchFilters } from '../store/filters/actions'
 
-type MenuProps = 
-ReturnType<typeof mapStateToProps> &
-ReturnType<typeof mapDispatchToProps>
+type MenuProps = {}
 
-export const Menu: React.FC<MenuProps> = ({page, changePage}) => {
+export const Menu: React.FC<MenuProps> = () => {
 
+  const page = useSelector((state: ApplicationState) => state.menu.page)
   const existingFilters = useSelector((state: ApplicationState) => state.existingFilters)
   const dispatch = useDispatch()
 
@@ -25,33 +23,22 @@ export const Menu: React.FC<MenuProps> = ({page, changePage}) => {
         name='Raspored'
         icon={'calendar alternate'}
         active={page === PageName.TIMETABLE}
-        handleClick={() => {changePage(PageName.TIMETABLE); fetchTimetable(dispatch, existingFilters)}}
+        handleClick={() => {dispatch(viewPage(PageName.TIMETABLE)); fetchTimetable(dispatch, existingFilters)}}
       />
       <MenuItem 
         name='Filteri' 
         icon={'filter'} 
         active={page === PageName.FILTERS}
-        handleClick={() => changePage(PageName.FILTERS)}
+        handleClick={() => {dispatch(viewPage(PageName.FILTERS)); fetchFilters(dispatch)}}
       />
       <MenuItem
         name='Postavke'
         icon={'cog'}
         active={page === PageName.PREFERENCES}
-        handleClick={() => changePage(PageName.PREFERENCES)}
+        handleClick={() => dispatch(viewPage(PageName.PREFERENCES))}
       />
     </MenuSemantic>
   )
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-  page: state.menu.page
-})
-
-const mapDispatchToProps = (dispatch: Dispatch<Action>) => bindActionCreators({
-  changePage: viewPage,
-}, dispatch)
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Menu)
+export default Menu

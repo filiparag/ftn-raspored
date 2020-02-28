@@ -221,19 +221,23 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
           }
         }
         case 'ts': {
-          const delta = (action.payload.value === 'add') ? 0.5 : -0.5
+          const delta = (action.payload.value === 'add') ? 0.5 : 
+                        (action.payload.value === 'sub') ? -0.5 : 0
+          const time = ((state.timeStart + delta % 24) + 24) % 24
           return {
             ...state,
-            timeStart: ((state.timeStart + delta % 24) + 24) % 24,
-            tsString: timeString(state.timeStart)
+            timeStart: time,
+            tsString: timeString(time)
           }
         }
         case 'te': {
-          const delta = (action.payload.value === 'add') ? 0.5 : -0.5
+          const delta = (action.payload.value === 'add') ? 0.5 : 
+                        (action.payload.value === 'sub') ? -0.5 : 0
+          const time = ((state.timeEnd + delta % 24) + 24) % 24
           return {
             ...state,
-            timeEnd: ((state.timeEnd + delta % 24) + 24) % 24,
-            teString: timeString(state.timeEnd)
+            timeEnd: time,
+            teString: timeString(time)
           }
         }
         default: {
@@ -257,7 +261,7 @@ export const existingFiltersReducer: Reducer<FilterEntry[]> = (state: FilterEntr
     }
     case FilterAction.REMOVE: {
       state.splice(action.payload, 1)
-      return state
+      return [...state]
     }
     default: {
       return state

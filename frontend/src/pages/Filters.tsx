@@ -3,7 +3,7 @@ import { ApplicationState } from '../store'
 import { Header, Button, Grid, Message } from 'semantic-ui-react'
 import { NewFilter } from '../components/NewFilter'
 import ExistingFilter from '../components/ExistingFilter'
-import { showNewFilter } from '../store/filters/actions'
+import { showNewFilter, fetchFilters } from '../store/filters/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { FilterEntry } from '../store/filters/types'
 

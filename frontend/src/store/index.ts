@@ -1,5 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, compose, Store } from 'redux';
 import thunkMiddleware from 'redux-thunk'
+import { persistStore, persistReducer, Persistor, PersistConfig } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 import menuReducer from './menu/reducers'
 import timetableReducer from './timetable/reducers'
 import loaderReducer from './loader/reducers'
@@ -7,8 +9,6 @@ import { filterReducer, newFilterReducer, existingFiltersReducer } from './filte
 import { MenuState, PageName } from './menu/types';
 import { Filter, NewFilter, FilterEntry } from './filters/types';
 import { TimetableList } from './timetable/types';
-import { fetchTimetable } from './timetable/actions'
-import { fetchFilters } from './filters/actions'
 
 export interface ApplicationState {
   menu: MenuState,
@@ -16,7 +16,7 @@ export interface ApplicationState {
   loader: number
   filter: Filter
   newFilter: NewFilter
-  existingFilters: FilterEntry[]
+  existingFilters: FilterEntry[],
 }
 
 export const initialState: ApplicationState = {
@@ -47,10 +47,10 @@ export const initialState: ApplicationState = {
     teString: '',
     visible: false
   },
-  existingFilters: [] as FilterEntry[]
+  existingFilters: [] as FilterEntry[],
 }
 
-export function configureStore(initialState: ApplicationState): Store<ApplicationState> {
+export function configureStore(initialState: ApplicationState): {store: Store<ApplicationState>, persistor: Persistor} {
 
   const rootReducer = combineReducers({
     menu: menuReducer,
@@ -60,6 +60,14 @@ export function configureStore(initialState: ApplicationState): Store<Applicatio
     newFilter: newFilterReducer,
     existingFilters: existingFiltersReducer
   })
+
+  const persistConfig: PersistConfig<ApplicationState, any, any, any> = {
+    key: 'root',
+    storage,
+    whitelist: ['existingFilters']
+  }
+
+  const persistedReducer = persistReducer<ApplicationState>(persistConfig, rootReducer)
 
   const middlewareEnhancer = applyMiddleware(
     thunkMiddleware
@@ -71,14 +79,12 @@ export function configureStore(initialState: ApplicationState): Store<Applicatio
   )
 
   const store = createStore(
-    rootReducer,
-    initialState,
+    persistedReducer,
     enchancers
   )
 
-  fetchTimetable(store.dispatch, initialState.existingFilters)
-  fetchFilters(store.dispatch)
+  const persistor = persistStore(store)
 
-  return store
+  return { store, persistor }
 
 }

@@ -3,7 +3,6 @@ import { Segment, Header, Grid, Label, Icon } from 'semantic-ui-react'
 import { FilterEntry } from '../store/filters/types'
 import { useDispatch } from 'react-redux'
 import { removeExistingFilter } from '../store/filters/actions'
-import { timeString } from './TimetableEntry'
 
 export interface ExistingFilterProps {
   id: number,
@@ -57,9 +56,13 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
       <p>
         {entry.grString.length > 0 ? entry.grString : notDefined}
       </p>
+      <Header size='medium'>Dan</Header>
+      <p>
+        {entry.daString.length > 0 ? entry.daString : notDefined}
+      </p>
       <Header size='medium'>Vreme</Header>
       <p>
-        od {timeString(entry.timeStart)} do {timeString(entry.timeEnd)}
+        od {entry.tsString} do {entry.teString}
       </p>
     </Segment>
   )

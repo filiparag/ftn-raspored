@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
 import { typeName } from '../components/TimetableEntry'
 import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter } from '../store/filters/actions'
+import { timeString as compactTimeString } from '../components/TimetableEntry'
 
 type NewFilterProps = {}
 
@@ -256,6 +257,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
     dispatch(updateAddNewFilter(dispatchPayload.group, {
       id: dispatchPayload.values, string: dispatchPayload.string
     }))
+    dispatch(updateAddNewFilter('ts', compactTimeString(newFilter.timeStart)))
+    dispatch(updateAddNewFilter('te', compactTimeString(newFilter.timeEnd)))
   }
 
   return (
@@ -275,7 +278,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           options={studyPrograms}
           onChange={(e, {value}) => updateSelection('sp', value)}
       />
-      <Header size='medium'>
+      <Header
+        size='medium'
+        color={newFilter.studyPrograms.length === 0 ? 'grey' : 'black'}
+      >
         Studijska grupa
         {newFilter.studyGroups.length === 0 ?
         <Label circular empty color='red' size='tiny'/> : null}
@@ -289,7 +295,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           options={studyGroups}
           onChange={(e, {value}) => updateSelection('sg', value)}
       />
-      <Header size='medium'>
+      <Header
+        size='medium'
+        color={newFilter.studyGroups.length === 0 ? 'grey' : 'black'}
+      >
         Semestar
         {newFilter.semesters.length === 0 ?
         <Label circular empty color='red' size='tiny'/> : null}
@@ -304,7 +313,11 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           onChange={(e, {value}) => updateSelection('sm', value)}
       />
       <Divider hidden />
-      <Header size='medium'>Predmet</Header>
+      <Header
+        size='medium'
+        color={newFilter.semesters.length === 0 || 
+               newFilter.types.length > 0 || newFilter.groups.length > 0 ? 'grey' : 'black'}
+      >Predmet</Header>
       <Dropdown
         placeholder='Predmet'
         disabled={newFilter.semesters.length === 0 || 
@@ -315,7 +328,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         options={subjects}
         onChange={(e, {value}) => updateSelection('su', value)}
       />
-      <Header size='medium'>Vrsta nastave</Header>
+      <Header
+        size='medium'
+        color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
+      >Vrsta nastave</Header>
       <Dropdown
         placeholder='Vrsta nastave'
         disabled={newFilter.semesters.length === 0}
@@ -325,7 +341,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         options={types}
         onChange={(e, {value}) => updateSelection('ty', value)}
       />
-      <Header size='medium'>Grupa</Header>
+      <Header
+        size='medium'
+        color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
+      >Grupa</Header>
       <Dropdown
         placeholder='Grupa'
         disabled={newFilter.semesters.length === 0}
@@ -335,7 +354,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         options={groups}
         onChange={(e, {value}) => updateSelection('gr', value)}
       />
-      <Header size='medium'>Dan</Header>
+      <Header
+        size='medium'
+        color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
+      >Dan</Header>
       <Dropdown
         placeholder='Dan'
         disabled={newFilter.semesters.length === 0}
@@ -345,20 +367,47 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         options={days}
         onChange={(e, {value}) => updateSelection('da', value)}
       />
-      <Header size='medium'>Vremenski period</Header>
+      <Header
+        size='medium'
+        color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
+      >Vremenski period</Header>
       <Grid columns={2} stackable>
         <Grid.Column>
           <Button.Group fluid>
-            <Button icon='left chevron' onClick={() => dispatch(updateAddNewFilter('ts', 'sub'))}/>
-            <Button basic content={'od ' + timeString(newFilter.timeStart)} />
-            <Button icon='right chevron' onClick={() => dispatch(updateAddNewFilter('ts', 'add'))}/>
+            <Button
+              icon='left chevron'
+              disabled={newFilter.semesters.length === 0}
+              onClick={() => dispatch(updateAddNewFilter('ts', 'sub'))}
+            />
+            <Button
+              basic
+              disabled={newFilter.semesters.length === 0}
+              content={'od ' + timeString(newFilter.timeStart)}
+            />
+            <Button
+              icon='right chevron'
+              disabled={newFilter.semesters.length === 0}
+              onClick={() => dispatch(updateAddNewFilter('ts', 'add'))}
+            />
           </Button.Group>
         </Grid.Column>
         <Grid.Column>
           <Button.Group fluid>
-            <Button icon='left chevron' onClick={() => dispatch(updateAddNewFilter('te', 'sub'))} />
-            <Button basic content={'do ' + timeString(newFilter.timeEnd)} />
-            <Button icon='right chevron' onClick={() => dispatch(updateAddNewFilter('te', 'add'))} />
+            <Button
+              icon='left chevron'
+              disabled={newFilter.semesters.length === 0}
+              onClick={() => dispatch(updateAddNewFilter('te', 'sub'))}
+            />
+            <Button
+              basic
+              disabled={newFilter.semesters.length === 0}
+              content={'do ' + timeString(newFilter.timeEnd)}
+            />
+            <Button
+              icon='right chevron'
+              disabled={newFilter.semesters.length === 0}
+              onClick={() => dispatch(updateAddNewFilter('te', 'add'))}
+            />
           </Button.Group>
         </Grid.Column>
       </Grid>

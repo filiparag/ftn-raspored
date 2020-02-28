@@ -72,7 +72,7 @@ export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry}: {entry: E
       <Icon name='triangle right' />
       <List.Content>
         <span>{timeString(entry.timeStart)} - {timeString(entry.timeEnd)}</span>
-        <List.Header as='h2'>{entry.subject}</List.Header>
+        <List.Header className='Subject'>{entry.subject}</List.Header>
         <List.Description>
           <Label
             size='medium'
@@ -93,12 +93,14 @@ export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry}: {entry: E
             content={entry.group}
             className='Label'
           />
+          {entry.lecturer.length > 0 ?
           <Label
             size='medium'
             icon='male'
             content={entry.lecturer}
             className='Label Lecturer'
           />
+          : null}
         </List.Description>
       </List.Content>
     </List.Item>
