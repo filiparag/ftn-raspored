@@ -1,4 +1,4 @@
-import { createStore, combineReducers, applyMiddleware, compose, Store } from 'redux';
+import { createStore, combineReducers, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import thunkMiddleware from 'redux-thunk'
 import { persistStore, persistReducer, Persistor, PersistConfig } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
@@ -9,6 +9,7 @@ import { filterReducer, newFilterReducer, existingFiltersReducer } from './filte
 import { MenuState, PageName } from './menu/types';
 import { Filter, NewFilter, FilterEntry } from './filters/types';
 import { TimetableList } from './timetable/types';
+import { fetchFilters } from './filters/actions';
 
 export interface ApplicationState {
   menu: MenuState,
@@ -50,6 +51,20 @@ export const initialState: ApplicationState = {
   existingFilters: [] as FilterEntry[],
 }
 
+export const apiURL = () => {
+  switch (process.env.NODE_ENV) {
+    case 'development': {
+      return 'http://localhost:8000/api/'
+    }
+    case 'production': {
+      return '/api/'
+    }
+    default: {
+      return '/api/'
+    }
+  }
+}
+
 export function configureStore(initialState: ApplicationState): {store: Store<ApplicationState>, persistor: Persistor} {
 
   const rootReducer = combineReducers({
@@ -73,17 +88,34 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
     thunkMiddleware
   )
 
-  const enchancers = compose(
-    middlewareEnhancer,
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__()
-  )
-
+  let enchancers: StoreEnhancer<{dispatch: unknown;}, {}>;
+  
+  switch (process.env.NODE_ENV) {
+    case 'development': {
+      enchancers = compose(
+        middlewareEnhancer,
+        (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__()
+      )
+      break
+    }
+    case 'production': {
+      enchancers = middlewareEnhancer
+      break
+    }
+    default: {
+      enchancers = middlewareEnhancer
+      break
+    }
+  }
+  
   const store = createStore(
     persistedReducer,
     enchancers
   )
 
   const persistor = persistStore(store)
+
+  fetchFilters(store.dispatch)
 
   return { store, persistor }
 

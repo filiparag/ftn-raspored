@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
 import { typeName } from '../components/TimetableEntry'
-import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter } from '../store/filters/actions'
+import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter, fetchFilters } from '../store/filters/actions'
 import { timeString as compactTimeString } from '../components/TimetableEntry'
 
 type NewFilterProps = {}
@@ -47,6 +47,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const newFilter = useSelector((state: ApplicationState) => state.newFilter)
   const filters = useSelector((state: ApplicationState) => state.filter)
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    fetchFilters(dispatch)
+  }, [dispatch])
 
   const dropdownObject = (text: string, key: number | string): DropdownEntry => {
     return {

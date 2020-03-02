@@ -1,4 +1,4 @@
-import React, { useEffect, createRef } from 'react'
+import React, { useEffect } from 'react'
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import TimetableEntry from '../components/TimetableEntry'

@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { ApplicationState } from '../store'
 import { Header, Button, Grid, Message } from 'semantic-ui-react'
 import { NewFilter } from '../components/NewFilter'
 import ExistingFilter from '../components/ExistingFilter'
-import { showNewFilter, fetchFilters } from '../store/filters/actions'
+import { showNewFilter } from '../store/filters/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { FilterEntry } from '../store/filters/types'
 
@@ -20,10 +20,6 @@ export const Filters: React.FC<FiltersProps> = () => {
   const existingFilters = useSelector(
     (state: ApplicationState) => state.existingFilters
   )
-
-  useEffect(() => {
-    fetchFilters(dispatch)
-  }, [dispatch])
   
   const NoFiltersMessage = (
     <Message warning>

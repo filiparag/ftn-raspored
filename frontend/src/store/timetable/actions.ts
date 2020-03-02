@@ -4,6 +4,7 @@ import { TimetableAction, TimetableList } from './types'
 import { hideLoader, showLoader } from '../loader/actions'
 import { Dispatch } from 'react'
 import { FilterEntry } from '../filters/types'
+import { apiURL } from '..'
 
 export const updateTimetable = (entries: TimetableList) => action(TimetableAction.UPDATE, entries)
 
@@ -16,9 +17,13 @@ export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEnt
     dispatch(hideLoader())
     return
   }
-  
-  var query = [] as string[]
-  filters.forEach(filter => {
+
+  let entries = [] as TimetableList
+
+  for (const filter of filters) {
+
+    let query = [] as string[]
+
     filter.studyPrograms.forEach(val => {
       query.push(`studijskiProgram=${val}`)
     })
@@ -42,11 +47,15 @@ export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEnt
     })
     query.push(`vremeOdPosle=${filter.timeStart}`)
     query.push(`vremeDoPre=${filter.timeEnd}`)
-  })
 
-  const response = await fetch(`http://localhost:10000/api/devel/casovi?${query.join('&')}`)
-  const json = await response.json()
-  dispatch(updateTimetable(json))
+    const response = await fetch(`${apiURL()}casovi?${query.join('&')}`)
+    const json: TimetableList = await response.json()
+  
+    entries = entries.concat(json)
+
+  }
+  
+  dispatch(updateTimetable(entries))
   dispatch(hideLoader())
 
 }

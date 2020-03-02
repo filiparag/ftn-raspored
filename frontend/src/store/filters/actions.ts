@@ -2,6 +2,7 @@ import { action } from 'typesafe-actions'
 import { FilterAction, Filter, NewFilterAction, FilterEntry } from './types'
 import { Dispatch } from 'redux'
 import { showLoader, hideLoader } from '../loader/actions'
+import { apiURL } from '..'
 
 export const updateFilters = (filters: Filter) => action(FilterAction.UPDATE, filters)
 
@@ -19,7 +20,7 @@ export const addNewFilter = (filter: FilterEntry) => action(NewFilterAction.ADD,
 
 export const fetchFilters = (dispatch: Dispatch) => {
   dispatch(showLoader())
-  fetch(`http://localhost:10000/api/devel/filter/tree`)
+  fetch(`${apiURL()}filter/tree`)
     .then(response => response.json())
     .then(json => dispatch(updateFilters(json))).finally(() => dispatch(hideLoader()))
 }

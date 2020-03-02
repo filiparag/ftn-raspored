@@ -6,7 +6,7 @@ import (
 )
 
 func Router() *mux.Router {
-	routes := mux.NewRouter().StrictSlash(true).PathPrefix("/api/devel").Subrouter()
+	routes := mux.NewRouter().StrictSlash(true)
 	routes.HandleFunc(
 		"/",
 		controller.Root).Methods("GET")
