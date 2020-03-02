@@ -27,6 +27,8 @@ type VrstaNastave struct {
 
 type Grupa string
 
+type Izvodjac string
+
 type Cas struct {
 	Id			int		`json:"id"`
 	Subject		string	`json:"predmet"`

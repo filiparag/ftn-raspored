@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/filiparag/ftn-raspored/api/model"
 	"log"
+	"strings"
 )
 
 func GetStudyPrograms() []model.StudijskiProgram {
@@ -151,6 +152,37 @@ func GetGroups(subject int) []model.Grupa {
 			return nil
 		}
 		response = append(response, row)
+	}
+
+	return response
+}
+
+func GetLecturers(subject int) []model.Izvodjac {
+
+	rows, err := db.Query(`SELECT DISTINCT c.izvodjac
+								 FROM cas AS c
+								 INNER JOIN predmet p on c.predmet_id = p.id
+								 WHERE p.id = ?`, subject)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	response := make([]model.Izvodjac, 0)
+
+	for rows.Next() {
+		var row string
+		err = rows.Scan(&row)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+		row = strings.Replace(row, "  ", " ", -1)
+		separated := strings.Split(row, ", ")
+		for _, val := range separated {
+			response = append(response, model.Izvodjac(val))
+		}
 	}
 
 	return response

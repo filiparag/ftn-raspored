@@ -30,6 +30,6 @@ func Router() *mux.Router {
 		controller.GetSubjects).Methods("GET")
 	routes.HandleFunc(
 		"/filter/{studijskiProgram}/{studijskaGrupa}/{semestar}/{predmet}",
-		controller.GetCTypesGroups).Methods("GET")
+		controller.GetCSubject).Methods("GET")
 	return routes
 }

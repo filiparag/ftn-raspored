@@ -21,9 +21,5 @@ type CFilterPredmet struct {
 	Subject			Predmet			`json:"predmet"`
 	Types			[]VrstaNastave	`json:"vrsta_nastave"`
 	Groups 			[]Grupa        	`json:"grupa"`
-}
-
-type CFilterVrstaNastaveGrupa struct {
-	Types  			[]VrstaNastave 		`json:"vrsta_nastave"`
-	Groups 			[]Grupa        		`json:"grupa"`
+	Lecturers		[]Izvodjac		`json:"izvodjac"`
 }

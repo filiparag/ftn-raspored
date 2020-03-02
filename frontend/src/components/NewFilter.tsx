@@ -117,7 +117,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                 dispatchPayload.string += `${dispatchPayload.string.length === 0
                                            ? '' : ', '}${sg.name === 'SVI'
                                            ? sp.name : sg.name + ' (' 
-                                           + abbrevateName(sp.name)})`
+                                           + abbrevateName(sp.name) + ')'}`
                 for (const sm of sg.semesters) {
                   const name = `${sm.name} semestar (${sg.name === 'SVI' ? 
                                 abbrevateName(sp.name) : abbrevateName(sp.name)

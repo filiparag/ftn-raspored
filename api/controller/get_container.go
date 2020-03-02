@@ -32,6 +32,7 @@ func GetCTree(w http.ResponseWriter, r *http.Request) {
 						Subject: pr,
 						Groups: database.GetGroups(pr.Id),
 						Types: database.GetTypes(pr.Id),
+						Lecturers: database.GetLecturers(pr.Id),
 					}
 					cSM.Subjects = append(cSM.Subjects, cPR)
 				}
@@ -53,7 +54,7 @@ func GetCTree(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetCTypesGroups(w http.ResponseWriter, r *http.Request) {
+func GetCSubject(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	predmet, err := strconv.Atoi(vars["predmet"])
 	if err != nil {
@@ -61,9 +62,10 @@ func GetCTypesGroups(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	response := model.CFilterVrstaNastaveGrupa{
+	response := model.CFilterPredmet{
 		Types:  database.GetTypes(predmet),
 		Groups: database.GetGroups(predmet),
+		Lecturers: database.GetLecturers(predmet),
 	}
 	if len(response.Types) == 0 || len(response.Groups) == 0 {
 		w.WriteHeader(http.StatusNoContent)
