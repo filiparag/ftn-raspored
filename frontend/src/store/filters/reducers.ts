@@ -6,7 +6,7 @@ import { PageAction } from '../menu/types'
 
 export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filter, action): Filter => {
   switch (action.type) {
-    case FilterAction.UPDATE: {        
+    case FilterAction.UPDATE: {      
       const filters: Filter = []
       for (const sp of action.payload) {
         const studyProgram = {
@@ -31,7 +31,8 @@ export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filt
                 id: su['predmet']['id'],
                 name: su['predmet']['predmet'],
                 groups: su['grupa'],
-                types: []
+                types: [],
+                lecturers: su['izvodjac']
               } as FilterSubject
               for (const ty of su['vrsta_nastave']) {
                 const type = {
@@ -132,6 +133,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             types: []
           }
         }
+        case 'le': {
+          return {
+            ...state,
+            leString: '',
+            lecturers: []
+          }
+        }
         case 'da': {
           return {
             ...state,
@@ -211,6 +219,18 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             ...state,
             types: [...state.types, ...ids],
             tyString: state.tyString + action.payload.value.string
+          }
+        }
+        case 'le': {
+          var lecturers = [] as Array<string>
+          if (Array.isArray(action.payload.value.id))
+            lecturers = action.payload.value.id
+          else
+            lecturers = [action.payload.value.id]
+          return {
+            ...state,
+            lecturers: [...state.lecturers, ...lecturers],
+            leString: state.leString + action.payload.value.string
           }
         }
         case 'da': {

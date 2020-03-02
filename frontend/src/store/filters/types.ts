@@ -11,6 +11,7 @@ export interface FilterChild {
 export interface FilterSubject extends FilterChild {
   types: FilterChild[] 
   groups: string[]
+  lecturers: string[]
 }
 
 export interface FilterSemester extends FilterChild {
@@ -34,6 +35,7 @@ export interface FilterEntry {
   subjects: Array<number>,
   groups: Array<string>,
   types: Array<number>,
+  lecturers: Array<string>,
   days: Array<number>
   timeStart: number,
   timeEnd: number,
@@ -43,6 +45,7 @@ export interface FilterEntry {
   suString: string,
   grString: string,
   tyString: string,
+  leString: string,
   daString: string,
   tsString: string,
   teString: string

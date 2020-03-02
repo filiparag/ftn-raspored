@@ -33,8 +33,9 @@ export const initialState: ApplicationState = {
     semesters: [] as Array<number>,
     subjects: [] as Array<number>,
     groups: [] as Array<string>,
-    days: [] as Array<number>,
     types: [] as Array<number>,
+    lecturers: [] as Array<string>,
+    days: [] as Array<number>,
     timeStart: 0.0,
     timeEnd: 23.5,
     spString: '',
@@ -43,6 +44,7 @@ export const initialState: ApplicationState = {
     suString: '',
     grString: '',
     tyString: '',
+    leString: '',
     daString: '',
     tsString: '',
     teString: '',
@@ -54,7 +56,7 @@ export const initialState: ApplicationState = {
 export const apiURL = () => {
   switch (process.env.NODE_ENV) {
     case 'development': {
-      return 'http://localhost:8000/api/'
+      return 'http://localhost:10000/'
     }
     case 'production': {
       return '/api/'

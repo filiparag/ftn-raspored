@@ -63,6 +63,10 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
       <p>
         {entry.grString.length > 0 ? entry.grString : notDefined}
       </p>
+      <Header size='medium'>Izvođač nastave</Header>
+      <p>
+        {entry.leString.length > 0 ? entry.leString : notDefined}
+      </p>
       <Header size='medium'>Dan</Header>
       <p>
         {entry.daString.length > 0 ? entry.daString : notDefined}

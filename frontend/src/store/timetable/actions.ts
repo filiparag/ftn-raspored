@@ -42,6 +42,9 @@ export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEnt
     filter.types.forEach(val => {
       query.push(`vrstaNastave=${val}`)
     })
+    filter.lecturers.forEach(val => {
+      query.push(`izvodjac=${val}`)
+    })
     filter.days.forEach(val => {
       query.push(`dan=${val}`)
     })

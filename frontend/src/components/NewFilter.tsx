@@ -80,6 +80,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const [subjects, suSet] = useState([] as DropdownEntry[])
   const [groups, grSet] = useState([] as DropdownEntry[])
   const [types, tySet] = useState([] as DropdownEntry[])
+  const [lecturers, leSet] = useState([] as DropdownEntry[])
 
   const updateSelection = (group: string, value: any) => {
     const dispatchPayload = {
@@ -184,8 +185,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         dispatchPayload.group='su'
         const grArray = [] as DropdownEntry[]
         const tyArray = [] as DropdownEntry[]
+        const leArray = [] as DropdownEntry[]
         const cachedGroups = [] as string[]
         const cachedTypes = [] as number[]
+        const cachedLecturers = [] as string[]
         for (const sp of filters) {
           if (newFilter.studyPrograms.includes(sp.id)) {
             for (const sg of sp.studyGroups) {
@@ -215,6 +218,12 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                             tyArray.push(dropdownObject(typeName(ty.name), ty.id))
                           }
                         }
+                        for (const le of su.lecturers) {
+                          if (!cachedLecturers.includes(le)) {
+                            cachedLecturers.push(le)
+                            leArray.push(dropdownObject(le, le))
+                          }
+                        }
                       }
                     }
                   }
@@ -225,8 +234,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         }
         dispatch(updateResetNewFilter('gr'))
         dispatch(updateResetNewFilter('ty'))
+        dispatch(updateResetNewFilter('le'))
         grSet(naturalSortEntries(grArray))
         tySet(naturalSortEntries(tyArray))
+        leSet(naturalSortEntries(leArray))
         break
       }
       case 'gr': {
@@ -245,6 +256,15 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
                                      '' : ', '}${typeName(types[
                                      types.findIndex(el => el.value === v)].text)}`
+        });
+        break
+      }
+      case 'le': {
+        dispatchPayload.group='le'
+        dispatchPayload.values = value
+        value.forEach((v: string) => {
+          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
+                                     '' : ', '}${v}`
         });
         break
       }
@@ -359,6 +379,19 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         selection
         options={groups}
         onChange={(e, {value}) => updateSelection('gr', value)}
+      />
+      <Header
+        size='medium'
+        color={newFilter.subjects.length === 0 ? 'grey' : 'black'}
+      >Izvođač nastave</Header>
+      <Dropdown
+        placeholder='Izvođač nastave'
+        disabled={newFilter.subjects.length === 0}
+        fluid
+        multiple
+        selection
+        options={lecturers}
+        onChange={(e, {value}) => updateSelection('le', value)}
       />
       <Header
         size='medium'
