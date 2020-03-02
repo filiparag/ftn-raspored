@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import ReactGA from 'react-ga';
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
@@ -49,6 +50,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    ReactGA.pageview("/filters/new")
     fetchFilters(dispatch)
   }, [dispatch])
 
@@ -421,7 +423,13 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           <Button
             fluid
             color='red'
-            onClick={() => dispatch(closeNewFilter())}
+            onClick={() => {
+              dispatch(closeNewFilter())
+              ReactGA.event({
+                category: 'Filters',
+                action: 'Cancel new filter'
+              })
+            }}
           >Nazad</Button>
         </Grid.Column>
         <Grid.Column>
@@ -429,7 +437,13 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             disabled={newFilter.semesters.length === 0}
             fluid
             color='green'
-            onClick={() => {dispatch(addNewFilter(newFilter))}}
+            onClick={() => {
+              ReactGA.event({
+                category: 'Filters',
+                action: 'Add new filter'
+              })
+              dispatch(addNewFilter(newFilter))
+            }}
           >Dodaj</Button>
         </Grid.Column>
       </Grid>

@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { Store } from 'redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { Persistor } from 'redux-persist'
 import { ApplicationState } from './store'
+import ReactGA from 'react-ga';
 import Menu from './components/Menu'
 import Page from './components/Page'
 import Loader from './components/Loader'
@@ -19,8 +20,14 @@ export const randomKey = (): string => {
   return (Math.floor(Math.random() * 100000000)).toString()
 }
 
+ReactGA.initialize('UA-159492774-1');
+
 const App: React.FC<AppProps> = ({ store, persistor }) => {
   
+  useEffect(() => {
+    ReactGA.pageview("/")
+  }, [])
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>

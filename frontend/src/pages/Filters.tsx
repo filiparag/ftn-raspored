@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import ReactGA from 'react-ga';
 import { ApplicationState } from '../store'
 import { Header, Button, Grid, Message } from 'semantic-ui-react'
 import { NewFilter } from '../components/NewFilter'
@@ -11,6 +12,10 @@ type FiltersProps = {}
 
 export const Filters: React.FC<FiltersProps> = () => {
   
+  useEffect(() => {
+    ReactGA.pageview("/filters")
+  }, [])
+
   const dispatch = useDispatch()
 
   const newFilterVisible = useSelector(

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import ReactGA from 'react-ga';
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
 import TimetableEntry from '../components/TimetableEntry'
@@ -34,6 +35,7 @@ export const Timetable: React.FC<TimetableProps> = () => {
   // })
 
   useEffect(() => {
+    ReactGA.pageview("/timetable")
     fetchTimetable(dispatch, existingFilters)
     // window.scrollTo(0, (dayRefs as any)[2].current.offsetTop)
   }, [existingFilters, dispatch])

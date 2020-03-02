@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactGA from 'react-ga';
 import { Segment, Header, Grid, Label, Icon } from 'semantic-ui-react'
 import { FilterEntry } from '../store/filters/types'
 import { useDispatch } from 'react-redux'
@@ -26,7 +27,13 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
             as='a'
             basic
             color='red'
-            onClick={() => dispatch(removeExistingFilter(id))}>
+            onClick={() => {
+              ReactGA.event({
+                category: 'Filters',
+                action: 'Remove existing filter'
+              })
+              dispatch(removeExistingFilter(id))
+            }}>
             <Icon name='trash alternate' />
             Obriši
           </Label>

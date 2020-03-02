@@ -1,37 +1,33 @@
-import React from 'react'
-import { Dispatch, bindActionCreators } from 'redux'
-import { ApplicationState } from '../store'
-import { viewPage } from '../store/menu/actions'
-import { connect } from 'react-redux'
-import { Action } from 'typesafe-actions'
-import { Header, Divider, Segment } from 'semantic-ui-react'
+import React, { useEffect } from 'react'
+import ReactGA from 'react-ga';
+import { Header, Segment, Checkbox, Grid } from 'semantic-ui-react'
 
-type PreferencesProps = 
-ReturnType<typeof mapStateToProps> &
-ReturnType<typeof mapDispatchToProps>
+interface PreferencesProps {}
 
-export const Preferences: React.FC<PreferencesProps> = ({page, changePage}) => {
+export const Preferences: React.FC<PreferencesProps> = () => {
+
+  useEffect(() => {
+    ReactGA.pageview("/preferences")
+  }, [])
+
   return (
     <div>
       <Header size='huge'>Postavke</Header>
       <Segment color='grey' padded>
-        <Header size='medium'>O servisu</Header>
-        <Divider hidden />
-        Verzija: devel
+        <Grid columns={2}>
+          <Grid.Column>
+            <Header size='medium'>Telemetrija</Header>
+          </Grid.Column>
+          <Grid.Column textAlign='right'>
+            <Checkbox toggle defaultChecked/>
+          </Grid.Column>
+        </Grid>
+        <p>
+          Slanjem anonimne telemetrije pomažete razvoju servisa.
+        </p>
       </Segment>
     </div>
   )
 }
 
-const mapStateToProps = (state: ApplicationState) => ({
-  page: state.menu.page
-})
-
-const mapDispatchToProps = (dispatch: Dispatch<Action>) => bindActionCreators({
-    changePage: viewPage,
-}, dispatch)
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Preferences)
+export default Preferences
