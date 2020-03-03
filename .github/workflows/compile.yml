@@ -58,13 +58,13 @@ jobs:
     - name: Compress build
       id: compress_build
       run: |
-        mkdir -p "release"
-        mv frontend/build "release/frontend"
-        mv docker/ "release/docker"
-        mkdir -p "release/backend"
-        mv ~/go/src/github.com/filiparag/ftn-raspored/api/api "release/backend/server"
-        mv backend/database/raspored.db "release/backend/database.db"
-        tar -zcf "ftn-raspored.tar.gz" "release/"
+        mkdir -p "ftn-raspored"
+        mv frontend/build "ftn-raspored/frontend"
+        mv docker/ "ftn-raspored/docker"
+        mkdir -p "ftn-raspored/backend"
+        mv ~/go/src/github.com/filiparag/ftn-raspored/api/api "ftn-raspored/backend/server"
+        mv backend/database/raspored.db "ftn-raspored/backend/database.db"
+        tar -zcf "ftn-raspored.tar.gz" "ftn-raspored/"
 
     - name: Publish release
       id: create_release

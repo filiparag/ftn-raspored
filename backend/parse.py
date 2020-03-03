@@ -279,7 +279,7 @@ for f in files:
 
         sql_db.execute(f"INSERT INTO studijski_program \
             ( id, studijski_program, izvorni_dokument_id ) VALUES \
-            ( {getID(f[1], studijski_program)}, \
+            ( {getID(studijski_program)}, \
             '{studijski_program}', {f[0]} )")
 
         studijski_program_id = sql_db.lastrowid
@@ -289,7 +289,7 @@ for f in files:
 
             sql_db.execute(f"INSERT INTO studijska_grupa \
             ( id, studijska_grupa, studijski_program_id ) VALUES \
-            ( {getID(f[1], studijski_program, studijska_grupa)}, \
+            ( {getID(studijski_program, studijska_grupa)}, \
             '{studijska_grupa}', {studijski_program_id})")
 
             studijska_grupa_id = sql_db.lastrowid
@@ -299,7 +299,7 @@ for f in files:
 
                 sql_db.execute(f"INSERT INTO semestar \
                 ( id, semestar, studijska_grupa_id ) VALUES \
-                ( {getID(f[1], studijski_program, studijska_grupa, str(semestar))}, \
+                ( {getID(studijski_program, studijska_grupa, str(semestar))}, \
                 {semestar}, {studijska_grupa_id})")
 
                 semestar_id = sql_db.lastrowid
@@ -309,7 +309,7 @@ for f in files:
 
                     sql_db.execute(f"INSERT INTO predmet \
                     ( id, predmet, semestar_id ) VALUES \
-                    ( {getID(f[1], studijski_program, studijska_grupa, str(semestar), predmet)}, \
+                    ( {getID(studijski_program, studijska_grupa, str(semestar), predmet)}, \
                     '{predmet}', {semestar_id})")
 
                     predmet_id = sql_db.lastrowid
