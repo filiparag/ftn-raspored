@@ -2,9 +2,10 @@ import React from 'react'
 import ReactGA from 'react-ga';
 import { Segment, Header, Grid, Label, Icon } from 'semantic-ui-react'
 import { FilterEntry } from '../store/filters/types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
+import { ApplicationState } from '../store';
 
 export interface ExistingFilterProps {
   id: number,
@@ -14,6 +15,10 @@ export interface ExistingFilterProps {
 const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
 
   const dispatch = useDispatch()
+
+  const telemetry = useSelector(
+    (state: ApplicationState) => state.preferences.telemetry
+  )
 
   return (
     <Segment color='grey' padded raised>
@@ -27,10 +32,11 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
             basic
             color='red'
             onClick={() => {
-              ReactGA.event({
-                category: 'Filters',
-                action: 'Remove existing filter'
-              })
+              if (telemetry)
+                ReactGA.event({
+                  category: 'Filters',
+                  action: 'Remove existing filter'
+                })
               dispatch(removeExistingFilter(id))
             }}>
             <Icon name='trash alternate' />

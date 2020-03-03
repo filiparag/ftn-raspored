@@ -23,6 +23,10 @@ export const Timetable: React.FC<TimetableProps> = () => {
     (state: ApplicationState) => state.existingFilters
   )
 
+  const telemetry = useSelector(
+    (state: ApplicationState) => state.preferences.telemetry
+  )
+
   const dispatch = useDispatch()
 
   const dayNames = [
@@ -35,10 +39,11 @@ export const Timetable: React.FC<TimetableProps> = () => {
   // })
 
   useEffect(() => {
-    ReactGA.pageview("/timetable")
+    if (telemetry)
+      ReactGA.pageview("/timetable")
     fetchTimetable(dispatch, existingFilters)
     // window.scrollTo(0, (dayRefs as any)[2].current.offsetTop)
-  }, [existingFilters, dispatch])
+  }, [existingFilters, dispatch, telemetry])
 
   const rows = []
 

@@ -20,13 +20,16 @@ export const randomKey = (): string => {
   return (Math.floor(Math.random() * 100000000)).toString()
 }
 
-ReactGA.initialize('UA-159492774-1');
-
 const App: React.FC<AppProps> = ({ store, persistor }) => {
   
+  const telemetry = store.getState().preferences.telemetry
+
   useEffect(() => {
-    ReactGA.pageview("/")
-  }, [])
+    if (telemetry) {
+      ReactGA.initialize('UA-159492774-1')
+      ReactGA.pageview("/")
+    }
+  }, [telemetry])
 
   return (
     <Provider store={store}>

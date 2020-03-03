@@ -45,14 +45,25 @@ export const abbrevateName = (name: string): string => {
 
 export const NewFilter: React.FC<NewFilterProps> = () => {
 
-  const newFilter = useSelector((state: ApplicationState) => state.newFilter)
-  const filters = useSelector((state: ApplicationState) => state.filter)
+  const newFilter = useSelector(
+    (state: ApplicationState) => state.newFilter
+  )
+  
+  const filters = useSelector(
+    (state: ApplicationState) => state.filter
+  )
+  
+  const telemetry = useSelector(
+    (state: ApplicationState) => state.preferences.telemetry
+  )
+  
   const dispatch = useDispatch()
 
   useEffect(() => {
-    ReactGA.pageview("/filters/new")
+    if (telemetry)
+      ReactGA.pageview("/filters/new")
     fetchFilters(dispatch)
-  }, [dispatch])
+  }, [dispatch, telemetry])
 
   const dropdownObject = (text: string, key: number | string): DropdownEntry => {
     return {
@@ -457,10 +468,11 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             color='red'
             onClick={() => {
               dispatch(closeNewFilter())
-              ReactGA.event({
-                category: 'Filters',
-                action: 'Cancel new filter'
-              })
+              if (telemetry)
+                ReactGA.event({
+                  category: 'Filters',
+                  action: 'Cancel new filter'
+                })
             }}
           >Nazad</Button>
         </Grid.Column>
@@ -470,10 +482,11 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             fluid
             color='green'
             onClick={() => {
-              ReactGA.event({
-                category: 'Filters',
-                action: 'Add new filter'
-              })
+              if (telemetry)
+                ReactGA.event({
+                  category: 'Filters',
+                  action: 'Add new filter'
+                })
               dispatch(addNewFilter(newFilter))
             }}
           >Dodaj</Button>

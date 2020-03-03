@@ -5,8 +5,10 @@ import storage from 'redux-persist/lib/storage'
 import menuReducer from './menu/reducers'
 import timetableReducer from './timetable/reducers'
 import loaderReducer from './loader/reducers'
+import preferencesReducer from './preferences/reducers'
 import { filterReducer, newFilterReducer, existingFiltersReducer } from './filters/reducers'
 import { MenuState, PageName } from './menu/types';
+import { PreferencesState } from './preferences/types';
 import { Filter, NewFilter, FilterEntry } from './filters/types';
 import { TimetableList } from './timetable/types';
 import { fetchFilters } from './filters/actions';
@@ -18,6 +20,7 @@ export interface ApplicationState {
   filter: Filter
   newFilter: NewFilter
   existingFilters: FilterEntry[],
+  preferences: PreferencesState
 }
 
 export const initialState: ApplicationState = {
@@ -51,6 +54,9 @@ export const initialState: ApplicationState = {
     visible: false
   },
   existingFilters: [] as FilterEntry[],
+  preferences: {
+    telemetry: true
+  }
 }
 
 export const apiURL = () => {
@@ -75,13 +81,14 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
     loader: loaderReducer,
     filter: filterReducer,
     newFilter: newFilterReducer,
-    existingFilters: existingFiltersReducer
+    existingFilters: existingFiltersReducer,
+    preferences: preferencesReducer
   })
 
   const persistConfig: PersistConfig<ApplicationState, any, any, any> = {
     key: 'root',
     storage,
-    whitelist: ['existingFilters']
+    whitelist: ['existingFilters', 'preferences']
   }
 
   const persistedReducer = persistReducer<ApplicationState>(persistConfig, rootReducer)

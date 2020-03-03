@@ -12,9 +12,14 @@ type FiltersProps = {}
 
 export const Filters: React.FC<FiltersProps> = () => {
   
+  const telemetry = useSelector(
+    (state: ApplicationState) => state.preferences.telemetry
+  )
+
   useEffect(() => {
-    ReactGA.pageview("/filters")
-  }, [])
+    if (telemetry)
+      ReactGA.pageview("/filters")
+  }, [telemetry])
 
   const dispatch = useDispatch()
 
