@@ -1,0 +1,7 @@
+section {
+  margin-top: 1rem;
+}
+
+section > .ui.medium.header {
+  margin-bottom: 0.5rem !important;
+}

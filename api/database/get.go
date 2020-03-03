@@ -181,7 +181,9 @@ func GetLecturers(subject int) []model.Izvodjac {
 		row = strings.Replace(row, "  ", " ", -1)
 		separated := strings.Split(row, ", ")
 		for _, val := range separated {
-			response = append(response, model.Izvodjac(val))
+			if len(strings.Replace(val, " ", "", -1)) > 0 {
+				response = append(response, model.Izvodjac(val))
+			}
 		}
 	}
 
