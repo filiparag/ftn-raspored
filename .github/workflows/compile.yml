@@ -1,13 +1,15 @@
 name: CI
 
-on:
-  push:
-    tags:
-      - v
+# on:
+#   push:
+#     tags:
+#       - v
+
+on: [push]
 
 jobs:
   build:
-
+    name: Release compiler
     runs-on: ubuntu-latest
 
     steps:
