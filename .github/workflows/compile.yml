@@ -1,11 +1,9 @@
 name: CI
 
-# on:
-#   push:
-#     tags:
-#       - v
-
-on: [push]
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -17,21 +15,24 @@ jobs:
     - uses: actions/checkout@v2
       
     - name: Install dependencies
+      id: install_dependencies
       run: |
         sudo apt --yes update
-        sudo apt --yes --force-yes install yarn gcc build-essential musl-tools upx wget
+        sudo apt --yes --force-yes install yarn gcc build-essential musl-tools upx wget python3 python3-pip python3-setuptools
         cd /tmp
         wget "https://dl.google.com/go/go1.14.linux-amd64.tar.gz"
         sudo tar -xf go1.14.linux-amd64.tar.gz
         sudo mv go /usr/local
       
     - name: Build frontend
+      id: build_frontend
       run: |
         cd frontend/
         yarn
         yarn build
         
     - name: Build API
+      id: build_api
       run: |
         mkdir -p ~/go/src/github.com/filiparag/ftn-raspored/api
         cp -rp api/* ~/go/src/github.com/filiparag/ftn-raspored/api
@@ -43,39 +44,47 @@ jobs:
         export GOOS=linux
         export GARCH=amd64
         go get -d .
-        CC=$(which musl-gcc) go build --ldflags '-w -linkmode external -extldflags "-static"' .
+        CC=$(which musl-gcc) go build -v --ldflags '-w -linkmode external -extldflags "-static"' .
         upx api
-               
-    - name: Restructure file tree
+
+    - name: Populate database
+      id: populate_database
       run: |
-        VERSION="$(git tag -l --points-at HEAD)"
-        if [[ "$VERSION" == "" ]]; then
-          VERSION="$(git rev-parse --short HEAD)"
-        fi
-        mkdir "$VERSION"
-        mv frontend/build "$VERSION/frontend"
-        mv ~/go/src/github.com/filiparag/ftn-raspored/api/api "$VERSION/api"
-        tar -zcf "ftn-raspored.tar.gz" "$VERSION/*"
+        cd backend
+        pip3 install --user -r requirements.txt
+        ./update.py
+        ./parse.py
+               
+    - name: Compress build
+      id: compress_build
+      run: |
+        mkdir -p "release"
+        mv frontend/build "release/frontend"
+        mv docker/ "release/docker"
+        mkdir -p "release/backend"
+        mv ~/go/src/github.com/filiparag/ftn-raspored/api/api "release/backend/server"
+        mv backend/database/raspored.db "release/backend/database.db"
+        tar -zcf "ftn-raspored.tar.gz" "release/"
 
     - name: Publish release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: Automatically generated release
-          draft: false
-          prerelease: false
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: Automatically generated release
+        draft: false
+        prerelease: false
 
     - name: Upload release asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./ftn-raspored.tar.gz
-          asset_name: ftn-raspored.tar.gz
-          asset_content_type: application/x-gtar
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./ftn-raspored.tar.gz
+        asset_name: ftn-raspored.tar.gz
+        asset_content_type: application/x-gtar

@@ -1,4 +1,4 @@
-#! /bin/env python
+#! /usr/bin/env python3
 
 import urllib.request
 import sqlite3
