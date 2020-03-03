@@ -11,7 +11,7 @@ import hashlib
 days = ['P O N E D E L J A K', 'U T O R A K',
         'S R E D A', 'Č E T V R T A K', 'P E T A K',
         'S U B O T A', 'N E D E L J A']
-clas = ['Pred.', 'lab.vežbe', 'aud.vežbe', 'rač.vežbe', 'arh.vežbe']
+clas = ['Pred.', 'lab.vežbe', 'aud.vežbe', 'rač.vežbe', 'arh.vežbe', 'um.vežbe']
 wildcard = 'SVI'
 
 
@@ -318,14 +318,18 @@ for f in files:
                         [studijski_program, studijska_grupa, \
                         semestar, predmet]):
 
-                        sql_db.execute(f"INSERT INTO cas \
-                        ( vrsta_nastave_id, predmet_id, grupa, \
-                        dan, vreme_od, vreme_do, ucionica, \
-                        izvodjac ) VALUES \
-                        ((SELECT id FROM vrsta_nastave WHERE \
-                        vrsta_nastave = '{cas[0]}'),\
-                        {predmet_id}, '{cas[2]}', {cas[1]}, \
-                        {cas[3]}, {cas[4]}, '{cas[5]}', '{cas[6]}')")
+                        try:
+                            sql_db.execute(f"INSERT INTO cas \
+                            ( vrsta_nastave_id, predmet_id, grupa, \
+                            dan, vreme_od, vreme_do, ucionica, \
+                            izvodjac ) VALUES \
+                            ((SELECT id FROM vrsta_nastave WHERE \
+                            vrsta_nastave = '{cas[0]}'),\
+                            {predmet_id}, '{cas[2]}', {cas[1]}, \
+                            {cas[3]}, {cas[4]}, '{cas[5]}', '{cas[6]}')")
+                        except Exception as ex:
+                            print("Exception:", cas, ex)
+                            pprint(cas)
 
 
     sql_db.execute(f"UPDATE izvorni_dokument SET \

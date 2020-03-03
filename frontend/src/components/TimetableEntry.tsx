@@ -27,6 +27,8 @@ export const typeColor = (type: string): SemanticCOLORS => {
       return 'red'
     case 'arh.vežbe':
       return 'brown'
+    case 'um.vežbe':
+      return 'pink'
     default:
       return 'grey'
   }
@@ -43,7 +45,9 @@ export const typeIcon = (type: string): SemanticICONS => {
     case 'lab.vežbe':
       return 'eye dropper'
     case 'arh.vežbe':
-      return 'spoon'
+      return 'compass outline'
+    case 'um.vežbe':
+        return 'paint brush'
     default:
       return 'book'
   }
@@ -61,6 +65,8 @@ export const typeName = (type: string): string => {
       return 'Laboratorijske vežbe'
     case 'arh.vežbe':
       return 'Arhitekturne vežbe'
+    case 'um.vežbe':
+      return 'Umetničke vežbe'
     default:
       return type
   }

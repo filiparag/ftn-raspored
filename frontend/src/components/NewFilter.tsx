@@ -338,7 +338,6 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           options={semesters}
           onChange={(e, {value}) => updateSelection('sm', value)}
       />
-      <Divider hidden />
       <Header
         size='medium'
         color={newFilter.semesters.length === 0 || 
