@@ -30,14 +30,16 @@ jobs:
         
     - name: Build API
       run: |
-        mkdir -p ~/go/src/github.com/filiparag/ftn-raspored/
-        cp -rp api/ ~/go/src/go/src/github.com/filiparag/ftn-raspored/api
+        mkdir -p ~/go/src/github.com/filiparag/ftn-raspored/api
+        cp -rp api/* ~/go/src/go/src/github.com/filiparag/ftn-raspored/api
+        cd ~/go/src/github.com/filiparag/ftn-raspored/api
+        export GOPATH="$(realpath $HOME/go)"
         export CGO_ENABLED=1
         go get -d ./...
         go build -v ./...
         go install -v ./...
         
-    - name: Compress
+    - name: Restructure file tree
       run: |
         VERSION="$(git tag -l --points-at HEAD)"
         if [[ "$VERSION" == "" ]]; then
@@ -46,7 +48,6 @@ jobs:
         mkdir "$VERSION"
         mv frontend/build "$VERSION/frontend"
         mv ~/go/bin/api "$VERSION/api"
-        tar -czvf "$VERSION.tar.gz" "$VERSION/"
 
     - name: Release GitHub Actions
       uses: technote-space/release-github-actions@v3.0.4
