@@ -11,6 +11,7 @@
     "@types/react": "^16.9.23",
     "@types/react-dom": "^16.9.0",
     "cross-fetch": "^3.0.4",
+    "prop-types": "^15.7.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-ga": "^2.7.0",

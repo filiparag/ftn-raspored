@@ -18,9 +18,12 @@ jobs:
       
     - name: Install dependencies
       run: |
-        sudo add-apt-repository ppa:longsleep/golang-backports -y
         sudo apt --yes update
-        sudo apt --yes --force-yes install golang-go yarn
+        sudo apt --yes --force-yes install yarn gcc build-essential musl-tools upx wget
+        cd /tmp
+        wget "https://dl.google.com/go/go1.14.linux-amd64.tar.gz"
+        sudo tar -xf go1.14.linux-amd64.tar.gz
+        sudo mv go /usr/local
       
     - name: Build frontend
       run: |
@@ -31,14 +34,18 @@ jobs:
     - name: Build API
       run: |
         mkdir -p ~/go/src/github.com/filiparag/ftn-raspored/api
-        cp -rp api/* ~/go/src/go/src/github.com/filiparag/ftn-raspored/api
+        cp -rp api/* ~/go/src/github.com/filiparag/ftn-raspored/api
         cd ~/go/src/github.com/filiparag/ftn-raspored/api
+        export GOROOT=/usr/local/go
         export GOPATH="$(realpath $HOME/go)"
+        export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
         export CGO_ENABLED=1
-        go get -d ./...
-        go build -v ./...
-        go install -v ./...
-        
+        export GOOS=linux
+        export GARCH=amd64
+        go get -d .
+        CC=$(which musl-gcc) go build --ldflags '-w -linkmode external -extldflags "-static"' .
+        upx api
+               
     - name: Restructure file tree
       run: |
         VERSION="$(git tag -l --points-at HEAD)"
@@ -47,10 +54,28 @@ jobs:
         fi
         mkdir "$VERSION"
         mv frontend/build "$VERSION/frontend"
-        mv ~/go/bin/api "$VERSION/api"
+        mv ~/go/src/github.com/filiparag/ftn-raspored/api/api "$VERSION/api"
+        tar -zcf "ftn-raspored.tar.gz" "$VERSION/*"
 
-    - name: Release GitHub Actions
-      uses: technote-space/release-github-actions@v3.0.4
-      with:
+    - name: Publish release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CLEAN_TARGETS: .*,api,backend,frontend
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: Automatically generated release
+          draft: false
+          prerelease: false
+
+    - name: Upload release asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./ftn-raspored.tar.gz
+          asset_name: ftn-raspored.tar.gz
+          asset_content_type: application/x-gtar
