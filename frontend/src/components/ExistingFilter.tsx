@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
 import { ApplicationState } from '../store';
+import { fetchTimetable, cleanTimetable } from '../store/timetable/actions';
 
 export interface ExistingFilterProps {
   id: number,
@@ -38,6 +39,7 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
                   action: 'Remove existing filter'
                 })
               dispatch(removeExistingFilter(id))
+              dispatch(cleanTimetable())
             }}>
             <Icon name='trash alternate' />
             Obriši

@@ -5,8 +5,6 @@ import * as serviceWorker from './serviceWorker';
 import { configureStore, initialState } from './store'
 import './index.css';
 
-// const initialState = (window as any).INITIAL_REDUX_STATE
-
 const { store, persistor } = configureStore(initialState)
 
 render(
@@ -17,4 +15,4 @@ render(
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.register();

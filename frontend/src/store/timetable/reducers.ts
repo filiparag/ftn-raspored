@@ -5,6 +5,9 @@ import { dayNames, monthNames } from '../../pages/Timetable'
 
 export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = initialState.timetable, action): TimetableList => {
   switch (action.type) {
+    case TimetableAction.CLEAN: {
+      return initialState.timetable
+    }
     case TimetableAction.UPDATE: {
 
       let timetable: TimetableList = new Array(7)

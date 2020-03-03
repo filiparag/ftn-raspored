@@ -8,6 +8,8 @@ import { apiURL } from '..'
 
 export const updateTimetable = (entries: TimetableList) => action(TimetableAction.UPDATE, entries)
 
+export const cleanTimetable = () => action(TimetableAction.CLEAN)
+
 export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEntry[]) => {
 
   dispatch(showLoader())

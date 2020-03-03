@@ -12,6 +12,7 @@ import { PreferencesState } from './preferences/types';
 import { Filter, NewFilter, FilterEntry } from './filters/types';
 import { TimetableList } from './timetable/types';
 import { fetchFilters } from './filters/actions';
+import upgrade from './upgrade';
 
 export interface ApplicationState {
   menu: MenuState,
@@ -56,7 +57,7 @@ export const initialState: ApplicationState = {
   existingFilters: [] as FilterEntry[],
   preferences: {
     telemetry: true,
-    version: [0,1,1]
+    version: [0,1,1],
   }
 }
 
@@ -89,7 +90,7 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
   const persistConfig: PersistConfig<ApplicationState, any, any, any> = {
     key: 'root',
     storage,
-    whitelist: ['timetable', 'existingFilters', 'preferences.telemetry']
+    whitelist: ['timetable', 'existingFilters', 'preferences']
   }
 
   const persistedReducer = persistReducer<ApplicationState>(persistConfig, rootReducer)
