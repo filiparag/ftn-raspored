@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, createRef } from 'react'
 import ReactGA from 'react-ga';
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,6 +12,17 @@ import { showNewFilter } from '../store/filters/actions'
 import { fetchTimetable } from '../store/timetable/actions'
 
 type TimetableProps = {}
+
+export const dayNames = [
+  'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak',
+  'Petak', 'Subota', 'Nedelja'
+]
+
+export const monthNames = [
+  'januar', 'februar', 'mart', 'april', 'maj',
+  'jun', 'jul', 'avgust', 'septembar', 'oktobar',
+  'novembar', 'decembar'
+]
 
 export const Timetable: React.FC<TimetableProps> = () => {
 
@@ -29,37 +40,50 @@ export const Timetable: React.FC<TimetableProps> = () => {
 
   const dispatch = useDispatch()
 
-  const dayNames = [
-    'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak',
-    'Petak', 'Subota', 'Nedelja'
-  ]
-
-  // const dayRefs = dayNames.map(() => {
-  //   return createRef()
-  // })
+  const todayRef = createRef<HTMLDivElement>()
+  const scrollToRef = (ref: React.RefObject<any>) => {
+    if (ref.current !== null)
+      window.scrollTo(0, ref.current.offsetTop)
+  }
 
   useEffect(() => {
     if (telemetry)
       ReactGA.pageview("/timetable")
     fetchTimetable(dispatch, existingFilters)
-    // window.scrollTo(0, (dayRefs as any)[2].current.offsetTop)
+    scrollToRef(todayRef)
   }, [existingFilters, dispatch, telemetry])
 
   const rows = []
+  const now = new Date()
+  const today = now.getDay() === 0 ? 6 : now.getDay() - 1
+  const timeNow = now.getHours() + now.getMinutes() / 60
 
   for (const day in timetable) {
-    rows.push(
-        <Header size='large' key={dayNames[day]}>
-          {dayNames[day]}
-        </Header>
-    )
-    for (const entry of timetable[day]) {
+    if (timetable[day] !== null && timetable[day] !== undefined) {
+      if (timetable[day].weekday === today)
+        rows.push(
+          <div ref={todayRef} key={randomKey()}></div>
+        )
       rows.push(
-        <TimetableEntry
-          entry={entry}
-          key={randomKey()}
-        />)
+        <Header size='large' key={randomKey()}>
+          {timetable[day].date}
+        </Header>
+      )
+      for (const entry of timetable[day].entries) {
+        
+        rows.push(
+          <TimetableEntry
+            entry={entry}
+            key={randomKey()}
+            ongoing={
+              timetable[day].weekday === today &&
+              entry.timeStart <= timeNow && entry.timeEnd >= timeNow
+            }
+          />
+        )
+      }
     }
+    
   }
 
   const NoEntriesMessage = (

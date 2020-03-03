@@ -9,7 +9,15 @@ export interface TimetableEntry {
   lecturer: string
 }
 
-export type TimetableList = TimetableEntry[][]
+export interface TimetableDay {
+  weekday: number | null,
+  date: string | null,
+  entries: TimetableEntry[]
+}
+
+export type TimetableList = TimetableDay[]
+
+
 
 export enum TimetableAction {
   ADD_DAY = 'TIMETABLE_ADD_DAY',

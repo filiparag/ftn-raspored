@@ -3,5 +3,6 @@ export enum PreferencesAction {
 }
 
 export interface PreferencesState {
-  telemetry: boolean
+  telemetry: boolean,
+  version: [number, number | undefined, number | undefined]
 }

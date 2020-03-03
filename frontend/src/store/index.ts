@@ -55,7 +55,8 @@ export const initialState: ApplicationState = {
   },
   existingFilters: [] as FilterEntry[],
   preferences: {
-    telemetry: true
+    telemetry: true,
+    version: [0,1,1]
   }
 }
 
@@ -88,7 +89,7 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
   const persistConfig: PersistConfig<ApplicationState, any, any, any> = {
     key: 'root',
     storage,
-    whitelist: ['existingFilters', 'preferences']
+    whitelist: ['timetable', 'existingFilters', 'preferences.telemetry']
   }
 
   const persistedReducer = persistReducer<ApplicationState>(persistConfig, rootReducer)

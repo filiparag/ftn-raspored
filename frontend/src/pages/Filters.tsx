@@ -7,6 +7,7 @@ import ExistingFilter from '../components/ExistingFilter'
 import { showNewFilter } from '../store/filters/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { FilterEntry } from '../store/filters/types'
+import { randomKey } from '../App';
 
 type FiltersProps = {}
 
@@ -50,7 +51,7 @@ export const Filters: React.FC<FiltersProps> = () => {
       <ExistingFilter
         entry={filter}
         id={index}
-        key={(Math.floor(Math.random() * 1000000)).toString()}
+        key={randomKey()}
       />
     )
   })

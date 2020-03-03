@@ -6,7 +6,8 @@ import '../style/Timetable.css'
 
 
 type TimetableEntryProps = {
-  entry: Entry
+  entry: Entry,
+  ongoing: boolean
 }
 
 export const timeString = (time: number): string => {
@@ -72,13 +73,19 @@ export const typeName = (type: string): string => {
   }
 }
 
-export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry}: {entry: Entry}) => {
+export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry, ongoing}: TimetableEntryProps) => {
   return (
     <List.Item key={entry.id}>
-      <Icon name='triangle right' />
+      <Icon
+        name='angle right'
+      />
       <List.Content>
-        <span>{timeString(entry.timeStart)} - {timeString(entry.timeEnd)}</span>
-        <List.Header className='Subject'>{entry.subject}</List.Header>
+        <span>
+          {timeString(entry.timeStart)} - {timeString(entry.timeEnd)} {ongoing ? '(u toku)' : null}
+        </span>
+        <List.Header className='Subject'>
+          {entry.subject}
+        </List.Header>
         <List.Description>
           <Label
             size='medium'
