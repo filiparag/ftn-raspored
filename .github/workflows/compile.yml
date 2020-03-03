@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - v
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - uses: actions/checkout@v2
+      
+    - name: Install dependencies
+      run: |
+        sudo add-apt-repository ppa:longsleep/golang-backports -y
+        sudo apt --yes update
+        sudo apt --yes --force-yes install golang-go yarn
+      
+    - name: Build frontend
+      run: |
+        cd frontend/
+        yarn
+        yarn build
+        
+    - name: Build API
+      run: |
+        mkdir -p ~/go/src/github.com/filiparag/ftn-raspored/
+        cp -rp api/ ~/go/src/go/src/github.com/filiparag/ftn-raspored/api
+        export CGO_ENABLED=1
+        go get -d ./...
+        go build -v ./...
+        go install -v ./...
+        
+    - name: Compress
+      run: |
+        VERSION="$(git tag -l --points-at HEAD)"
+        if [[ "$VERSION" == "" ]]; then
+          VERSION="$(git rev-parse --short HEAD)"
+        fi
+        mkdir "$VERSION"
+        mv frontend/build "$VERSION/frontend"
+        mv ~/go/bin/api "$VERSION/api"
+        tar -czvf "$VERSION.tar.gz" "$VERSION/"
+
+    - name: Release GitHub Actions
+      uses: technote-space/release-github-actions@v3.0.4
+      with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLEAN_TARGETS: .*,api,backend,frontend
