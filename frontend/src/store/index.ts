@@ -12,7 +12,6 @@ import { PreferencesState } from './preferences/types';
 import { Filter, NewFilter, FilterEntry } from './filters/types';
 import { TimetableList } from './timetable/types';
 import { fetchFilters } from './filters/actions';
-import upgrade from './upgrade';
 
 export interface ApplicationState {
   menu: MenuState,

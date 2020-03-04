@@ -4,7 +4,7 @@ import { ApplicationState } from '../store'
 import { Header, Button, Grid, Message } from 'semantic-ui-react'
 import { NewFilter } from '../components/NewFilter'
 import ExistingFilter from '../components/ExistingFilter'
-import { showNewFilter } from '../store/filters/actions'
+import { showNewFilter, fetchFilters } from '../store/filters/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { FilterEntry } from '../store/filters/types'
 import { randomKey } from '../App';
@@ -17,12 +17,17 @@ export const Filters: React.FC<FiltersProps> = () => {
     (state: ApplicationState) => state.preferences.telemetry
   )
 
+  const filters = useSelector(
+    (state: ApplicationState) => state.filter
+  )
+
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (telemetry)
       ReactGA.pageview("/filters")
-  }, [telemetry])
-
-  const dispatch = useDispatch()
+    fetchFilters(dispatch)
+  }, [dispatch, telemetry])
 
   const newFilterVisible = useSelector(
     (state: ApplicationState) => state.newFilter.visible
@@ -63,15 +68,18 @@ export const Filters: React.FC<FiltersProps> = () => {
           <Header size='huge'>Filteri</Header>
         </Grid.Column>
         <Grid.Column>
-          {newFilterVisible ? null : 
-          <Button
-            floated='right'
-            color='green'
-            icon='plus'
-            content='Dodaj'
-            labelPosition='right'
-            onClick={() => dispatch(showNewFilter())}
-          />}
+          {newFilterVisible ? null :
+            filters.length > 0 ?
+              <Button
+                floated='right'
+                color='green'
+                icon='plus'
+                content='Dodaj'
+                labelPosition='right'
+                onClick={() => dispatch(showNewFilter())}
+              /> :
+              null
+          }
         </Grid.Column>
       </Grid>
       {newFilterVisible ? <NewFilter /> :

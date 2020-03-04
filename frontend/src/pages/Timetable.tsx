@@ -1,4 +1,4 @@
-import React, { useEffect, createRef } from 'react'
+import React, { useEffect, createRef, useLayoutEffect } from 'react'
 import ReactGA from 'react-ga';
 import { ApplicationState } from '../store'
 import { useSelector, useDispatch } from 'react-redux'
@@ -50,8 +50,11 @@ export const Timetable: React.FC<TimetableProps> = () => {
     if (telemetry)
       ReactGA.pageview("/timetable")
     fetchTimetable(dispatch, existingFilters)
-    scrollToRef(todayRef)
   }, [existingFilters, dispatch, telemetry])
+
+  useLayoutEffect(() => {
+    scrollToRef(todayRef)
+  }, [todayRef])
 
   const rows = []
   const now = new Date()
@@ -109,14 +112,37 @@ export const Timetable: React.FC<TimetableProps> = () => {
     </Message>
   )
 
+  const ErrorMessage = (
+    <Message error>
+      <Message.Header>
+        Došlo je do greške
+      </Message.Header>
+      <p>
+        Nemoguće je uspostaviti vezu sa serverom.
+      </p>
+      <Button
+        fluid
+        basic
+        color='brown'
+        onClick={() => {
+          fetchTimetable(dispatch, existingFilters)
+        }}
+      >
+        Pokušaj ponovo
+      </Button>
+    </Message>
+  )
+
   if (rows.length === 0 && existingFilters.length === 0)
     return NoEntriesMessage
-  else
+  else if (rows.length > 0)
     return (
-    <List size='big' relaxed>
-      {rows}
-    </List>
-  )
+      <List size='big' relaxed>
+        {rows}
+      </List>
+    )
+  else
+    return ErrorMessage
 }
 
 export default Timetable

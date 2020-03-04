@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
 import { ApplicationState } from '../store';
-import { fetchTimetable, cleanTimetable } from '../store/timetable/actions';
+import { cleanTimetable } from '../store/timetable/actions';
 
 export interface ExistingFilterProps {
   id: number,
