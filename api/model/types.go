@@ -29,6 +29,8 @@ type Grupa string
 
 type Izvodjac string
 
+type Ucionica string
+
 type Cas struct {
 	Id			int		`json:"id"`
 	Subject		string	`json:"predmet"`

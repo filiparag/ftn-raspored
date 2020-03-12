@@ -28,6 +28,7 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 	keywords["grupa"] = [2]string{"c.grupa", "="}
 	keywords["dan"] = [2]string{"c.dan", "="}
 	keywords["izvodjac"] = [2]string{"c.izvodjac", "="}
+	keywords["ucionica"] = [2]string{"c.ucionica", "="}
 
 	var sqlQuery = `SELECT c.id, p.predmet, vn.vrsta_nastave, c.grupa, c.dan,
 						   c.vreme_od, c.vreme_do, c.ucionica, c.izvodjac

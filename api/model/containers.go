@@ -22,4 +22,5 @@ type CFilterPredmet struct {
 	Types			[]VrstaNastave	`json:"vrsta_nastave"`
 	Groups 			[]Grupa        	`json:"grupa"`
 	Lecturers		[]Izvodjac		`json:"izvodjac"`
+	Classrooms		[]Ucionica		`json:"ucionica"`
 }

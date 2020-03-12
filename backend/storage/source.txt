@@ -5,11 +5,11 @@ http://www.ftn.uns.ac.rs/81592838/animacija-u-inzenjerstvu
 #http://www.ftn.uns.ac.rs/81592842/digitalna-tehnika--dizajn-i-produkcija-u-arhitekturi-i-urbanizmu
 http://www.ftn.uns.ac.rs/81592843/energetika--elektronika-i-telekomunikacije
 #http://www.ftn.uns.ac.rs/81592844/geodezija-i-geomatika
-#http://www.ftn.uns.ac.rs/81592845/graficko-inzenjerstvo-i-dizajn
+http://www.ftn.uns.ac.rs/81592845/graficko-inzenjerstvo-i-dizajn
 #http://www.ftn.uns.ac.rs/81592846/gradjevinarstvo
 #http://www.ftn.uns.ac.rs/n1765589270/industrijsko-inzenjerstvo
 #http://www.ftn.uns.ac.rs/n1765589269/inzenjerski-menadzment
-#http://www.ftn.uns.ac.rs/n1765589268/inzenjerstvo-informacionih-sistema
+http://www.ftn.uns.ac.rs/n1765589268/inzenjerstvo-informacionih-sistema
 #http://www.ftn.uns.ac.rs/n1765589267/inzenjerstvo-inovacija
 http://www.ftn.uns.ac.rs/n1765589266/informacioni-inzenjering
 #http://www.ftn.uns.ac.rs/n1765589265/inzenjerstvo-tretmana-i-zastite-voda---tempus
@@ -22,7 +22,7 @@ http://www.ftn.uns.ac.rs/n1765589261/mehatronika
 http://www.ftn.uns.ac.rs/n1765589237/primenjeno-softversko-inzenjerstvo
 http://www.ftn.uns.ac.rs/n1765589236/racunarstvo-i-automatika
 #http://www.ftn.uns.ac.rs/n1765589235/saobracaj
-#http://www.ftn.uns.ac.rs/n1765589234/scenska-arhitektura-i-dizajn
+http://www.ftn.uns.ac.rs/n1765589234/scenska-arhitektura-i-dizajn
 http://www.ftn.uns.ac.rs/n1765589233/softversko-inzenjerstvo-i-informacione-tehnologije
 #http://www.ftn.uns.ac.rs/n1765589232/upravljanje-rizikom-od-katastrofalnih-dogadjaja-i-pozara
 #http://www.ftn.uns.ac.rs/n1765589231/oss-elektroenergetika---obnovljivi-izvori-elektricne-energije

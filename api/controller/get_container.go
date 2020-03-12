@@ -33,6 +33,7 @@ func GetCTree(w http.ResponseWriter, r *http.Request) {
 						Groups: database.GetGroups(pr.Id),
 						Types: database.GetTypes(pr.Id),
 						Lecturers: database.GetLecturers(pr.Id),
+						Classrooms: database.GetClassrooms(pr.Id),
 					}
 					cSM.Subjects = append(cSM.Subjects, cPR)
 				}
@@ -66,6 +67,7 @@ func GetCSubject(w http.ResponseWriter, r *http.Request) {
 		Types:  database.GetTypes(predmet),
 		Groups: database.GetGroups(predmet),
 		Lecturers: database.GetLecturers(predmet),
+		Classrooms: database.GetClassrooms(predmet),
 	}
 	if len(response.Types) == 0 || len(response.Groups) == 0 {
 		w.WriteHeader(http.StatusNoContent)

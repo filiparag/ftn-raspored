@@ -144,3 +144,24 @@ func GetLecturers(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func GetClassrooms(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	predmet, err := strconv.Atoi(vars["predmet"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+	response := database.GetClassrooms(predmet)
+	if len(response) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		err := json.NewEncoder(w).Encode(response)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}
+}
