@@ -1,5 +1,3 @@
-import { Version } from '../upgrade'
-
 export enum PreferencesAction {
   TELEMETRY = 'TELEMETRY',
   UPGRADE = 'UPGRADE',
@@ -7,5 +5,4 @@ export enum PreferencesAction {
 
 export interface PreferencesState {
   telemetry: boolean,
-  version: Version
 }

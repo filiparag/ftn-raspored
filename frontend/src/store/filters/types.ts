@@ -36,6 +36,7 @@ export interface FilterEntry {
   groups: Array<string>,
   types: Array<number>,
   lecturers: Array<string>,
+  classrooms: Array<string>,
   days: Array<number>
   timeStart: number,
   timeEnd: number,
@@ -46,6 +47,7 @@ export interface FilterEntry {
   grString: string,
   tyString: string,
   leString: string,
+  clString: String,
   daString: string,
   tsString: string,
   teString: string

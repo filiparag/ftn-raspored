@@ -103,7 +103,7 @@ export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry, ongoing}: 
           <Label
             size='medium'
             icon='group'
-            content={entry.group}
+            content={entry.groups.join(', ')}
             className='Label'
           />
           {entry.lecturer.length > 0 ?

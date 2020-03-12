@@ -14,7 +14,7 @@ export const Preferences: React.FC<PreferencesProps> = () => {
   
   const preferences = useSelector(
     (state: ApplicationState) => state.preferences
-    )
+  )
     
   useEffect(() => {
     if (preferences.telemetry)
@@ -30,7 +30,7 @@ export const Preferences: React.FC<PreferencesProps> = () => {
           <List.Item>
             <List.Content floated='right'>
               <Label horizontal color='blue'>
-                {preferences.version.join('.')}
+                {[0,1,3].join('.')}
                 {process.env.NODE_ENV === 'development' ?
                   <Label.Detail>devel</Label.Detail>
                 : null}

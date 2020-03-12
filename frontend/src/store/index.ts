@@ -38,6 +38,7 @@ export const initialState: ApplicationState = {
     groups: [] as Array<string>,
     types: [] as Array<number>,
     lecturers: [] as Array<string>,
+    classrooms: [] as Array<string>,
     days: [] as Array<number>,
     timeStart: 0.0,
     timeEnd: 23.5,
@@ -48,15 +49,15 @@ export const initialState: ApplicationState = {
     grString: '',
     tyString: '',
     leString: '',
+    clString: '',
     daString: '',
     tsString: '',
     teString: '',
     visible: false
-  },
+  } as NewFilter,
   existingFilters: [] as FilterEntry[],
   preferences: {
     telemetry: true,
-    version: [0,1,1],
   }
 }
 

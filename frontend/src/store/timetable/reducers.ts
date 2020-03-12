@@ -39,13 +39,39 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
             date: date,
             entries: [entry]
           }
-        else
-          day.entries.splice(
-            search(day.entries, entry),
-            0,
-            entry
-          )
+        else {
+          const similar = findSimilarEntry(day, entry)
+          if (similar !== -1)
+            day.entries[similar].groups.push(...entry.groups)
+          else 
+            day.entries.splice(
+              search(day.entries, entry),
+              0,
+              entry
+            )
+        }
         return day
+      }
+
+      const findSimilarEntry = (
+        day: TimetableDay,
+        entry: TimetableEntry
+      ): number => {
+        for (const index in day.entries) {
+          const cmpExisting = {
+            ...day.entries[index],
+            id: 0,
+            groups: []
+          } as TimetableEntry
+          const cmpNew = {
+            ...entry,
+            id: 0,
+            groups: []
+          } as TimetableEntry
+          if (JSON.stringify(cmpNew) === JSON.stringify(cmpExisting))
+            return parseInt(index)
+        }
+        return -1
       }
 
       for (const c of action.payload) {
@@ -54,7 +80,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
           id: c['id'],
           subject: c['predmet'],
           type: c['vrsta_nastave'],
-          group: c['grupa'],
+          groups: [c['grupa']],
           timeStart: c['vreme_od'],
           timeEnd: c['vreme_do'],
           classroom: c['ucionica'],

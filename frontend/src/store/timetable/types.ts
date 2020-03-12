@@ -2,7 +2,7 @@ export interface TimetableEntry {
   id: number,
   subject: string,
   type: string,
-  group: string,
+  groups: string[],
   timeStart: number,
   timeEnd: number,
   classroom: string,
