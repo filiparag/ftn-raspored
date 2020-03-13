@@ -10,8 +10,8 @@ div.Label {
   margin-bottom: 0.4rem !important;
 }
 
-@media only screen and (max-width: 40rem) {
+/* @media only screen and (max-width: 40rem) {
   div.Label.Lecturer {
     display: none;
   }
-}
+} */

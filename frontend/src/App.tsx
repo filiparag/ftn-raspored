@@ -8,6 +8,7 @@ import ReactGA from 'react-ga';
 import Menu from './components/Menu'
 import Page from './components/Page'
 import Loader from './components/Loader'
+import Prompt from './components/Prompt'
 import 'semantic-ui-css/semantic.min.css'
 import './style/App.css';
 
@@ -35,6 +36,7 @@ const App: React.FC<AppProps> = ({ store, persistor }) => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Loader />
+        <Prompt />
         <div className='Page'>
           <Page />
         </div>

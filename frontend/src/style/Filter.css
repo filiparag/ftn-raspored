@@ -5,3 +5,8 @@ section {
 section > .ui.medium.header {
   margin-bottom: 0.5rem !important;
 }
+
+.ExistingFilterAction {
+  cursor: pointer !important;
+  border-radius: 0.3rem !important;
+}
