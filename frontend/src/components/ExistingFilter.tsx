@@ -1,11 +1,13 @@
 import React from 'react'
 import ReactGA from 'react-ga';
-import { Segment, Header, Grid, Label, Icon } from 'semantic-ui-react'
+import { Segment, Header, Grid, Label, Icon, Popup } from 'semantic-ui-react'
 import { FilterEntry } from '../store/filters/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
 import { ApplicationState } from '../store';
+import { showPrompt } from '../store/prompt/actions'
+import { PromptObject, PromptButton } from '../store/prompt/types'
 import { cleanTimetable } from '../store/timetable/actions';
 
 export interface ExistingFilterProps {
@@ -28,22 +30,73 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
           <Header size='large'>Filter #{id + 1}</Header>
         </Grid.Column>
         <Grid.Column textAlign='right'>
-          <Label
-            as='a'
-            basic
-            color='red'
-            onClick={() => {
-              if (telemetry)
-                ReactGA.event({
-                  category: 'Filters',
-                  action: 'Remove existing filter'
-                })
-              dispatch(removeExistingFilter(id))
-              dispatch(cleanTimetable())
-            }}>
-            <Icon name='trash alternate' />
-            Obriši
-          </Label>
+          <Popup content='Izmeni filter' inverted position='bottom left' trigger={
+            <Icon
+              className='ExistingFilterAction'
+              bordered
+              inverted
+              color='blue'
+              name='pencil'
+            />
+          } />
+          <Popup content='Podeli filter' inverted position='bottom center' trigger={
+            <Icon
+              className='ExistingFilterAction'
+              bordered
+              inverted
+              color='teal'
+              name='share alternate'
+              onClick={() => dispatch(showPrompt({
+                header: `Podeli filter ${id + 1}`,
+                body: <code>{JSON.stringify(entry)}</code>,
+                actions: [
+                  {
+                    name: 'Nazad',
+                    action: null
+                  },
+                  {
+                    name: 'Kopiraj',
+                    color: 'blue',
+                    icon: 'copy outline',
+                    action: () => {}
+                  }
+                ]
+              }))}
+            />
+          } />
+          <Popup content='Obriši filter' inverted position='bottom right' trigger={
+            <Icon
+              className='ExistingFilterAction'
+              bordered
+              inverted
+              color='red'
+              name='trash alternate'
+              onClick={() => dispatch(showPrompt({
+                header: `Obriši filter ${id + 1}?`,
+                body: null,
+                actions: [
+                  {
+                    name: 'Nazad',
+                    action: null
+                  },
+                  {
+                    name: 'Obriši',
+                    color: 'red',
+                    icon: 'trash alternate',
+                    action: () => {
+                      if (telemetry)
+                        ReactGA.event({
+                          category: 'Filters',
+                          action: 'Remove existing filter'
+                        })
+                      dispatch(removeExistingFilter(id))
+                      dispatch(cleanTimetable())
+                    }
+                  }
+                ]
+              }))}
+            />
+          } />
         </Grid.Column>
       </Grid>
       {entry.spString.length > 0 ?
@@ -99,6 +152,14 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
           <Header size='medium'>Izvođač nastave</Header>
           <p>
             {entry.leString}
+          </p>
+        </section>
+      : null}
+      {entry.clString.length > 0 ?
+        <section>
+          <Header size='medium'>Učionica</Header>
+          <p>
+            {entry.clString}
           </p>
         </section>
       : null}

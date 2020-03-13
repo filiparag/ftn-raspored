@@ -92,6 +92,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const [groups, grSet] = useState([] as DropdownEntry[])
   const [types, tySet] = useState([] as DropdownEntry[])
   const [lecturers, leSet] = useState([] as DropdownEntry[])
+  const [classrooms, clSet] = useState([] as DropdownEntry[])
 
   const updateSelection = (group: string, value: any) => {
     const dispatchPayload = {
@@ -197,9 +198,11 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         const grArray = [] as DropdownEntry[]
         const tyArray = [] as DropdownEntry[]
         const leArray = [] as DropdownEntry[]
+        const clArray = [] as DropdownEntry[]
         const cachedGroups = [] as string[]
         const cachedTypes = [] as number[]
         const cachedLecturers = [] as string[]
+        const cachedClassrooms = [] as string[]
         for (const sp of filters) {
           if (newFilter.studyPrograms.includes(sp.id)) {
             for (const sg of sp.studyGroups) {
@@ -235,6 +238,12 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
                             leArray.push(dropdownObject(le, le))
                           }
                         }
+                        for (const cl of su.classrooms) {
+                          if (!cachedClassrooms.includes(cl)) {
+                            cachedClassrooms.push(cl)
+                            clArray.push(dropdownObject(cl, cl))
+                          }
+                        }
                       }
                     }
                   }
@@ -246,9 +255,11 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         dispatch(updateResetNewFilter('gr'))
         dispatch(updateResetNewFilter('ty'))
         dispatch(updateResetNewFilter('le'))
+        dispatch(updateResetNewFilter('cl'))
         grSet(naturalSortEntries(grArray))
         tySet(naturalSortEntries(tyArray))
         leSet(naturalSortEntries(leArray))
+        clSet(naturalSortEntries(clArray))
         break
       }
       case 'gr': {
@@ -272,6 +283,15 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       }
       case 'le': {
         dispatchPayload.group='le'
+        dispatchPayload.values = value
+        value.forEach((v: string) => {
+          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
+                                     '' : ', '}${v}`
+        });
+        break
+      }
+      case 'cl': {
+        dispatchPayload.group='cl'
         dispatchPayload.values = value
         value.forEach((v: string) => {
           dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
@@ -312,6 +332,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           fluid
           multiple
           selection
+          search
           options={studyPrograms}
           onChange={(e, {value}) => updateSelection('sp', value)}
       />
@@ -329,6 +350,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           fluid
           multiple
           selection
+          search
           options={studyGroups}
           onChange={(e, {value}) => updateSelection('sg', value)}
       />
@@ -361,6 +383,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         fluid
         multiple
         selection
+        search
         options={subjects}
         onChange={(e, {value}) => updateSelection('su', value)}
       />
@@ -387,6 +410,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         fluid
         multiple
         selection
+        search
         options={groups}
         onChange={(e, {value}) => updateSelection('gr', value)}
       />
@@ -400,8 +424,23 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         fluid
         multiple
         selection
+        search
         options={lecturers}
         onChange={(e, {value}) => updateSelection('le', value)}
+      />
+      <Header
+        size='medium'
+        color={newFilter.subjects.length === 0 ? 'grey' : 'black'}
+      >Učionica</Header>
+      <Dropdown
+        placeholder='Učionica'
+        disabled={newFilter.subjects.length === 0}
+        fluid
+        multiple
+        selection
+        search
+        options={classrooms}
+        onChange={(e, {value}) => updateSelection('cl', value)}
       />
       <Header
         size='medium'

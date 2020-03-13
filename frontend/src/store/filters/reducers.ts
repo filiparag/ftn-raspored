@@ -32,7 +32,8 @@ export const filterReducer: Reducer<Filter> = (state: Filter = initialState.filt
                 name: su['predmet']['predmet'],
                 groups: su['grupa'],
                 types: [],
-                lecturers: su['izvodjac']
+                lecturers: su['izvodjac'],
+                classrooms: su['ucionica']
               } as FilterSubject
               for (const ty of su['vrsta_nastave']) {
                 const type = {
@@ -140,6 +141,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             lecturers: []
           }
         }
+        case 'cl': {
+          return {
+            ...state,
+            clString: '',
+            classrooms: []
+          }
+        }
         case 'da': {
           return {
             ...state,
@@ -231,6 +239,18 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             ...state,
             lecturers: [...state.lecturers, ...lecturers],
             leString: state.leString + action.payload.value.string
+          }
+        }
+        case 'cl': {
+          var classrooms = [] as Array<string>
+          if (Array.isArray(action.payload.value.id))
+            classrooms = action.payload.value.id
+          else
+            classrooms = [action.payload.value.id]
+          return {
+            ...state,
+            classrooms: [...state.classrooms, ...classrooms],
+            clString: state.clString + action.payload.value.string
           }
         }
         case 'da': {

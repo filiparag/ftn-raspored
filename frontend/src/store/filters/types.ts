@@ -9,9 +9,10 @@ export interface FilterChild {
 }
 
 export interface FilterSubject extends FilterChild {
-  types: FilterChild[] 
-  groups: string[]
-  lecturers: string[]
+  types: FilterChild[], 
+  groups: string[],
+  lecturers: string[],
+  classrooms: string[]
 }
 
 export interface FilterSemester extends FilterChild {
