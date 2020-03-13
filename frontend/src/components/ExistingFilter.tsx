@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactGA from 'react-ga';
-import { Segment, Header, Grid, Icon, Popup, Input } from 'semantic-ui-react'
+import { Segment, Header, Grid, Icon, Popup } from 'semantic-ui-react'
 import { FilterEntry } from '../store/filters/types'
 import { useDispatch, useSelector } from 'react-redux'
-import { removeExistingFilter } from '../store/filters/actions'
+import { removeExistingFilter, updateEditExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
 import { ApplicationState } from '../store'
 import { showPrompt } from '../store/prompt/actions'
@@ -80,6 +80,9 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
               inverted
               color='blue'
               name='pencil'
+              onClick={() => {
+                dispatch(updateEditExistingFilter(entry))
+              }}
             />
           } />
           <Popup content='Podeli filter' inverted position='bottom center' trigger={

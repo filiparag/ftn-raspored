@@ -58,6 +58,7 @@ export const initialState: ApplicationState = {
     daString: '',
     tsString: '',
     teString: '',
+    fromExisting: false,
     visible: false
   } as NewFilter,
   existingFilters: [] as FilterEntry[],

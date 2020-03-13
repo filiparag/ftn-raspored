@@ -1,6 +1,7 @@
 export enum FilterAction {
   UPDATE = 'FILTER_UPDATE',
-  REMOVE = 'FILER_REMOVE_EXISTING'
+  REMOVE = 'FILER_REMOVE_EXISTING',
+  EDIT   = 'FILTER_EDIT_EXISTING',
 }
 
 export interface FilterChild {
@@ -55,6 +56,7 @@ export interface FilterEntry {
 }
 
 export interface NewFilter extends FilterEntry {
+  fromExisting: boolean,
   visible: boolean
 }
 

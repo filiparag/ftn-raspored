@@ -8,6 +8,8 @@ export const updateFilters = (filters: Filter) => action(FilterAction.UPDATE, fi
 
 export const removeExistingFilter = (id: number) => action(FilterAction.REMOVE, id)
 
+export const updateEditExistingFilter = (filter: FilterEntry) => action(FilterAction.EDIT, filter)
+
 export const showNewFilter = () => action(NewFilterAction.SHOW)
 
 export const closeNewFilter = () => action(NewFilterAction.CLOSE)

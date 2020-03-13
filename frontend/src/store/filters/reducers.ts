@@ -78,6 +78,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
         visible: false
       }
     }
+    case FilterAction.EDIT: {
+      return {
+        ...action.payload,
+        fromExisting: true,
+        visible: true
+      }
+    }
     case PageAction.CHANGE: {
       return {
         ...initialState.newFilter,
