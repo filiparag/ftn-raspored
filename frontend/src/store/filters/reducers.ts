@@ -72,6 +72,12 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
         visible: false
       }
     }
+    case FilterAction.SAVE: {
+      return {
+        ...initialState.newFilter,
+        visible: false
+      }
+    }
     case NewFilterAction.ADD: {
       return {
         ...initialState.newFilter,
@@ -80,8 +86,8 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
     }
     case FilterAction.EDIT: {
       return {
-        ...action.payload,
-        fromExisting: true,
+        ...action.payload.filter,
+        existingID: action.payload.id,
         visible: true
       }
     }
@@ -280,7 +286,8 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
         case 'te': {
           const delta = (action.payload.value === 'add') ? 0.5 : 
                         (action.payload.value === 'sub') ? -0.5 : 0
-          const time = ((state.timeEnd + delta % 24) + 24) % 24
+          let time = (state.timeEnd + delta - 0.5) % 24 + 0.5
+          time = time < 0.5 ? 24 : time
           return {
             ...state,
             timeEnd: time,
@@ -312,6 +319,15 @@ export const existingFiltersReducer: Reducer<FilterEntry[]> = (state: FilterEntr
     }
     default: {
       return state
+    }
+    case FilterAction.SAVE: {
+      const newState = [...state]
+      newState[action.payload.id] = {
+        ...action.payload.filter,
+        visible: undefined,
+        existingID: undefined
+      } as FilterEntry
+      return newState
     }
   }
 }

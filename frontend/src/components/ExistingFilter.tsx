@@ -5,7 +5,7 @@ import { FilterEntry } from '../store/filters/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter, updateEditExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
-import { ApplicationState } from '../store'
+import { ApplicationState, initialState } from '../store'
 import { showPrompt } from '../store/prompt/actions'
 import { cleanTimetable } from '../store/timetable/actions'
 import QRCode from 'qrcode.react'
@@ -64,7 +64,12 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
     (state: ApplicationState) => state.preferences.telemetry
   )
 
-  const shareURL = window.location.href + encodeFilter(entry)
+  const filters_length = useSelector(
+    (state: ApplicationState) => state.filter.length
+  )
+
+  const shareURL = `${window.location.origin}/#/filter/${encodeFilter(entry)}`
+  console.log(shareURL)
 
   return (
     <Segment color='grey' padded raised>
@@ -73,6 +78,7 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
           <Header size='large'>Filter #{id + 1}</Header>
         </Grid.Column>
         <Grid.Column textAlign='right'>
+          {filters_length > 0 ?
           <Popup content='Izmeni filter' inverted position='bottom left' trigger={
             <Icon
               className='ExistingFilterAction'
@@ -81,10 +87,11 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
               color='blue'
               name='pencil'
               onClick={() => {
-                dispatch(updateEditExistingFilter(entry))
+                dispatch(updateEditExistingFilter(id, entry))
               }}
             />
           } />
+          : null}
           <Popup content='Podeli filter' inverted position='bottom center' trigger={
             <Icon
               className='ExistingFilterAction'
@@ -105,7 +112,7 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
                     />
                   </div>
                 ),
-                size: 'mini',
+                size: 'small',
                 actions: [
                   {
                     name: 'Nazad',
@@ -116,7 +123,7 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
                     color: 'blue',
                     icon: 'copy outline',
                     action: () => copyToClipboard(
-                      window.location.href + encodeFilter(entry)
+                      shareURL
                     ),
                     autohide: false
                   }
@@ -232,7 +239,9 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
           </p>
         </section>
       : null}
-      {entry.tsString.length > 0 || entry.teString.length > 0 ?
+      {(entry.tsString.length > 0 || entry.teString.length > 0) &&
+       (entry.timeStart !== initialState.newFilter.timeStart ||
+        entry.timeEnd !== initialState.newFilter.timeEnd) ?
           <section>
           <Header size='medium'>Vreme</Header>
           <p>

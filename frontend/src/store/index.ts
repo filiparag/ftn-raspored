@@ -46,7 +46,7 @@ export const initialState: ApplicationState = {
     classrooms: [] as Array<string>,
     days: [] as Array<number>,
     timeStart: 0.0,
-    timeEnd: 23.5,
+    timeEnd: 24.0,
     spString: '',
     sgString: '',
     smString: '',
@@ -58,7 +58,6 @@ export const initialState: ApplicationState = {
     daString: '',
     tsString: '',
     teString: '',
-    fromExisting: false,
     visible: false
   } as NewFilter,
   existingFilters: [] as FilterEntry[],

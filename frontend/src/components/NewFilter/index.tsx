@@ -1,47 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import ReactGA from 'react-ga';
-import { ApplicationState } from '../store'
+import { ApplicationState } from '../../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
-import { typeName } from '../components/TimetableEntry'
-import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter, fetchFilters } from '../store/filters/actions'
-import { timeString as compactTimeString } from '../components/TimetableEntry'
+import { typeName, timeString } from '../TimetableEntry'
+import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter, fetchFilters, updateSaveExistingFilter } from '../../store/filters/actions'
+import { timeString as compactTimeString } from '../TimetableEntry'
+import { DropdownEntry, dayStrings } from './data'
+import { abbrevateName, naturalSortEntries, dropdownObject } from './functions';
+import { ddStudyPrograms, ddDays } from './methods';
 
 type NewFilterProps = {}
-
-interface DropdownEntry {
-  key: number | string,
-  text: string,
-  value: number | string
-}
-
-export const timeString = (time: number): string => {
-  let hour = '0' + Math.floor(time)
-  let minute = '0' + Math.round((time - Math.floor(time)) * 60)
-  return hour.substr(hour.length - 2) + ' : ' + minute.substr(minute.length - 2)
-}
-
-export const naturalSortEntries = (array: DropdownEntry[]): DropdownEntry[] => {
-  return array.sort((a, b) => {
-    return a.text.localeCompare(
-      b.text, undefined,
-      {numeric: true, sensitivity: 'base'}
-    );
-  });
-}
-
-export const abbrevateName = (name: string): string => {
-  const words = name.split('-')[0].split(' ')
-  var abbr = ''
-  for (const w of words) {
-    if (w === 'i') {
-      continue
-    } else if (w[0] !== undefined) {
-      abbr += w[0].toLocaleUpperCase()
-    }
-  }
-  return abbr
-}
 
 export const NewFilter: React.FC<NewFilterProps> = () => {
 
@@ -57,35 +26,11 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
     (state: ApplicationState) => state.preferences.telemetry
   )
   
-  const dispatch = useDispatch()
+	const dispatch = useDispatch()
+	
+	const fromExisting = newFilter.existingID !== undefined
 
-  useEffect(() => {
-    if (telemetry)
-      ReactGA.pageview("/filters/new")
-    fetchFilters(dispatch)
-  }, [dispatch, telemetry])
-
-  const dropdownObject = (text: string, key: number | string): DropdownEntry => {
-    return {
-      key: key,
-      value: key,
-      text: text
-    }
-  }
-
-  var spArray = [] as DropdownEntry[]
-  for (const sp of filters)
-    spArray.push(dropdownObject(sp.name, sp.id))
-
-  const dayStrings = [
-    'Ponedeljak', 'Utorak', 'Sreda', 
-    'Četvrtak', 'Petak', 'Subota', 'Nedelja'
-  ]
-  var days = [] as DropdownEntry[]
-    for (const day in dayStrings)
-      days.push(dropdownObject(dayStrings[day], day))
-
-  const [studyPrograms] = useState(naturalSortEntries(spArray))
+  const [studyPrograms] = useState(ddStudyPrograms(filters))
   const [studyGroups, sgSet] = useState([] as DropdownEntry[])
   const [semesters, smSet] = useState([] as DropdownEntry[])
   const [subjects, suSet] = useState([] as DropdownEntry[])
@@ -93,6 +38,24 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const [types, tySet] = useState([] as DropdownEntry[])
   const [lecturers, leSet] = useState([] as DropdownEntry[])
   const [classrooms, clSet] = useState([] as DropdownEntry[])
+	const [days] = useState(ddDays())
+	
+  useEffect(() => {
+    if (telemetry)
+      ReactGA.pageview("/filters/new")
+		fetchFilters(dispatch)
+		if (fromExisting) {
+			updateSelection('sp', newFilter.studyPrograms)
+			updateSelection('sg', newFilter.studyGroups)
+			updateSelection('sm', newFilter.semesters)
+			updateSelection('su', newFilter.subjects)
+			updateSelection('ty', newFilter.types)
+			updateSelection('gr', newFilter.groups)
+			updateSelection('le', newFilter.lecturers)
+			updateSelection('cl', newFilter.classrooms)
+			updateSelection('da', newFilter.days)
+    }
+  }, [dispatch, telemetry, fromExisting])
 
   const updateSelection = (group: string, value: any) => {
     const dispatchPayload = {
@@ -255,9 +218,9 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         dispatch(updateResetNewFilter('gr'))
         dispatch(updateResetNewFilter('ty'))
         dispatch(updateResetNewFilter('le'))
-        dispatch(updateResetNewFilter('cl'))
+				dispatch(updateResetNewFilter('cl'))
         grSet(naturalSortEntries(grArray))
-        tySet(naturalSortEntries(tyArray))
+				tySet(naturalSortEntries(tyArray))
         leSet(naturalSortEntries(leArray))
         clSet(naturalSortEntries(clArray))
         break
@@ -273,12 +236,29 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       }
       case 'ty': {
         dispatchPayload.group='ty'
-        dispatchPayload.values = value
-        value.forEach((v: number) => {
-          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
-                                     '' : ', '}${typeName(types[
-                                     types.findIndex(el => el.value === v)].text)}`
-        });
+				dispatchPayload.values = value
+				for (const sp of filters) {
+          if (newFilter.studyPrograms.includes(sp.id)) {
+            for (const sg of sp.studyGroups) {
+              if (newFilter.studyGroups.includes(sg.id)) {
+                for (const sm of sg.semesters) {
+                  if (newFilter.semesters.includes(sm.id)) {
+                    for (const su of sm.subjects) {
+                      if (newFilter.subjects.includes(su.id)) {
+												for (const ty of su.types) {
+													if (value.includes(ty.id)) {
+														dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
+																											 '' : ', '}${typeName(ty.name)}`
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
         break
       }
       case 'le': {
@@ -319,8 +299,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   }
 
   return (
-    <Segment color='green' padded raised>
-      <Header size='large'>Novi filter</Header>
+    <Segment color={fromExisting ? 'blue' : 'green'} padded raised>
+      <Header size='large'>{fromExisting ? 'Izmeni' : 'Novi'} filter</Header>
       <Header size='medium'>
         Studijski program
         {newFilter.studyPrograms.length === 0 ? 
@@ -334,7 +314,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           selection
           search
           options={studyPrograms}
-          onChange={(e, {value}) => updateSelection('sp', value)}
+					onChange={(e, {value}) => updateSelection('sp', value)}
+					value={newFilter.studyPrograms}
       />
       <Header
         size='medium'
@@ -352,7 +333,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           selection
           search
           options={studyGroups}
-          onChange={(e, {value}) => updateSelection('sg', value)}
+					onChange={(e, {value}) => updateSelection('sg', value)}
+					defaultValue={newFilter.studyGroups}
       />
       <Header
         size='medium'
@@ -369,7 +351,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           multiple
           selection
           options={semesters}
-          onChange={(e, {value}) => updateSelection('sm', value)}
+					onChange={(e, {value}) => updateSelection('sm', value)}
+					value={newFilter.semesters}
       />
       <Header
         size='medium'
@@ -385,7 +368,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         selection
         search
         options={subjects}
-        onChange={(e, {value}) => updateSelection('su', value)}
+				onChange={(e, {value}) => updateSelection('su', value)}
+				value={newFilter.subjects}
       />
       <Header
         size='medium'
@@ -398,7 +382,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         multiple
         selection
         options={types}
-        onChange={(e, {value}) => updateSelection('ty', value)}
+				onChange={(e, {value}) => updateSelection('ty', value)}
+				value={newFilter.types}
       />
       <Header
         size='medium'
@@ -412,7 +397,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         selection
         search
         options={groups}
-        onChange={(e, {value}) => updateSelection('gr', value)}
+				onChange={(e, {value}) => updateSelection('gr', value)}
+				value={newFilter.groups}
       />
       <Header
         size='medium'
@@ -426,7 +412,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         selection
         search
         options={lecturers}
-        onChange={(e, {value}) => updateSelection('le', value)}
+				onChange={(e, {value}) => updateSelection('le', value)}
+				value={newFilter.lecturers}
       />
       <Header
         size='medium'
@@ -440,7 +427,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         selection
         search
         options={classrooms}
-        onChange={(e, {value}) => updateSelection('cl', value)}
+				onChange={(e, {value}) => updateSelection('cl', value)}
+				value={newFilter.classrooms}
       />
       <Header
         size='medium'
@@ -453,7 +441,8 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         multiple
         selection
         options={days}
-        onChange={(e, {value}) => updateSelection('da', value)}
+				onChange={(e, {value}) => updateSelection('da', value)}
+				value={newFilter.days}
       />
       <Header
         size='medium'
@@ -463,17 +452,19 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         <Grid.Column>
           <Button.Group fluid>
             <Button
-              icon='left chevron'
+							icon='left chevron'
               disabled={newFilter.semesters.length === 0}
               onClick={() => dispatch(updateAddNewFilter('ts', 'sub'))}
             />
             <Button
-              basic
+							basic={newFilter.timeStart + 0.5 <= newFilter.timeEnd}
+							color={newFilter.timeStart + 0.5 > newFilter.timeEnd ? 'orange' : undefined}
               disabled={newFilter.semesters.length === 0}
               content={'od ' + timeString(newFilter.timeStart)}
             />
             <Button
-              icon='right chevron'
+							icon='right chevron'
+							basic={newFilter.timeEnd <= newFilter.timeStart + 0.5}
               disabled={newFilter.semesters.length === 0}
               onClick={() => dispatch(updateAddNewFilter('ts', 'add'))}
             />
@@ -482,12 +473,14 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         <Grid.Column>
           <Button.Group fluid>
             <Button
-              icon='left chevron'
+							icon='left chevron'
+							basic={newFilter.timeEnd <= newFilter.timeStart + 0.5}
               disabled={newFilter.semesters.length === 0}
               onClick={() => dispatch(updateAddNewFilter('te', 'sub'))}
-            />
+							/>
             <Button
-              basic
+              basic={newFilter.timeEnd >= newFilter.timeStart + 0.5}
+							color={newFilter.timeEnd < newFilter.timeStart + 0.5 ? 'orange' : undefined}
               disabled={newFilter.semesters.length === 0}
               content={'do ' + timeString(newFilter.timeEnd)}
             />
@@ -517,18 +510,21 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         </Grid.Column>
         <Grid.Column>
           <Button
-            disabled={newFilter.semesters.length === 0}
+            disabled={newFilter.semesters.length === 0 || newFilter.timeStart + 0.5 > newFilter.timeEnd}
             fluid
-            color='green'
+            color={fromExisting ? 'blue' : 'green'}
             onClick={() => {
               if (telemetry)
                 ReactGA.event({
                   category: 'Filters',
-                  action: 'Add new filter'
-                })
-              dispatch(addNewFilter(newFilter))
+                  action: fromExisting ? 'Edit existing filter' : 'Add new filter'
+								})
+							if (newFilter.existingID !== undefined)
+								dispatch(updateSaveExistingFilter(newFilter.existingID, newFilter))
+							else
+								dispatch(addNewFilter(newFilter))
             }}
-          >Dodaj</Button>
+          >{fromExisting ? 'Sačuvaj' : 'Dodaj'}</Button>
         </Grid.Column>
       </Grid>
     </Segment>

@@ -37,8 +37,6 @@ export const Prompt: React.FC<PromptProps> = () => {
       )
     })
 
-    console.log(actionButtons)
-
     return (
       <div className='Prompt'>
         <Modal open={true} size={prompt.size}>
