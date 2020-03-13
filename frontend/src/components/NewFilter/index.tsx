@@ -41,10 +41,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 	const [days] = useState(ddDays())
 	
   useEffect(() => {
+		fetchFilters(dispatch)
     if (telemetry)
       ReactGA.pageview("/filters/new")
-		fetchFilters(dispatch)
-		if (fromExisting) {
+		if (fromExisting || newFilter.shared) {
 			updateSelection('sp', newFilter.studyPrograms)
 			updateSelection('sg', newFilter.studyGroups)
 			updateSelection('sm', newFilter.semesters)

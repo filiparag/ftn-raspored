@@ -84,6 +84,13 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
         visible: false
       }
     }
+    case NewFilterAction.ADD_SHARED: {
+      return {
+        ...action.payload,
+        shared: true,
+        visible: true
+      }
+    }
     case FilterAction.EDIT: {
       return {
         ...action.payload.filter,

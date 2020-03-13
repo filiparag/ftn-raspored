@@ -14,6 +14,8 @@ export const updateSaveExistingFilter = (id: number, filter: FilterEntry) => act
 
 export const showNewFilter = () => action(NewFilterAction.SHOW)
 
+export const showNewSharedFilter = (filter: FilterEntry) => action(NewFilterAction.ADD_SHARED, filter)
+
 export const closeNewFilter = () => action(NewFilterAction.CLOSE)
 
 export const updateResetNewFilter = (group?: string, value?: any) => action(NewFilterAction.UPDATE_RESET, {group: group})

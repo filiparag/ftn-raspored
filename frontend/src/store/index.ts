@@ -29,7 +29,7 @@ export interface ApplicationState {
 
 export const initialState: ApplicationState = {
   menu: {
-    page: PageName.FILTERS
+    page: PageName.TIMETABLE
   },
   timetable: [] as TimetableList,
   loader: 0,

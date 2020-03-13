@@ -26,12 +26,12 @@ export const encodeFilter = (f: FilterEntry): string => {
     return ''
 }
 
-export const decodeFilter = (str: string): any => {
+export const decodeFilter = (str: string): FilterEntry => {
   const dstr = decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
     return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
   }).join(""))
   const arr = JSON.parse(dstr)
-  const f = {
+  return {
     studyPrograms: arr[0],
     studyGroups: arr[1],
     semesters: arr[2],
@@ -44,7 +44,6 @@ export const decodeFilter = (str: string): any => {
     timeStart: arr[9],
     timeEnd: arr[10]
   } as FilterEntry
-  return JSON.stringify(f)
 }
 
 const copyToClipboard = (str: string) => {
@@ -68,8 +67,7 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
     (state: ApplicationState) => state.filter.length
   )
 
-  const shareURL = `${window.location.origin}/#/filter/${encodeFilter(entry)}`
-  console.log(shareURL)
+  const shareURL = `${window.location.origin}/#filter=${encodeFilter(entry)}`
 
   return (
     <Segment color='grey' padded raised>

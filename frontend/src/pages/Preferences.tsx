@@ -30,7 +30,7 @@ export const Preferences: React.FC<PreferencesProps> = () => {
           <List.Item>
             <List.Content floated='right'>
               <Label horizontal color='blue'>
-                {[0,1,3].join('.')}
+                {[0,1,4].join('.')}
                 {process.env.NODE_ENV === 'development' ?
                   <Label.Detail>devel</Label.Detail>
                 : null}

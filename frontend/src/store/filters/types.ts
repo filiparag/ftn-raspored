@@ -58,6 +58,7 @@ export interface FilterEntry {
 
 export interface NewFilter extends FilterEntry {
   existingID?: number,
+  shared?: boolean,
   visible: boolean
 }
 
@@ -65,6 +66,7 @@ export enum NewFilterAction {
   SHOW = 'FILTER_NEW_SHOW',
   CLOSE = 'FILTER_NEW_CLOSE',
   ADD = 'FILTER_NEW_ADD',
+  ADD_SHARED = 'FILTER_SHARED_ADD',
   UPDATE_ADD = 'FILTER_NEW_UPDATE_ADD',
   UPDATE_RESET = 'FILTER_NEW_UPDATE_RESET'
 }
