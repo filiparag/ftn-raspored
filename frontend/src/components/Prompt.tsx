@@ -1,7 +1,7 @@
 import React from 'react'
 import { ApplicationState } from '../store'
-import { connect, useSelector, useDispatch } from 'react-redux'
-import { Loader as Loading, Dimmer, Modal, Header, Button } from 'semantic-ui-react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Modal, Button } from 'semantic-ui-react'
 import '../style/Loader.css'
 import { hidePrompt } from '../store/prompt/actions'
 import { randomKey } from '../App'
@@ -30,7 +30,8 @@ export const Prompt: React.FC<PromptProps> = () => {
           onClick={() => {
             if (a.action !== null)
               a.action()
-            dispatch(hidePrompt())
+            if (a.autohide !== false)
+              dispatch(hidePrompt())
           }}
         />
       )
@@ -40,7 +41,7 @@ export const Prompt: React.FC<PromptProps> = () => {
 
     return (
       <div className='Prompt'>
-        <Modal open={true}>
+        <Modal open={true} size={prompt.size}>
           <Modal.Header>{prompt.header}</Modal.Header>
           {prompt.body !== null ?
             <Modal.Content>

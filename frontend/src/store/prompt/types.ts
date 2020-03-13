@@ -1,4 +1,4 @@
-import { SemanticICONS, SemanticCOLORS } from "semantic-ui-react/dist/commonjs/generic";
+import { SemanticICONS, SemanticCOLORS } from "semantic-ui-react"
 import { ReactElement } from "react";
 
 export enum PromptAction {
@@ -9,13 +9,15 @@ export enum PromptAction {
 export interface PromptButton {
   name: string,
   action: Function | null,
+  autohide?: boolean,
   icon?: SemanticICONS,
-  color?: SemanticCOLORS
+  color?: SemanticCOLORS,
 }
 
 export interface PromptObject {
   header: string,
   body: ReactElement | null,
+  size: 'mini' | 'tiny' | 'small' | 'large' | 'fullscreen',
   actions: Array<PromptButton>
 }
 

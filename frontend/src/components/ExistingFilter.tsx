@@ -1,18 +1,59 @@
 import React from 'react'
 import ReactGA from 'react-ga';
-import { Segment, Header, Grid, Label, Icon, Popup } from 'semantic-ui-react'
+import { Segment, Header, Grid, Icon, Popup, Input } from 'semantic-ui-react'
 import { FilterEntry } from '../store/filters/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
-import { ApplicationState } from '../store';
+import { ApplicationState } from '../store'
 import { showPrompt } from '../store/prompt/actions'
-import { PromptObject, PromptButton } from '../store/prompt/types'
-import { cleanTimetable } from '../store/timetable/actions';
+import { cleanTimetable } from '../store/timetable/actions'
+import QRCode from 'qrcode.react'
 
 export interface ExistingFilterProps {
   id: number,
   entry: FilterEntry
+}
+
+export const encodeFilter = (f: FilterEntry): string => {
+  const str = JSON.stringify(Object.values(f).slice(0, 11))
+  const enc = btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode(("0x" + p1) as any);
+  }))
+  if (enc !== undefined)
+    return enc
+  else
+    return ''
+}
+
+export const decodeFilter = (str: string): any => {
+  const dstr = decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
+    return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(""))
+  const arr = JSON.parse(dstr)
+  const f = {
+    studyPrograms: arr[0],
+    studyGroups: arr[1],
+    semesters: arr[2],
+    subjects: arr[3],
+    groups: arr[4],
+    types: arr[5],
+    lecturers: arr[6],
+    classrooms: arr[7],
+    days: arr[8],
+    timeStart: arr[9],
+    timeEnd: arr[10]
+  } as FilterEntry
+  return JSON.stringify(f)
+}
+
+const copyToClipboard = (str: string) => {
+  const el = document.createElement('textarea')
+  el.value = str
+  document.body.appendChild(el)
+  el.select()
+  document.execCommand('copy')
+  document.body.removeChild(el)
 }
 
 const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
@@ -22,6 +63,8 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
   const telemetry = useSelector(
     (state: ApplicationState) => state.preferences.telemetry
   )
+
+  const shareURL = window.location.href + encodeFilter(entry)
 
   return (
     <Segment color='grey' padded raised>
@@ -47,18 +90,32 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
               color='teal'
               name='share alternate'
               onClick={() => dispatch(showPrompt({
-                header: `Podeli filter ${id + 1}`,
-                body: <code>{JSON.stringify(entry)}</code>,
+                header: `Podeli filter`,
+                body: (
+                  <div style={{textAlign: 'center'}}>
+                    <QRCode
+                      renderAs='svg'
+                      size={256}
+                      includeMargin={false}
+                      level='M'
+                      value={shareURL}
+                    />
+                  </div>
+                ),
+                size: 'mini',
                 actions: [
                   {
                     name: 'Nazad',
                     action: null
                   },
                   {
-                    name: 'Kopiraj',
+                    name: 'Kopiraj link',
                     color: 'blue',
                     icon: 'copy outline',
-                    action: () => {}
+                    action: () => copyToClipboard(
+                      window.location.href + encodeFilter(entry)
+                    ),
+                    autohide: false
                   }
                 ]
               }))}
@@ -74,6 +131,7 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
               onClick={() => dispatch(showPrompt({
                 header: `Obriši filter ${id + 1}?`,
                 body: null,
+                size: 'mini',
                 actions: [
                   {
                     name: 'Nazad',
