@@ -4,7 +4,7 @@ import { ApplicationState } from '../../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
 import { timeString } from '../TimetableEntry'
-import { closeNewFilter, addNewFilter, updateAddNewFilter, updateSaveExistingFilter } from '../../store/filters/actions'
+import { closeNewFilter, addNewFilter, updateSaveExistingFilter } from '../../store/filters/actions'
 import { DropdownEntry, UIState } from './data'
 import { ddDays, uiUpdate } from './methods';
 
@@ -61,7 +61,10 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 			uiUpdate(newFilter, uiState, filters, 'gr', newFilter.groups)
 			uiUpdate(newFilter, uiState, filters, 'le', newFilter.lecturers)
 			uiUpdate(newFilter, uiState, filters, 'cl', newFilter.classrooms)
-			uiUpdate(newFilter, uiState, filters, 'da', newFilter.days)
+      uiUpdate(newFilter, uiState, filters, 'da', newFilter.days)
+      uiUpdate(newFilter, uiState, filters, 'ts', ['set', newFilter.timeStart])
+      uiUpdate(newFilter, uiState, filters, 'te', ['set', newFilter.timeEnd])
+      
     }
   }, [dispatch, telemetry, fromExisting])
 
@@ -222,7 +225,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             <Button
 							icon='left chevron'
               disabled={newFilter.semesters.length === 0}
-              onClick={() => dispatch(updateAddNewFilter('ts', 'sub'))}
+              onClick={() => uiUpdate(newFilter, uiState, filters, 'ts', ['sub'])}
             />
             <Button
 							basic={newFilter.timeStart + 0.5 <= newFilter.timeEnd}
@@ -234,7 +237,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 							icon='right chevron'
 							basic={newFilter.timeEnd <= newFilter.timeStart + 0.5}
               disabled={newFilter.semesters.length === 0}
-              onClick={() => dispatch(updateAddNewFilter('ts', 'add'))}
+              onClick={() => uiUpdate(newFilter, uiState, filters, 'ts', ['add'])}
             />
           </Button.Group>
         </Grid.Column>
@@ -244,7 +247,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 							icon='left chevron'
 							basic={newFilter.timeEnd <= newFilter.timeStart + 0.5}
               disabled={newFilter.semesters.length === 0}
-              onClick={() => dispatch(updateAddNewFilter('te', 'sub'))}
+              onClick={() => uiUpdate(newFilter, uiState, filters, 'te', ['sub'])}
 							/>
             <Button
               basic={newFilter.timeEnd >= newFilter.timeStart + 0.5}
@@ -255,7 +258,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
             <Button
               icon='right chevron'
               disabled={newFilter.semesters.length === 0}
-              onClick={() => dispatch(updateAddNewFilter('te', 'add'))}
+              onClick={() => uiUpdate(newFilter, uiState, filters, 'te', ['add'])}
             />
           </Button.Group>
         </Grid.Column>

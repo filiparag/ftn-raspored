@@ -85,6 +85,16 @@ export const uiUpdate = (
     values: [] as Array<number>,
     string: ''
   }
+  const tsPld: DispatchUIPayload = {
+    section: 'ts',
+    values: [] as Array<number>,
+    string: ''
+  }
+  const tePld: DispatchUIPayload = {
+    section: 'te',
+    values: [] as Array<number>,
+    string: ''
+  }
   const spArray = [] as DropdownEntry[]
   const sgArray = [] as DropdownEntry[]
   const smArray = [] as DropdownEntry[]
@@ -227,13 +237,25 @@ export const uiUpdate = (
         }
       }
     }
-  } else if (continueNesting(section, 'da')) {
+  } else if (section === 'da') {
     values.forEach((day: number) => {
       daPld.values.push(day)
       daPld.string += `${daPld.string.length === 0 ?
         '' : ', '}${dayStrings[
         uiState.get.days.findIndex(el => el.value === day)]}`
     })
+  } else if (section === 'ts') {
+    if (tsPld.values.length === 2 && tsPld.values[0] === 'set') {
+      tsPld.string = 'set'
+      tsPld.values = [tsPld.values[1]]
+    } else
+      tsPld.string = values.join('')
+  } else if (section === 'te') {
+    if (tePld.values.length === 2 && tePld.values[0] === 'set') {
+      tePld.string = 'set'
+      tePld.values = [tePld.values[1]]
+    } else
+      tePld.string = values.join('')
   }
   
   switch (section) {
@@ -286,6 +308,14 @@ export const uiUpdate = (
     }
     case 'da': {
       payloads.push(daPld)
+      break
+    }
+    case 'ts': {
+      payloads.push(tsPld)
+      break
+    }
+    case 'te': {
+      payloads.push(tePld)
       break
     }
   }

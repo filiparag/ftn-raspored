@@ -32,7 +32,8 @@ export interface UIState {
 	dispatch: Dispatch<any>
 }
 
-export type Section = '/' | 'sp' | 'sg' | 'sm' | 'su' | 'ty' | 'gr' | 'le' | 'cl' | 'da'
+export type Section = '/' | 'sp' | 'sg' | 'sm' | 'su' | 'ty' | 
+											'gr' | 'le' | 'cl' | 'da' | 'ts' | 'te'
 
 export interface DispatchUIPayload {
 	section: Section

@@ -17,6 +17,7 @@ export interface ExistingFilterProps {
 
 export const encodeFilter = (f: FilterEntry): string => {
   const str = JSON.stringify(Object.values(f).slice(0, 11))
+  console.log(str)
   const enc = btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
     return String.fromCharCode(("0x" + p1) as any);
   }))

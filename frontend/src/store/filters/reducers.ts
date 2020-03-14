@@ -371,6 +371,33 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
             daString: action.payload.p.string
           }
         }
+        case 'ts': {
+          const delta = (action.payload.p.string === 'add') ? 0.5 : 
+                        (action.payload.p.string === 'sub') ? -0.5 : 0
+          let time = ((state.timeStart + delta % 24) + 24) % 24
+          if (action.payload.p.string === 'set' &&
+              action.payload.p.values.length === 1)
+            time = action.payload.p.values[0]
+          return {
+            ...state,
+            timeStart: time,
+            tsString: timeString(time)
+          }
+        }
+        case 'te': {
+          const delta = (action.payload.p.string === 'add') ? 0.5 : 
+                        (action.payload.p.string === 'sub') ? -0.5 : 0
+          let time = (state.timeEnd + delta - 0.5) % 24 + 0.5
+          time = time < 0.5 ? 24 : time
+          if (action.payload.p.string === 'set' &&
+              action.payload.p.values.length === 1)
+            time = action.payload.p.values[0]
+          return {
+            ...state,
+            timeEnd: time,
+            teString: timeString(time)
+          }
+        }
         default: {
           return state
         }
