@@ -1,7 +1,6 @@
 import fetch from 'cross-fetch'
 import { action } from 'typesafe-actions'
 import { TimetableAction, TimetableList } from './types'
-import { hideLoader, showLoader } from '../loader/actions'
 import { Dispatch } from 'react'
 import { FilterEntry } from '../filters/types'
 import { apiURL } from '..'
@@ -12,14 +11,11 @@ export const cleanTimetable = () => action(TimetableAction.CLEAN)
 
 export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEntry[]) => {
 
-  dispatch(showLoader())
-
   if (filters.length === 0) {
     updateTimetable([])
-    dispatch(hideLoader())
     return
   }
-
+  
   let entries = [] as TimetableList
 
   for (const filter of filters) {
@@ -55,12 +51,11 @@ export const fetchTimetable = async (dispatch: Dispatch<any>, filters: FilterEnt
 
     const response = await fetch(`${apiURL()}casovi?${query.join('&')}`)
     const json: TimetableList = await response.json()
-  
+
     entries = entries.concat(json)
 
   }
   
   dispatch(updateTimetable(entries))
-  dispatch(hideLoader())
 
 }

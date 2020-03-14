@@ -106,7 +106,6 @@ const App: React.FC<AppProps> = ({ store }) => {
 
   return (
     <>
-      {/* <Updater /> */}
       <Loader />
       <Prompt />
       <div className='Page'>

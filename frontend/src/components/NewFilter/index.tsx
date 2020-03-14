@@ -3,12 +3,10 @@ import ReactGA from 'react-ga';
 import { ApplicationState } from '../../store'
 import { useSelector, useDispatch } from 'react-redux'
 import { Header, Dropdown, Divider, Button, Segment, Grid, Label } from 'semantic-ui-react'
-import { typeName, timeString } from '../TimetableEntry'
-import { closeNewFilter, addNewFilter, updateResetNewFilter, updateAddNewFilter, fetchFilters, updateSaveExistingFilter } from '../../store/filters/actions'
-import { timeString as compactTimeString } from '../TimetableEntry'
-import { DropdownEntry, dayStrings } from './data'
-import { abbrevateName, naturalSortEntries, dropdownObject } from './functions';
-import { ddStudyPrograms, ddDays } from './methods';
+import { timeString } from '../TimetableEntry'
+import { closeNewFilter, addNewFilter, updateAddNewFilter, updateSaveExistingFilter } from '../../store/filters/actions'
+import { DropdownEntry, UIState } from './data'
+import { ddDays, uiUpdate } from './methods';
 
 type NewFilterProps = {}
 
@@ -30,7 +28,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
 	
 	const fromExisting = newFilter.existingID !== undefined
 
-  const [studyPrograms] = useState(ddStudyPrograms(filters))
+  const [studyPrograms, spSet] = useState([] as DropdownEntry[])
   const [studyGroups, sgSet] = useState([] as DropdownEntry[])
   const [semesters, smSet] = useState([] as DropdownEntry[])
   const [subjects, suSet] = useState([] as DropdownEntry[])
@@ -38,265 +36,34 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const [types, tySet] = useState([] as DropdownEntry[])
   const [lecturers, leSet] = useState([] as DropdownEntry[])
   const [classrooms, clSet] = useState([] as DropdownEntry[])
-	const [days] = useState(ddDays())
-	
+  const [days, daSet] = useState(ddDays())
+  
+  const uiState: UIState = {
+    get: {
+      studyPrograms, studyGroups, semesters, subjects, groups, types, lecturers, classrooms, days
+    },
+    set: {
+      spSet, sgSet, smSet, suSet, grSet, tySet, leSet, clSet, daSet
+    },
+    dispatch
+  }
+
   useEffect(() => {
-		fetchFilters(dispatch)
     if (telemetry)
       ReactGA.pageview("/filters/new")
+    uiUpdate(newFilter, uiState, filters, '/')
 		if (fromExisting || newFilter.shared) {
-			updateSelection('sp', newFilter.studyPrograms)
-			updateSelection('sg', newFilter.studyGroups)
-			updateSelection('sm', newFilter.semesters)
-			updateSelection('su', newFilter.subjects)
-			updateSelection('ty', newFilter.types)
-			updateSelection('gr', newFilter.groups)
-			updateSelection('le', newFilter.lecturers)
-			updateSelection('cl', newFilter.classrooms)
-			updateSelection('da', newFilter.days)
+      uiUpdate(newFilter, uiState, filters, 'sp', newFilter.studyPrograms)
+      uiUpdate(newFilter, uiState, filters, 'sg', newFilter.studyGroups)
+			uiUpdate(newFilter, uiState, filters, 'sm', newFilter.semesters)
+			uiUpdate(newFilter, uiState, filters, 'su', newFilter.subjects)
+			uiUpdate(newFilter, uiState, filters, 'ty', newFilter.types)
+			uiUpdate(newFilter, uiState, filters, 'gr', newFilter.groups)
+			uiUpdate(newFilter, uiState, filters, 'le', newFilter.lecturers)
+			uiUpdate(newFilter, uiState, filters, 'cl', newFilter.classrooms)
+			uiUpdate(newFilter, uiState, filters, 'da', newFilter.days)
     }
   }, [dispatch, telemetry, fromExisting])
-
-  const updateSelection = (group: string, value: any) => {
-    const dispatchPayload = {
-      group: '',
-      values: [] as number[],
-      string: ''
-    }
-    switch (group) {
-      case 'sp': {
-        dispatchPayload.group='sp'
-        const sgArray = [] as DropdownEntry[]
-        for (const sp of filters) {
-          if (value.includes(sp.id)) {
-            dispatchPayload.values.push(sp.id)
-            dispatchPayload.string += `${dispatchPayload.string.length === 0
-                                       ? '' : ', '}${sp.name}`
-            for (const sg of sp.studyGroups) {
-              const name = sg.name === 'SVI' ? sp.name : 
-                           `${sg.name} (${abbrevateName(sp.name)})`
-              sgArray.push(dropdownObject(name, sg.id))
-            }
-          }
-        }
-        sgSet(naturalSortEntries(sgArray))
-        break
-      }
-      case 'sg': {
-        dispatchPayload.group='sg'
-        const smArray = [] as DropdownEntry[]
-        for (const sp of filters) {
-          if (newFilter.studyPrograms.includes(sp.id)) {
-            for (const sg of sp.studyGroups) {
-              if (value.includes(sg.id)) {
-                dispatchPayload.values.push(sg.id)
-                dispatchPayload.string += `${dispatchPayload.string.length === 0
-                                           ? '' : ', '}${sg.name === 'SVI'
-                                           ? sp.name : sg.name + ' (' 
-                                           + abbrevateName(sp.name) + ')'}`
-                for (const sm of sg.semesters) {
-                  const name = `${sm.name} semestar (${sg.name === 'SVI' ? 
-                                abbrevateName(sp.name) : abbrevateName(sp.name)
-                                + ' ' + abbrevateName(sg.name)})`
-                  smArray.push(dropdownObject(name, sm.id))
-                }
-              }
-            }
-          }
-        }
-        smSet(naturalSortEntries(smArray))
-        break
-      }
-      case 'sm': {
-        dispatchPayload.group='sm'
-        const suArray = [] as DropdownEntry[]
-        const grArray = [] as DropdownEntry[]
-        const tyArray = [] as DropdownEntry[]
-        const cachedGroups = [] as string[]
-        const cachedTypes = [] as number[]
-        for (const sp of filters) {
-          if (newFilter.studyPrograms.includes(sp.id)) {
-            for (const sg of sp.studyGroups) {
-              if (newFilter.studyGroups.includes(sg.id)) {
-                for (const sm of sg.semesters) {
-                  if (value.includes(sm.id)) {
-                    dispatchPayload.values.push(sm.id)
-                    dispatchPayload.string += `${dispatchPayload.string.length === 0
-                                               ? '' : ', '}${sm.name} semestar (${
-                                               sg.name === 'SVI'
-                                               ? abbrevateName(sp.name)
-                                               : abbrevateName(sp.name) + ' '
-                                               + abbrevateName(sg.name)})`
-                    for (const su of sm.subjects) {
-                      const name = `${su.name} (${sg.name === 'SVI' ? 
-                                    abbrevateName(sp.name) : abbrevateName(sp.name)
-                                    + ' ' + abbrevateName(sg.name)})`
-                      suArray.push(dropdownObject(name, su.id))
-                      for (const gr of su.groups) {
-                        if (!cachedGroups.includes(gr)) {
-                          cachedGroups.push(gr)
-                          grArray.push(dropdownObject(gr, gr))
-                        }
-                      }
-                      for (const ty of su.types) {
-                        if (!cachedTypes.includes(ty.id)) {
-                          cachedTypes.push(ty.id)
-                          tyArray.push(dropdownObject(typeName(ty.name), ty.id))
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        suSet(naturalSortEntries(suArray))
-        grSet(naturalSortEntries(grArray))
-        tySet(naturalSortEntries(tyArray))
-        break
-      }
-      case 'su': {
-        dispatchPayload.group='su'
-        const grArray = [] as DropdownEntry[]
-        const tyArray = [] as DropdownEntry[]
-        const leArray = [] as DropdownEntry[]
-        const clArray = [] as DropdownEntry[]
-        const cachedGroups = [] as string[]
-        const cachedTypes = [] as number[]
-        const cachedLecturers = [] as string[]
-        const cachedClassrooms = [] as string[]
-        for (const sp of filters) {
-          if (newFilter.studyPrograms.includes(sp.id)) {
-            for (const sg of sp.studyGroups) {
-              if (newFilter.studyGroups.includes(sg.id)) {
-                for (const sm of sg.semesters) {
-                  if (newFilter.semesters.includes(sm.id)) {
-                    for (const su of sm.subjects) {
-                      if (value.includes(su.id)) {
-                        dispatchPayload.values.push(su.id)
-                        dispatchPayload.string += `${dispatchPayload.string.length === 0
-                                                   ? '' : ', '}${su.name} (${
-                                                   sg.name === 'SVI'
-                                                   ? abbrevateName(sp.name)
-                                                   : abbrevateName(sp.name) + ' '
-                                                   + abbrevateName(sg.name)})`
-                      }
-                      if (value.length === 0 || value.includes(su.id)) {
-                        for (const gr of su.groups) {
-                          if (!cachedGroups.includes(gr)) {
-                            cachedGroups.push(gr)
-                            grArray.push(dropdownObject(gr, gr))
-                          }
-                        }
-                        for (const ty of su.types) {
-                          if (!cachedTypes.includes(ty.id)) {
-                            cachedTypes.push(ty.id)
-                            tyArray.push(dropdownObject(typeName(ty.name), ty.id))
-                          }
-                        }
-                        for (const le of su.lecturers) {
-                          if (!cachedLecturers.includes(le)) {
-                            cachedLecturers.push(le)
-                            leArray.push(dropdownObject(le, le))
-                          }
-                        }
-                        for (const cl of su.classrooms) {
-                          if (!cachedClassrooms.includes(cl)) {
-                            cachedClassrooms.push(cl)
-                            clArray.push(dropdownObject(cl, cl))
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        dispatch(updateResetNewFilter('gr'))
-        dispatch(updateResetNewFilter('ty'))
-        dispatch(updateResetNewFilter('le'))
-				dispatch(updateResetNewFilter('cl'))
-        grSet(naturalSortEntries(grArray))
-				tySet(naturalSortEntries(tyArray))
-        leSet(naturalSortEntries(leArray))
-        clSet(naturalSortEntries(clArray))
-        break
-      }
-      case 'gr': {
-        dispatchPayload.group='gr'
-        dispatchPayload.values = value
-        value.forEach((v: string) => {
-          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
-                                     '' : ', '}${v}`
-        });
-        break
-      }
-      case 'ty': {
-        dispatchPayload.group='ty'
-				dispatchPayload.values = value
-				for (const sp of filters) {
-          if (newFilter.studyPrograms.includes(sp.id)) {
-            for (const sg of sp.studyGroups) {
-              if (newFilter.studyGroups.includes(sg.id)) {
-                for (const sm of sg.semesters) {
-                  if (newFilter.semesters.includes(sm.id)) {
-                    for (const su of sm.subjects) {
-                      if (newFilter.subjects.includes(su.id)) {
-												for (const ty of su.types) {
-													if (value.includes(ty.id)) {
-														dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
-																											 '' : ', '}${typeName(ty.name)}`
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-        break
-      }
-      case 'le': {
-        dispatchPayload.group='le'
-        dispatchPayload.values = value
-        value.forEach((v: string) => {
-          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
-                                     '' : ', '}${v}`
-        });
-        break
-      }
-      case 'cl': {
-        dispatchPayload.group='cl'
-        dispatchPayload.values = value
-        value.forEach((v: string) => {
-          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
-                                     '' : ', '}${v}`
-        });
-        break
-      }
-      case 'da': {
-        dispatchPayload.group='da'
-        dispatchPayload.values = value
-        value.forEach((v: number) => {
-          dispatchPayload.string += `${dispatchPayload.string.length === 0 ?
-                                     '' : ', '}${dayStrings[
-                                     days.findIndex(el => el.value === v)]}`
-        });
-        break
-      }
-    }
-    dispatch(updateResetNewFilter(dispatchPayload.group))
-    dispatch(updateAddNewFilter(dispatchPayload.group, {
-      id: dispatchPayload.values, string: dispatchPayload.string
-    }))
-    dispatch(updateAddNewFilter('ts', compactTimeString(newFilter.timeStart)))
-    dispatch(updateAddNewFilter('te', compactTimeString(newFilter.timeEnd)))
-  }
 
   return (
     <Segment color={fromExisting ? 'blue' : 'green'} padded raised>
@@ -314,7 +81,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           selection
           search
           options={studyPrograms}
-					onChange={(e, {value}) => updateSelection('sp', value)}
+          onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'sp', value)}
 					value={newFilter.studyPrograms}
       />
       <Header
@@ -333,7 +100,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           selection
           search
           options={studyGroups}
-					onChange={(e, {value}) => updateSelection('sg', value)}
+          onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'sg', value)}
 					defaultValue={newFilter.studyGroups}
       />
       <Header
@@ -351,7 +118,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
           multiple
           selection
           options={semesters}
-					onChange={(e, {value}) => updateSelection('sm', value)}
+          onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'sm', value)}
 					value={newFilter.semesters}
       />
       <Header
@@ -362,13 +129,14 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       <Dropdown
         placeholder='Predmet'
         disabled={newFilter.semesters.length === 0 || 
-                  newFilter.types.length > 0 || newFilter.groups.length > 0}
+                  newFilter.types.length > 0 || newFilter.groups.length > 0 ||
+                  newFilter.lecturers.length > 0 || newFilter.classrooms.length > 0}
         fluid
         multiple
         selection
         search
         options={subjects}
-				onChange={(e, {value}) => updateSelection('su', value)}
+        onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'su', value)}
 				value={newFilter.subjects}
       />
       <Header
@@ -382,7 +150,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         multiple
         selection
         options={types}
-				onChange={(e, {value}) => updateSelection('ty', value)}
+        onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'ty', value)}
 				value={newFilter.types}
       />
       <Header
@@ -397,37 +165,37 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         selection
         search
         options={groups}
-				onChange={(e, {value}) => updateSelection('gr', value)}
+        onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'gr', value)}
 				value={newFilter.groups}
       />
       <Header
         size='medium'
-        color={newFilter.subjects.length === 0 ? 'grey' : 'black'}
+        color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
       >Izvođač nastave</Header>
       <Dropdown
         placeholder='Izvođač nastave'
-        disabled={newFilter.subjects.length === 0}
+        disabled={newFilter.semesters.length === 0}
         fluid
         multiple
         selection
         search
         options={lecturers}
-				onChange={(e, {value}) => updateSelection('le', value)}
+        onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'le', value)}
 				value={newFilter.lecturers}
       />
       <Header
         size='medium'
-        color={newFilter.subjects.length === 0 ? 'grey' : 'black'}
+        color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
       >Učionica</Header>
       <Dropdown
         placeholder='Učionica'
-        disabled={newFilter.subjects.length === 0}
+        disabled={newFilter.semesters.length === 0}
         fluid
         multiple
         selection
         search
         options={classrooms}
-				onChange={(e, {value}) => updateSelection('cl', value)}
+        onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'cl', value)}
 				value={newFilter.classrooms}
       />
       <Header
@@ -441,7 +209,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         multiple
         selection
         options={days}
-				onChange={(e, {value}) => updateSelection('da', value)}
+        onChange={(e, {value}) => uiUpdate(newFilter, uiState, filters, 'da', value)}
 				value={newFilter.days}
       />
       <Header

@@ -15,7 +15,6 @@ import { PromptState } from './prompt/types';
 import { PreferencesState } from './preferences/types';
 import { Filter, NewFilter, FilterEntry } from './filters/types';
 import { TimetableList } from './timetable/types';
-import { fetchFilters } from './filters/actions';
 
 export interface ApplicationState {
   menu: MenuState,
@@ -145,8 +144,6 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
   )
 
   const persistor = persistStore(store)
-
-  fetchFilters(store.dispatch)
 
   return { store, persistor }
 

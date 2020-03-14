@@ -1,8 +1,8 @@
 import { action } from 'typesafe-actions'
 import { FilterAction, Filter, NewFilterAction, FilterEntry } from './types'
 import { Dispatch } from 'redux'
-import { showLoader, hideLoader } from '../loader/actions'
 import { apiURL } from '..'
+import { Section, DispatchUIPayload } from '../../components/NewFilter/data'
 
 export const updateFilters = (filters: Filter) => action(FilterAction.UPDATE, filters)
 
@@ -22,11 +22,13 @@ export const updateResetNewFilter = (group?: string, value?: any) => action(NewF
 
 export const updateAddNewFilter = (group?: string, value?: any) => action(NewFilterAction.UPDATE_ADD, {group: group, value: value})
 
+export const updateNewFilter = (section: Section, p: DispatchUIPayload) => action(NewFilterAction.UPDATE, {section, p})
+
 export const addNewFilter = (filter: FilterEntry) => action(NewFilterAction.ADD, filter)
 
 export const fetchFilters = (dispatch: Dispatch) => {
-  dispatch(showLoader())
+  // dispatch(showLoader())
   fetch(`${apiURL()}filter/tree`)
     .then(response => response.json())
-    .then(json => dispatch(updateFilters(json))).finally(() => dispatch(hideLoader()))
+    .then(json => dispatch(updateFilters(json))) //.finally(() => dispatch(hideLoader()))
 }

@@ -26,7 +26,8 @@ export const Filters: React.FC<FiltersProps> = () => {
   useEffect(() => {
     if (telemetry)
       ReactGA.pageview("/filters")
-    fetchFilters(dispatch)
+    if (filters.length === 0)
+      fetchFilters(dispatch)
   }, [dispatch, telemetry])
 
   const newFilterVisible = useSelector(

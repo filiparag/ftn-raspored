@@ -8,7 +8,7 @@ import '../style/Timetable.css'
 import { randomKey } from '../App'
 import { viewPage } from '../store/menu/actions'
 import { PageName } from '../store/menu/types'
-import { showNewFilter } from '../store/filters/actions'
+import { showNewFilter, fetchFilters } from '../store/filters/actions'
 import { fetchTimetable } from '../store/timetable/actions'
 
 type TimetableProps = {}
@@ -34,6 +34,10 @@ export const Timetable: React.FC<TimetableProps> = () => {
     (state: ApplicationState) => state.existingFilters
   )
 
+  const filters_length = useSelector(
+    (state: ApplicationState) => state.filter.length
+  )
+
   const telemetry = useSelector(
     (state: ApplicationState) => state.preferences.telemetry
   )
@@ -50,6 +54,8 @@ export const Timetable: React.FC<TimetableProps> = () => {
     if (telemetry)
       ReactGA.pageview("/timetable")
     fetchTimetable(dispatch, existingFilters)
+    if (filters_length === 0)
+      fetchFilters(dispatch)
   }, [existingFilters, dispatch, telemetry])
 
   useLayoutEffect(() => {
@@ -98,17 +104,19 @@ export const Timetable: React.FC<TimetableProps> = () => {
         Kako bi se u rasporedu prikazivali časovi, potrebno je dodati
         barem jedan filter.
       </p>
-      <Button
-        fluid
-        basic
-        color='brown'
-        onClick={() => {
-          dispatch(viewPage(PageName.FILTERS))
-          dispatch(showNewFilter())}
-        }
-      >
-        Dodaj filter
-      </Button>
+      { filters_length > 0 ?
+        <Button
+          fluid
+          basic
+          color='brown'
+          onClick={() => {
+            dispatch(viewPage(PageName.FILTERS))
+            dispatch(showNewFilter())}
+          }
+        >
+          Dodaj filter
+        </Button>
+      : null}
     </Message>
   )
 

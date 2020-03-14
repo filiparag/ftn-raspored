@@ -306,6 +306,76 @@ export const newFilterReducer: Reducer<NewFilter> = (state: NewFilter = initialS
         }
       }
     }
+    case NewFilterAction.UPDATE: {
+      switch (action.payload.section) {
+        case 'sp': {
+          return {
+            ...state,
+            studyPrograms: [...action.payload.p.values],
+            spString: action.payload.p.string
+          }
+        }
+        case 'sg': {
+          return {
+            ...state,
+            studyGroups: [...action.payload.p.values],
+            sgString: action.payload.p.string
+          }
+        }
+        case 'sm': {
+          return {
+            ...state,
+            semesters: [...action.payload.p.values],
+            smString: action.payload.p.string
+          }
+        }
+        case 'su': {
+          return {
+            ...state,
+            subjects: [...action.payload.p.values],
+            suString: action.payload.p.string
+          }
+        }
+        case 'gr': {
+          return {
+            ...state,
+            groups: [...action.payload.p.values],
+            grString: action.payload.p.string
+          }
+        }
+        case 'ty': {
+          return {
+            ...state,
+            types: [...action.payload.p.values],
+            tyString: action.payload.p.string
+          }
+        }
+        case 'le': {
+          return {
+            ...state,
+            lecturers: [...action.payload.p.values],
+            leString: action.payload.p.string
+          }
+        }
+        case 'cl': {
+          return {
+            ...state,
+            classrooms: [...action.payload.p.values],
+            clString: action.payload.p.string
+          }
+        }
+        case 'da': {
+          return {
+            ...state,
+            days: [...action.payload.p.values],
+            daString: action.payload.p.string
+          }
+        }
+        default: {
+          return state
+        }
+      }
+    }
     default: {
       return state
     }
