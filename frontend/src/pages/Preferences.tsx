@@ -9,7 +9,6 @@ interface PreferencesProps {}
 
 export const Preferences: React.FC<PreferencesProps> = () => {
 
-  
   const dispatch = useDispatch()
   
   const preferences = useSelector(
@@ -30,7 +29,7 @@ export const Preferences: React.FC<PreferencesProps> = () => {
           <List.Item>
             <List.Content floated='right'>
               <Label horizontal color='blue'>
-                {[0,1,4].join('.')}
+                {preferences.version.join('.')}
                 {process.env.NODE_ENV === 'development' ?
                   <Label.Detail>devel</Label.Detail>
                 : null}

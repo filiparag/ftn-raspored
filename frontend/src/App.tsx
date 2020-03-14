@@ -64,13 +64,22 @@ const App: React.FC<AppProps> = ({ store }) => {
                     name: 'Odbaci',
                     color: 'red',
                     icon: 'trash alternate',
-                    action: null
+                    action: () => {
+                      ReactGA.event({
+                        category: 'Filters',
+                        action: 'Reject shared filter'
+                      })
+                    }
                   },
                   {
                     name: 'Dodaj',
                     color: 'green',
                     icon: 'add',
                     action: () => {
+                      ReactGA.event({
+                        category: 'Filters',
+                        action: 'Add shared filter'
+                      })
                       dispatch(
                         viewPage(PageName.FILTERS)
                       )
@@ -90,15 +99,14 @@ const App: React.FC<AppProps> = ({ store }) => {
   }
 
   useEffect(() => {
-    if (telemetry) {
-      ReactGA.initialize('UA-159492774-1')
+    if (telemetry)
       ReactGA.pageview("/")
-    }
     pareseURL(window.location.hash)
   }, [telemetry])
 
   return (
     <>
+      {/* <Updater /> */}
       <Loader />
       <Prompt />
       <div className='Page'>

@@ -1,0 +1,53 @@
+.Updater {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: #2185d0;
+  color: #ffffff;
+  position: fixed;
+  z-index: 970;
+}
+
+.Header {
+  position: absolute;
+  top: 40%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+  float: middle;
+}
+
+.DotsArray {
+  position: absolute;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 6.6rem;
+  height: 1.2rem;
+  background-color: transparent;
+}
+
+.Dot {
+  float: left;
+  position: relative;
+  height: 1.2rem;
+  width: 1.2rem;
+  border-radius: 100%;
+  background-color: #ffffff;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.Dot.dark {
+  background-color: #06518B !important;
+}
+
+body {
+  cursor: progress;
+  overflow: hidden !important;
+}

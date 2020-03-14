@@ -1,13 +1,14 @@
 import { createStore, combineReducers, applyMiddleware, compose, Store, StoreEnhancer } from 'redux';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2'
 import thunkMiddleware from 'redux-thunk'
-import { persistStore, persistReducer, Persistor, PersistConfig } from 'redux-persist'
+import { persistStore, persistReducer, Persistor, PersistConfig, createMigrate } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import menuReducer from './menu/reducers'
 import timetableReducer from './timetable/reducers'
 import loaderReducer from './loader/reducers'
 import promptReducer from './prompt/reducers'
 import preferencesReducer from './preferences/reducers'
+import migrations from './migrations'
 import { filterReducer, newFilterReducer, existingFiltersReducer } from './filters/reducers'
 import { MenuState, PageName } from './menu/types';
 import { PromptState } from './prompt/types';
@@ -63,7 +64,12 @@ export const initialState: ApplicationState = {
   existingFilters: [] as FilterEntry[],
   preferences: {
     telemetry: true,
+    version: [0, 1, 5]
   }
+}
+
+export const envDevel = (): boolean => {
+  return process.env.NODE_ENV === 'development'
 }
 
 export const apiURL = () => {
@@ -94,10 +100,17 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
   })
 
   const persistConfig: PersistConfig<ApplicationState, any, any, any> = {
-    key: 'root',
+    key: 'store',
     storage,
     whitelist: ['timetable', 'existingFilters', 'preferences'],
-    stateReconciler: autoMergeLevel2
+    version: initialState.preferences.version.reduce(
+      (sum: number, val: number, ind: number): number => {
+        return sum + Math.max((2 - ind) * 10, 1) * val
+      }
+    ),
+    debug: envDevel(),
+    stateReconciler: autoMergeLevel2,
+    migrate: createMigrate(migrations, { debug: envDevel() })
   }
 
   const persistedReducer = persistReducer<ApplicationState>(persistConfig, rootReducer)

@@ -2,12 +2,15 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
+import ReactGA from 'react-ga';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { configureStore, initialState } from './store'
 import './style/index.css';
 
 const { store, persistor } = configureStore(initialState)
+
+ReactGA.initialize('UA-159492774-1')
 
 render(
   <Provider store={store}>
