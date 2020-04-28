@@ -3,5 +3,6 @@
 .*/
 !.gitignore
 !LICENSE
+!README.md
 backend/storage/*.pdf
 backend/database/*.db
