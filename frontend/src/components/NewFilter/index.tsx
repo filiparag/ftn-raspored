@@ -66,6 +66,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       uiUpdate(newFilter, uiState, filters, 'te', ['set', newFilter.timeEnd])
       
     }
+    // eslint-disable-next-line
   }, [dispatch, telemetry, fromExisting])
 
   return (

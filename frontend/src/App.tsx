@@ -102,6 +102,7 @@ const App: React.FC<AppProps> = ({ store }) => {
     if (telemetry)
       ReactGA.pageview("/")
     pareseURL(window.location.hash)
+    // eslint-disable-next-line
   }, [telemetry])
 
   return (

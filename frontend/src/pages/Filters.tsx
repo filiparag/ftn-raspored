@@ -28,6 +28,7 @@ export const Filters: React.FC<FiltersProps> = () => {
       ReactGA.pageview("/filters")
     if (filters.length === 0)
       fetchFilters(dispatch)
+    // eslint-disable-next-line
   }, [dispatch, telemetry])
 
   const newFilterVisible = useSelector(

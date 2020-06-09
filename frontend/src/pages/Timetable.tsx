@@ -56,6 +56,7 @@ export const Timetable: React.FC<TimetableProps> = () => {
     fetchTimetable(dispatch, existingFilters)
     if (filters_length === 0)
       fetchFilters(dispatch)
+    // eslint-disable-next-line
   }, [existingFilters, dispatch, telemetry])
 
   useLayoutEffect(() => {
