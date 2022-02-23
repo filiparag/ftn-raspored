@@ -5,7 +5,7 @@ http://www.ftn.uns.ac.rs/n843520183/ciste-energetske-tehnologije
 http://www.ftn.uns.ac.rs/n843520182/energetika--elektronika-i-telekomunikacije
 http://www.ftn.uns.ac.rs/n843520181/geodezija-i-geoinformatika
 http://www.ftn.uns.ac.rs/n843520180/graficko-inzenjerstvo-i-dizajn
-http://www.ftn.uns.ac.rs/n843520179/gradjevinarstvo
+#http://www.ftn.uns.ac.rs/n843520179/gradjevinarstvo
 http://www.ftn.uns.ac.rs/n843520178/industrijsko-inzenjerstvo
 http://www.ftn.uns.ac.rs/n379321942/inzenjerski-menadzment
 http://www.ftn.uns.ac.rs/n379321941/inzenjerstvo-informacionih-sistema
@@ -22,6 +22,6 @@ http://www.ftn.uns.ac.rs/n379321910/planiranje-i-upravljanje-regionalnim-razvoje
 http://www.ftn.uns.ac.rs/n379321909/primenjeno-softversko-inzenjerstvo
 http://www.ftn.uns.ac.rs/n379321908/racunarstvo-i-automatika
 http://www.ftn.uns.ac.rs/n379321907/saobracaj
-http://www.ftn.uns.ac.rs/n379321906/scenska-arhitektura-i-dizajn
-http://www.ftn.uns.ac.rs/n379321905/softversko-inzenjerstvo-i-informacione-tehnologije
+#http://www.ftn.uns.ac.rs/n379321906/scenska-arhitektura-i-dizajn
+#http://www.ftn.uns.ac.rs/n379321905/softversko-inzenjerstvo-i-informacione-tehnologije
 http://www.ftn.uns.ac.rs/n379321904/upravljanje-rizikom-od-katastrofalnih-dogadjaja-i-pozara
