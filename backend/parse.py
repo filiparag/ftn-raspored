@@ -88,6 +88,7 @@ def parsePage(p):
 
     day = 0
     block_classes = False
+    department_classes = False
 
     # Parse class entries in tables
     for t in range(len(tables)):
@@ -107,10 +108,22 @@ def parsePage(p):
                 block_classes = True
                 continue
 
+            if class_curr[0] == 'Predmeti za koje nastavu organizuje departman' or class_curr[0] == 'Predmeti za koje nastavu organizuje departman':
+                department_classes = True
+                continue
+
             if class_curr[6] == None:
                 class_curr[6] = ''
 
-            groups = class_curr[1 if block_classes else 0]
+            group_col = 1 if block_classes else 0
+            groups = class_curr[group_col]
+            
+            # Fix group and time column mixup
+            if groups is not None:
+                split1 = groups.split() 
+                if len(split1) > 1 and ':' in split1[1]:
+                    groups = split1[0]                 
+                    class_curr[group_col + 1] = split1[1]
 
             # Grupa 'SVI' = None
             if groups == 'SVI' or groups == None:
@@ -137,6 +150,9 @@ def parsePage(p):
                         'vrsta_nastave': class_curr[5],
                         'izvodjac': class_curr[7].replace('\n', '')
                     }
+
+                elif department_classes:
+                    continue
 
                 else:
 
