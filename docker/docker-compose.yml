@@ -1,43 +1,32 @@
 version: "3.7"
 services:
-  frontend:
+  nginx:
     image: nginx:mainline-alpine
     ports:
       - "8000:80"
     networks:
-      raspored:
-        aliases:
-          - frontend
+      - raspored
     volumes:
-      - type: bind
-        source: ./nginx
-        target: /etc/nginx
-        read_only: true
-      - type: bind
-        source: ../frontend
-        target: /usr/share/nginx/html
-        read_only: true
+      - ./nginx:/etc/nginx:ro
     restart: always
-  api:
-    image: alpine:latest
-    expose:
-      - "10000"
+  frontend:
+    build: ../frontend
     networks:
-      raspored:
-        aliases:
-          - api
+      - raspored
+    restart: "no"
+  api:
+    build: ../api
     volumes:
-      - type: bind
-        source: ../backend/database.db
-        target: /var/db/database.db
-        read_only: true
-      - type: bind
-        source: ../backend/server
-        target: /usr/bin/server
-        read_only: true
-    build:
-      context: .
-      dockerfile: ./api.dockerfile
+      - database:/var/db:ro
+    networks:
+      - raspored
     restart: always
+  backend:
+    build: ../backend
+    volumes:
+      - database:/var/db:rw
+    restart: "no"
 networks:
   raspored:
+volumes:
+  database:
