@@ -56,7 +56,7 @@ def parsePage(p):
 
         if words[w]['text'] == 'studije':
             if words[w-2]['text'] == 'Master':
-                # end of Osnovne akademske studije, break parsing
+                # end of 'Osnovne akademske studije'
                 master_flag = True
 
         if words[w]['text'] == 'Semestar':
@@ -70,7 +70,8 @@ def parsePage(p):
                     wn += 1
                 study_program = study_program[1:]
                 if master_flag:
-                    study_program = "Master " + study_program
+                    study_program = study_program.removeprefix("Studijski program: ")
+                    study_program = study_program + ' - master'
 
         if words[w]['text'] == 'grupa:' or \
                 words[w]['text'] == 'grupe:':
@@ -107,7 +108,7 @@ def parsePage(p):
             if class_curr[0] == 'Grupa-e' or class_curr[0] == 'Datum':
                 continue
 
-            if class_curr[0] == 'B L O K   N A S T A V A' or class_curr[0] == 'BLOK NASTAVA':
+            if class_curr[0] == 'B L O K   N A S T A V A' or class_curr[0] == 'BLOK NASTAVA' or class_curr[0] == 'B L O K N A S T A V A':
                 block_classes = True
                 continue
 
@@ -129,7 +130,7 @@ def parsePage(p):
                     class_curr[group_col + 1] = split1[1]
 
             # Grupa 'SVI' = None
-            if groups == 'SVI' or groups == None:
+            if groups == None or groups.upper() == 'SVI':
                 groups = [wildcard]
             else:
                 groups = groups.split(',')

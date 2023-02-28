@@ -1,4 +1,5 @@
 version: "3.7"
+name: ftn-raspored
 services:
   nginx:
     image: nginx:mainline-alpine
