@@ -48,6 +48,7 @@ def parsePage(p):
     study_program = ''
     study_groups = []
     semester = ''
+    master_flag = False
 
     for w in range(len(words)):
 
@@ -56,7 +57,7 @@ def parsePage(p):
         if words[w]['text'] == 'studije':
             if words[w-2]['text'] == 'Master':
                 # end of Osnovne akademske studije, break parsing
-                return []
+                master_flag = True
 
         if words[w]['text'] == 'Semestar':
             print(words[w-1]['text'] + ' ' + words[w]['text'])
@@ -68,6 +69,8 @@ def parsePage(p):
                     study_program += ' ' + words[wn]['text']
                     wn += 1
                 study_program = study_program[1:]
+                if master_flag:
+                    study_program = "Master " + study_program
 
         if words[w]['text'] == 'grupa:' or \
                 words[w]['text'] == 'grupe:':
@@ -264,6 +267,7 @@ sql_db.executemany("INSERT OR IGNORE INTO vrsta_nastave \
 
 args = list(filter(lambda arg: arg[0] != '-', sys.argv))
 opts = list(filter(lambda arg: arg[0] == '-', sys.argv))
+
 
 if len(args) == 2:
     files = [files[int(args[1])]]
