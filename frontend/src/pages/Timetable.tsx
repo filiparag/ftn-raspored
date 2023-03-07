@@ -66,7 +66,6 @@ export const Timetable: React.FC<TimetableProps> = () => {
   const rows = []
   const now = new Date()
   const today = now.getDay() === 0 ? 6 : now.getDay() - 1
-  const timeNow = now.getHours() + now.getMinutes() / 60
 
   for (const day in timetable) {
     if (timetable[day] !== null && timetable[day] !== undefined) {
@@ -85,9 +84,8 @@ export const Timetable: React.FC<TimetableProps> = () => {
           <TimetableEntry
             entry={entry}
             key={randomKey()}
-            ongoing={
-              timetable[day].weekday === today &&
-              entry.timeStart <= timeNow && entry.timeEnd >= timeNow
+            weekday={
+              timetable[day].weekday
             }
           />
         )
