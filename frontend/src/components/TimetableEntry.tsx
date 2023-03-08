@@ -85,7 +85,7 @@ export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry, weekday}: 
         return
       }
       const timeNow = now.getHours() + now.getMinutes() / 60
-      const isNow = entry.timeStart <= timeNow && entry.timeEnd >= timeNow
+      const isNow = entry.timeStart <= timeNow && entry.timeEnd > timeNow
       setOngoing(isNow && isToday)
     },1000)
     return () => clearInterval(secTimer);
