@@ -3,6 +3,9 @@ name: ftn-raspored
 services:
   nginx:
     image: nginx:mainline-alpine
+    depends_on:
+      - frontend
+      - api
     ports:
       - "8000:80"
     networks:
@@ -17,6 +20,9 @@ services:
     restart: "no"
   api:
     build: ../api
+    depends_on:
+      backend:
+        condition: service_completed_successfully
     volumes:
       - database:/var/db:ro
     networks:
