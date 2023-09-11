@@ -1,9 +1,10 @@
 package database
 
 import (
-	"github.com/filiparag/ftn-raspored/api/model"
 	"log"
 	"strings"
+
+	"github.com/filiparag/ftn-raspored/api/model"
 )
 
 func GetStudyPrograms() []model.StudijskiProgram {
@@ -31,8 +32,10 @@ func GetStudyPrograms() []model.StudijskiProgram {
 
 func GetStudyGroups(studyProgram int) []model.StudijskaGrupa {
 
-	rows, err := db.Query("SELECT id, studijska_grupa FROM studijska_grupa WHERE studijski_program_id = ?",
-								studyProgram)
+	rows, err := db.Query(
+		"SELECT id, studijska_grupa FROM studijska_grupa WHERE studijski_program_id = ?",
+		studyProgram,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -56,7 +59,10 @@ func GetStudyGroups(studyProgram int) []model.StudijskaGrupa {
 
 func GetSemesters(studyGroup int) []model.Semestar {
 
-	rows, err := db.Query("SELECT id, semestar FROM semestar WHERE studijska_grupa_id = ?", studyGroup)
+	rows, err := db.Query(
+		"SELECT id, semestar FROM semestar WHERE studijska_grupa_id = ?",
+		studyGroup,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -80,7 +86,10 @@ func GetSemesters(studyGroup int) []model.Semestar {
 
 func GetSubjects(semester int) []model.Predmet {
 
-	rows, err := db.Query("SELECT id, predmet FROM predmet WHERE semestar_id = ?", semester)
+	rows, err := db.Query(
+		"SELECT id, predmet FROM predmet WHERE semestar_id = ?",
+		semester,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -104,11 +113,14 @@ func GetSubjects(semester int) []model.Predmet {
 
 func GetTypes(subject int) []model.VrstaNastave {
 
-	rows, err := db.Query(`SELECT DISTINCT vn.id, vn.vrsta_nastave
-								 FROM cas AS c
-								 INNER JOIN vrsta_nastave vn on c.vrsta_nastave_id = vn.id
-								 INNER JOIN predmet p on c.predmet_id = p.id
-								 WHERE p.id = ?`, subject)
+	rows, err := db.Query(
+		`SELECT DISTINCT vn.id, vn.vrsta_nastave
+		FROM cas AS c
+		INNER JOIN vrsta_nastave vn on c.vrsta_nastave_id = vn.id
+		INNER JOIN predmet p on c.predmet_id = p.id
+		WHERE p.id = ?`,
+		subject,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -132,10 +144,13 @@ func GetTypes(subject int) []model.VrstaNastave {
 
 func GetGroups(subject int) []model.Grupa {
 
-	rows, err := db.Query(`SELECT DISTINCT c.grupa
-								 FROM cas AS c
-								 INNER JOIN predmet p on c.predmet_id = p.id
-								 WHERE p.id = ?`, subject)
+	rows, err := db.Query(
+		`SELECT DISTINCT c.grupa
+		FROM cas AS c
+		INNER JOIN predmet p on c.predmet_id = p.id
+		WHERE p.id = ?`,
+		subject,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -159,10 +174,13 @@ func GetGroups(subject int) []model.Grupa {
 
 func GetLecturers(subject int) []model.Izvodjac {
 
-	rows, err := db.Query(`SELECT DISTINCT c.izvodjac
-								 FROM cas AS c
-								 INNER JOIN predmet p on c.predmet_id = p.id
-								 WHERE p.id = ?`, subject)
+	rows, err := db.Query(
+		`SELECT DISTINCT c.izvodjac
+		FROM cas AS c
+		INNER JOIN predmet p on c.predmet_id = p.id
+		WHERE p.id = ?`,
+		subject,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -192,10 +210,13 @@ func GetLecturers(subject int) []model.Izvodjac {
 
 func GetClassrooms(subject int) []model.Ucionica {
 
-	rows, err := db.Query(`SELECT DISTINCT c.ucionica
-								 FROM cas AS c
-								 INNER JOIN predmet p on c.predmet_id = p.id
-								 WHERE p.id = ?`, subject)
+	rows, err := db.Query(
+		`SELECT DISTINCT c.ucionica
+		FROM cas AS c
+		INNER JOIN predmet p on c.predmet_id = p.id
+		WHERE p.id = ?`,
+		subject,
+	)
 	if err != nil {
 		log.Println(err)
 		return nil

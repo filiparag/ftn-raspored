@@ -1,12 +1,14 @@
 package main
 
 import (
-	"github.com/filiparag/ftn-raspored/api/database"
-	"github.com/filiparag/ftn-raspored/api/middleware"
-	"github.com/filiparag/ftn-raspored/api/route"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/filiparag/ftn-raspored/api/database"
+	"github.com/filiparag/ftn-raspored/api/middleware"
+	"github.com/filiparag/ftn-raspored/api/route"
 )
 
 func main() {
@@ -23,6 +25,7 @@ func main() {
 	router := route.Router()
 	mRouter := middleware.Middleware(router)
 	http.Handle("/", mRouter)
+	fmt.Println("Serving API on :10000")
 	log.Fatal(http.ListenAndServe(":10000", nil))
 
 }
