@@ -5,7 +5,7 @@ import { FilterEntry } from '../store/filters/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { removeExistingFilter, updateEditExistingFilter } from '../store/filters/actions'
 import '../style/Filter.css'
-import { ApplicationState, initialState } from '../store'
+import { ApplicationState, apiURL, initialState } from '../store'
 import { showPrompt } from '../store/prompt/actions'
 import { cleanTimetable } from '../store/timetable/actions'
 import QRCode from 'qrcode.react'
@@ -24,6 +24,37 @@ export const encodeFilter = (f: FilterEntry): string => {
     return enc
   else
     return ''
+}
+
+export const encodeQuery = (filter: FilterEntry): string => {
+  const query = [] as string[]
+  filter.studyPrograms.forEach(val => {
+    query.push(`studijskiProgram=${val}`)
+  })
+  filter.studyGroups.forEach(val => {
+    query.push(`studijskaGrupa=${val}`)
+  })
+  filter.semesters.forEach(val => {
+    query.push(`semestar=${val}`)
+  })
+  filter.subjects.forEach(val => {
+    query.push(`predmet=${val}`)
+  })
+  filter.groups.forEach(val => {
+    query.push(`grupa=${val}`)
+  })
+  filter.types.forEach(val => {
+    query.push(`vrstaNastave=${val}`)
+  })
+  filter.lecturers.forEach(val => {
+    query.push(`izvodjac=${val}`)
+  })
+  filter.days.forEach(val => {
+    query.push(`dan=${val}`)
+  })
+  query.push(`vremeOdPosle=${filter.timeStart}`)
+  query.push(`vremeDoPre=${filter.timeEnd}`)
+  return query.join('&');
 }
 
 export const decodeFilter = (str: string): FilterEntry => {
@@ -127,6 +158,21 @@ const ExistingFilter: React.FC<ExistingFilterProps> = ({id, entry}) => {
                   }
                 ]
               }))}
+            />
+          } />
+          <Popup content='Kopiraj link za iCal kalendar' inverted position='bottom right' trigger={
+            <Icon
+              className='ExistingFilterAction'
+              bordered
+              inverted
+              color='teal'
+              name='calendar alternate'
+              onClick={() => {
+                const url = `${window.location.protocol}//${
+                  window.location.host
+                }${apiURL()}ical?${encodeQuery(entry)}`;
+                copyToClipboard(url);
+              }}
             />
           } />
           <Popup content='Obriši filter' inverted position='bottom right' trigger={
