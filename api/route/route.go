@@ -14,6 +14,9 @@ func Router() *mux.Router {
 		"/casovi",
 		controller.Classes).Methods("GET")
 	routes.HandleFunc(
+		"/ical",
+		controller.Classes).Methods("GET")
+	routes.HandleFunc(
 		"/filter",
 		controller.GetStudyPrograms).Methods("GET")
 	routes.HandleFunc(

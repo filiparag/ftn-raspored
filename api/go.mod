@@ -1,9 +1,9 @@
-module filiparag.com/ftn-raspored/api/v2
+module github.com/filiparag/ftn-raspored/api
 
-go 1.17
+go 1.21.1
 
 require (
-	github.com/filiparag/ftn-raspored v0.1.6
 	github.com/gorilla/mux v1.8.0
 	github.com/mattn/go-sqlite3 v1.14.11
+	github.com/arran4/golang-ical v0.1.0
 )

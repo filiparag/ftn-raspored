@@ -3,9 +3,15 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/filiparag/ftn-raspored/api/database"
 	"log"
+	"math"
 	"net/http"
+	"strconv"
+	"time"
+
+	ics "github.com/arran4/golang-ical"
+	"github.com/filiparag/ftn-raspored/api/database"
+	"github.com/filiparag/ftn-raspored/api/model"
 )
 
 func Classes(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +48,7 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 
 	var sqlArgs = make([]string, 0)
 	var whereAnd = false
-	
+
 	for key, val := range r.URL.Query() {
 		if len(val) == 0 {
 			w.WriteHeader(http.StatusNotAcceptable)
@@ -65,7 +71,7 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 				}
 				if key == "izvodjac" {
 					sqlQuery += fmt.Sprintf("%s LIKE ? COLLATE NOCASE", ident[0])
-					sqlArgs = append(sqlArgs, "%" + value + "%")
+					sqlArgs = append(sqlArgs, "%"+value+"%")
 				} else {
 					sqlQuery += fmt.Sprintf("%s %s ?", ident[0], ident[1])
 					sqlArgs = append(sqlArgs, value)
@@ -86,11 +92,84 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
 		w.WriteHeader(http.StatusOK)
-		err := json.NewEncoder(w).Encode(response)
-		if err != nil {
-			log.Println(err)
-			return
+		if r.URL.Path == "/casovi" {
+			err := json.NewEncoder(w).Encode(response)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+		} else if r.URL.Path == "/ical" {
+			w.Header().Add("Content-Type", "text/calendar")
+			fmt.Fprintln(w, calendar(response))
 		}
+
 	}
+
+}
+
+func calendar(classes []model.Cas) string {
+
+	tz, _ := time.LoadLocation("Europe/Belgrade")
+	newYear := time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC)
+	startDay := int(newYear.Weekday()+6) % 7
+
+	cal := ics.NewCalendar()
+	cal.SetName("FTN Raspored")
+	cal.SetTimezoneId("Europe/Belgrade")
+	cal.SetRefreshInterval("PT24H")
+	cal.SetColor("slategray")
+	cal.SetMethod(ics.MethodRequest)
+
+	for _, c := range classes {
+
+		startTime := time.Date(
+			newYear.Year(),
+			newYear.Month(),
+			(c.Day+1)+(7-startDay),
+			int(math.Floor(float64(c.TimeStart))),
+			int(math.Mod(float64(c.TimeStart*100), 100)*0.6),
+			0, 0, tz,
+		)
+		endTime := time.Date(
+			newYear.Year(),
+			newYear.Month(),
+			(c.Day+1)+(7-startDay),
+			int(math.Floor(float64(c.TimeEnd))),
+			int(math.Mod(float64(c.TimeStart*100), 100)*0.6),
+			0, 0, tz,
+		)
+
+		event := cal.AddEvent(strconv.Itoa(c.Id))
+		event.SetDtStampTime(startTime)
+		event.SetStartAt(startTime)
+		event.SetEndAt(endTime)
+		event.SetSummary(c.Subject)
+		event.SetLocation(c.Classroom)
+		event.SetOrganizer(c.Lecturer)
+		switch c.Type {
+		case "Pred.":
+			event.SetColor("dodgerblue")
+			event.SetDescription("Predavanje")
+		case "rač.vežbe":
+			event.SetColor("limegreen")
+			event.SetDescription("Računarske vežbe")
+		case "aud.vežbe":
+			event.SetColor("darkorange")
+			event.SetDescription("Auditorne vežbe")
+		case "lab.vežbe":
+			event.SetColor("firebrick")
+			event.SetDescription("Laboratorijske vežbe")
+		case "arh.vežbe":
+			event.SetColor("saddlebrown")
+			event.SetDescription("Arhitekturne vežbe")
+		case "um.vežbe":
+			event.SetColor("plum")
+			event.SetDescription("Umetničke vežbe")
+		}
+		event.AddRrule("FREQ=WEEKLY;INTERVAL=1")
+
+	}
+
+	return cal.Serialize()
 
 }
