@@ -63,7 +63,7 @@ export const initialState: ApplicationState = {
   existingFilters: [] as FilterEntry[],
   preferences: {
     telemetry: true,
-    version: [0, 1, 7]
+    version: [0, 1, 8]
   }
 }
 
@@ -119,7 +119,7 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
   )
 
   let enchancers: StoreEnhancer<{dispatch: unknown;}, {}>;
-  
+
   switch (process.env.NODE_ENV) {
     case 'development': {
       enchancers = compose(
@@ -137,7 +137,7 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
       break
     }
   }
-  
+
   const store = createStore(
     persistedReducer,
     enchancers
