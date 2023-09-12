@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"crypto"
+	"encoding/base32"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -91,7 +93,6 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 	} else if len(response) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 	} else {
-		w.WriteHeader(http.StatusOK)
 		if r.URL.Path == "/casovi" {
 			err := json.NewEncoder(w).Encode(response)
 			if err != nil {
@@ -99,10 +100,12 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		} else if r.URL.Path == "/ical" {
-			w.Header().Add("Content-Type", "text/calendar")
+			id := base32.StdEncoding.EncodeToString(crypto.SHA1.New().Sum([]byte(r.URL.RawQuery)))
+			fileName := fmt.Sprintf("attachment; filename=ftn_raspored_%s.ics", id[:16])
+			w.Header().Add("Content-Type", "text/calendar; charset=utf-8")
+			w.Header().Set("Content-Disposition", fileName)
 			fmt.Fprintln(w, calendar(response))
 		}
-
 	}
 
 }
@@ -110,12 +113,13 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 func calendar(classes []model.Cas) string {
 
 	tz, _ := time.LoadLocation("Europe/Belgrade")
-	newYear := time.Date(time.Now().Year(), 1, 1, 0, 0, 0, 0, time.UTC)
+	newYear := time.Date(time.Now().Year(), 10, 1, 0, 0, 0, 0, time.UTC)
 	startDay := int(newYear.Weekday()+6) % 7
 
 	cal := ics.NewCalendar()
 	cal.SetName("FTN Raspored")
 	cal.SetTimezoneId("Europe/Belgrade")
+	cal.SetTzid("Europe/Belgrade")
 	cal.SetRefreshInterval("PT24H")
 	cal.SetColor("slategray")
 	cal.SetMethod(ics.MethodRequest)
@@ -135,7 +139,7 @@ func calendar(classes []model.Cas) string {
 			newYear.Month(),
 			(c.Day+1)+(7-startDay),
 			int(math.Floor(float64(c.TimeEnd))),
-			int(math.Mod(float64(c.TimeStart*100), 100)*0.6),
+			int(math.Mod(float64(c.TimeEnd*100), 100)*0.6),
 			0, 0, tz,
 		)
 
@@ -167,6 +171,8 @@ func calendar(classes []model.Cas) string {
 			event.SetDescription("Umetničke vežbe")
 		}
 		event.AddRrule("FREQ=WEEKLY;INTERVAL=1")
+		// event.AddRrule("FREQ=WEEKLY;INTERVAL=1;UNTIL=20240218T000000Z")
+		// event.AddExdate("20240101,20240102,20240108")
 
 	}
 
