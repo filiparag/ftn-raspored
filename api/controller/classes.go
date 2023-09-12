@@ -110,11 +110,33 @@ func Classes(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func localTimestamp(ts time.Time) string {
+	return ts.Format("20060102T150405")
+}
+
+func combineDatetimes(ts time.Time, dates []string) string {
+	rule := ""
+	for _, d := range dates {
+		rule += fmt.Sprintf("%sT%s,", d, ts.Format("150405"))
+	}
+	return rule
+}
+
+func combineDates(ts time.Time, dates []string) string {
+	rule := ""
+	for _, d := range dates {
+		rule += fmt.Sprintf("%s,", d)
+	}
+	return rule
+}
+
 func calendar(classes []model.Cas) string {
 
+	now := time.Now()
+	startMonth := time.Date(now.Year(), 10, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(now.Year()+1, 2, 18, 0, 0, 0, 0, time.UTC)
+	startDay := int(startMonth.Weekday()+6) % 7
 	tz, _ := time.LoadLocation("Europe/Belgrade")
-	newYear := time.Date(time.Now().Year(), 10, 1, 0, 0, 0, 0, time.UTC)
-	startDay := int(newYear.Weekday()+6) % 7
 
 	cal := ics.NewCalendar()
 	cal.SetName("FTN Raspored")
@@ -124,32 +146,60 @@ func calendar(classes []model.Cas) string {
 	cal.SetColor("slategray")
 	cal.SetMethod(ics.MethodRequest)
 
+	swapdays := [][]string{
+		{"20240103", "20240104"}, // Monday
+		{},                       // Tuesday
+		{},                       // Wednesday
+		{},                       // Thursday
+		{"20240430"},             // Friday
+		{"20240611"},             // Saturday
+		{},                       // Sunday
+	}
+
+	exdates := []string{
+		// Day swaps
+		"20240103", "20240104", "20240105", "20240103", "20240430", "20240611",
+		// Winter semester
+		"20231111", "20231225", "20240101", "20240102", "20240108", "20240108",
+		"20240120", "20240121", "20240122", "20240123", "20240124", "20240125",
+		"20240126", "20240127", "20240128", "20240129", "20240130", "20240131",
+		"20240201", "20240202", "20240203", "20240204", "20240205", "20240206",
+		"20240207", "20240208", "20240209", "20240210", "20240211", "20240212",
+		"20240213", "20240214", "20240215", "20240216", "20240217", "20240218",
+		// Summer semester
+		"20240329", "20240330", "20240331", "20240401", "20240408", "20240409",
+		"20240410", "20240411", "20240412", "20240413", "20240414", "20240501",
+		"20240502", "20240503", "20240504", "20240505", "20240506",
+	}
+
 	for _, c := range classes {
 
-		startTime := time.Date(
-			newYear.Year(),
-			newYear.Month(),
-			(c.Day+1)+(7-startDay),
-			int(math.Floor(float64(c.TimeStart))),
-			int(math.Mod(float64(c.TimeStart*100), 100)*0.6),
-			0, 0, tz,
-		)
-		endTime := time.Date(
-			newYear.Year(),
-			newYear.Month(),
-			(c.Day+1)+(7-startDay),
-			int(math.Floor(float64(c.TimeEnd))),
-			int(math.Mod(float64(c.TimeEnd*100), 100)*0.6),
-			0, 0, tz,
-		)
+		year := startMonth.Year()
+		month := startMonth.Month()
+		day := (c.Day + 1) + (7 - startDay)
+		startHour := int(math.Floor(float64(c.TimeStart)))
+		startMinute := int(math.Mod(float64(c.TimeStart*100), 100) * 0.6)
+		endHour := int(math.Floor(float64(c.TimeEnd)))
+		endMinute := int(math.Mod(float64(c.TimeEnd*100), 100) * 0.6)
+
+		if c.Day >= 7 {
+			date := time.Unix(int64(c.Day), 0)
+			year = date.Year()
+			month = date.Month()
+			day = date.Day()
+		}
+
+		startTime := time.Date(year, month, day, startHour, startMinute, 0, 0, tz)
+		endTime := time.Date(year, month, day, endHour, endMinute, 0, 0, tz)
 
 		event := cal.AddEvent(strconv.Itoa(c.Id))
-		event.SetDtStampTime(startTime)
-		event.SetStartAt(startTime)
-		event.SetEndAt(endTime)
+		event.SetProperty(ics.ComponentPropertyDtstamp, localTimestamp(startTime))
+		event.SetProperty(ics.ComponentPropertyDtStart, localTimestamp(startTime))
+		event.SetProperty(ics.ComponentPropertyDtEnd, localTimestamp(endTime))
 		event.SetSummary(c.Subject)
 		event.SetLocation(c.Classroom)
 		event.SetOrganizer(c.Lecturer)
+		event.SetTimeTransparency(ics.TransparencyTransparent)
 		switch c.Type {
 		case "Pred.":
 			event.SetColor("dodgerblue")
@@ -170,9 +220,16 @@ func calendar(classes []model.Cas) string {
 			event.SetColor("plum")
 			event.SetDescription("Umetničke vežbe")
 		}
-		event.AddRrule("FREQ=WEEKLY;INTERVAL=1")
-		// event.AddRrule("FREQ=WEEKLY;INTERVAL=1;UNTIL=20240218T000000Z")
-		// event.AddExdate("20240101,20240102,20240108")
+		if c.Day < 7 {
+			event.AddRrule(fmt.Sprintf(
+				"FREQ=WEEKLY;INTERVAL=1;UNTIL=%s",
+				endDate.Format("20060102T150405Z"),
+			))
+			event.AddExdate(combineDatetimes(startTime, exdates))
+			if len(swapdays[c.Day]) > 0 {
+				event.AddProperty("RDATE;VALUE=DATE", combineDates(startTime, swapdays[c.Day]))
+			}
+		}
 
 	}
 
