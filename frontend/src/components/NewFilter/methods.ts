@@ -121,14 +121,14 @@ export const uiUpdate = (
         for (const sg of sp.studyGroups) {
           if (section === 'sp')
             sgArray.push(dropdownObject(
-              sg.name === 'SVI' ? sp.name : 
+              sg.name === 'SVI' ? sp.name :
               `${sg.name} (${abbrevateName(sp.name)})`
             , sg.id))
           else if (section === 'sg' && values.includes(sg.id)) {
             sgPld.values.push(sg.id)
             sgPld.string += `${sgPld.string.length === 0
               ? '' : ', '}${sg.name === 'SVI'
-              ? sp.name : sg.name + ' (' 
+              ? sp.name : sg.name + ' ('
               + abbrevateName(sp.name) + ')'}`
           }
           if (
@@ -139,7 +139,7 @@ export const uiUpdate = (
             for (const sm of sg.semesters) {
               if (section === 'sg')
                 smArray.push(dropdownObject(
-                  `${sm.name} semestar (${sg.name === 'SVI' ? 
+                  `${sm.name} semestar (${sg.name === 'SVI' ?
                   abbrevateName(sp.name) : abbrevateName(sp.name)
                   + ' ' + abbrevateName(sg.name)})`
                 , sm.id))
@@ -160,7 +160,7 @@ export const uiUpdate = (
                 for (const su of sm.subjects) {
                   if (section === 'sm')
                     suArray.push(dropdownObject(
-                      `${su.name} (${sg.name === 'SVI' ? 
+                      `${su.name} (${sg.name === 'SVI' ?
                       abbrevateName(sp.name) : abbrevateName(sp.name)
                       + ' ' + abbrevateName(sg.name)})`
                     , su.id))
@@ -257,7 +257,7 @@ export const uiUpdate = (
     } else
       tePld.string = values.join('')
   }
-  
+
   switch (section) {
     case '/': {
       uiState.set.spSet(naturalSortEntries(spArray))
