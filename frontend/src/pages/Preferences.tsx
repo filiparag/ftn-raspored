@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import ReactGA from 'react-ga';
-import { Header, Segment, Checkbox, Grid, List, Label } from 'semantic-ui-react'
+import { Header, Segment, Checkbox, Grid, List, Label, Button, Icon } from 'semantic-ui-react'
 import { useSelector, useDispatch } from 'react-redux';
-import { ApplicationState } from '../store';
+import { ApplicationState, apiURL } from '../store';
 import { toggleTelemetry } from '../store/preferences/actions'
 
 interface PreferencesProps {}
@@ -10,11 +10,11 @@ interface PreferencesProps {}
 export const Preferences: React.FC<PreferencesProps> = () => {
 
   const dispatch = useDispatch()
-  
+
   const preferences = useSelector(
     (state: ApplicationState) => state.preferences
   )
-    
+
   useEffect(() => {
     if (preferences.telemetry)
       ReactGA.pageview("/preferences")
@@ -77,6 +77,27 @@ export const Preferences: React.FC<PreferencesProps> = () => {
         <p>
           Slanjem anonimne telemetrije pomažete razvoju servisa.
         </p>
+      </Segment>
+      <Segment color='grey' padded>
+        <Header size='medium'>O servisu</Header>
+        <p>
+          Ova web aplikacija koristi zvanične PDF dokumente
+          fakulteta kao izvor podataka.
+          Greške u automatskom parsiranju tabela su moguće,
+          ali se retko dešavaju.
+        </p>
+        <Button icon labelPosition='left' color='grey' onClick={() => {
+            window.open('https://github.com/filiparag/ftn-raspored', '_blank');
+        }}>
+          <Icon name='github' />
+          GitHub
+        </Button>
+        <Button icon labelPosition='left' color='blue' onClick={() => {
+            window.open(apiURL(), '_blank');
+        }}>
+          <Icon name='code' />
+          API
+        </Button>
       </Segment>
     </div>
   )

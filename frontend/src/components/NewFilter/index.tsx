@@ -15,17 +15,17 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const newFilter = useSelector(
     (state: ApplicationState) => state.newFilter
   )
-  
+
   const filters = useSelector(
     (state: ApplicationState) => state.filter
   )
-  
+
   const telemetry = useSelector(
     (state: ApplicationState) => state.preferences.telemetry
   )
-  
+
 	const dispatch = useDispatch()
-	
+
 	const fromExisting = newFilter.existingID !== undefined
 
   const [studyPrograms, spSet] = useState([] as DropdownEntry[])
@@ -37,7 +37,7 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
   const [lecturers, leSet] = useState([] as DropdownEntry[])
   const [classrooms, clSet] = useState([] as DropdownEntry[])
   const [days, daSet] = useState(ddDays())
-  
+
   const uiState: UIState = {
     get: {
       studyPrograms, studyGroups, semesters, subjects, groups, types, lecturers, classrooms, days
@@ -64,17 +64,28 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       uiUpdate(newFilter, uiState, filters, 'da', newFilter.days)
       uiUpdate(newFilter, uiState, filters, 'ts', ['set', newFilter.timeStart])
       uiUpdate(newFilter, uiState, filters, 'te', ['set', newFilter.timeEnd])
-      
+    } else {
+      if (!newFilter.groups.includes('SVI'))
+        newFilter.groups.push('SVI')
     }
+
     // eslint-disable-next-line
   }, [dispatch, telemetry, fromExisting])
 
   return (
     <Segment color={fromExisting ? 'blue' : 'green'} padded raised>
       <Header size='large'>{fromExisting ? 'Izmeni' : 'Novi'} filter</Header>
+      <p
+        style={{
+          display: fromExisting ? 'none' : 'block',
+        }}
+      >
+        Neobavezna polja (bez crvene tačke) podrazumevano uključuju sve
+        vrednosti iz liste kada ostanu prazna.
+      </p>
       <Header size='medium'>
         Studijski program
-        {newFilter.studyPrograms.length === 0 ? 
+        {newFilter.studyPrograms.length === 0 ?
         <Label circular empty color='red' size='tiny'/> : null}
       </Header>
       <Dropdown
@@ -127,12 +138,22 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
       />
       <Header
         size='medium'
-        color={newFilter.semesters.length === 0 || 
+        color={newFilter.semesters.length === 0 ||
                newFilter.types.length > 0 || newFilter.groups.length > 0 ? 'grey' : 'black'}
       >Predmet</Header>
+      <p
+        style={{
+          display: newFilter.semesters.length > 0 &&
+          (newFilter.types.length > 0 || newFilter.groups.length > 0 ||
+          newFilter.lecturers.length > 0 || newFilter.classrooms.length > 0) ? 'block' : 'none',
+          color: 'grey',
+        }}
+      >
+        Predmete nije moguće menjati dok su odabrani filteri ispod.
+      </p>
       <Dropdown
         placeholder='Predmet'
-        disabled={newFilter.semesters.length === 0 || 
+        disabled={newFilter.semesters.length === 0 ||
                   newFilter.types.length > 0 || newFilter.groups.length > 0 ||
                   newFilter.lecturers.length > 0 || newFilter.classrooms.length > 0}
         fluid
@@ -161,6 +182,15 @@ export const NewFilter: React.FC<NewFilterProps> = () => {
         size='medium'
         color={newFilter.semesters.length === 0 ? 'grey' : 'black'}
       >Grupa</Header>
+      <p
+        style={{
+          display: fromExisting ? 'none' : 'block',
+          color: newFilter.semesters.length === 0 ? 'grey' : 'black',
+        }}
+      >
+        Podrazumevana grupa <b>SVI</b> obuhvata zajednička predavanja,
+        a za vežbe je potrebno odabrati dodatne grupe.
+      </p>
       <Dropdown
         placeholder='Grupa'
         disabled={newFilter.semesters.length === 0}
