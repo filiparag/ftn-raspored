@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useLayoutEffect } from 'react'
 import { List, Icon, Label } from 'semantic-ui-react'
 import { TimetableEntry as Entry } from '../store/timetable/types'
 import { SemanticCOLORS, SemanticICONS } from 'semantic-ui-react/dist/commonjs/generic'
@@ -73,23 +73,33 @@ export const typeName = (type: string): string => {
   }
 }
 
+export const timetableEntryOngoing = (entry : Entry, weekday: number | null): boolean => {
+  const now = new Date()
+  const today = now.getDay() === 0 ? 6 : now.getDay() - 1
+  const isToday = weekday === today
+  if (!isToday) {
+    return false
+  }
+  const timeNow = now.getHours() + now.getMinutes() / 60
+  const isNow = entry.timeStart <= timeNow && entry.timeEnd > timeNow
+  return isNow && isToday
+}
+
 export const TimetableEntry: React.FC<TimetableEntryProps> = ({entry, weekday}: TimetableEntryProps) => {
 
-  const  [ongoing, setOngoing] = useState(false);
+  const  [ongoing, setOngoing] = useState(() => timetableEntryOngoing(entry,weekday));
+  
+  // version of useEffect that exectues before render
+  useLayoutEffect(() => {
+      setOngoing(timetableEntryOngoing(entry,weekday))
+   });
+
   useEffect(() => {
     let secTimer = setInterval( () => {
-      const now = new Date()
-      const today = now.getDay() === 0 ? 6 : now.getDay() - 1
-      const isToday = weekday === today
-      if (!isToday) {
-        return
-      }
-      const timeNow = now.getHours() + now.getMinutes() / 60
-      const isNow = entry.timeStart <= timeNow && entry.timeEnd > timeNow
-      setOngoing(isNow && isToday)
+      setOngoing(timetableEntryOngoing(entry,weekday))
     },1000)
     return () => clearInterval(secTimer);
-   }, []);
+   });
   
   return (
     <List.Item key={entry.id}>
