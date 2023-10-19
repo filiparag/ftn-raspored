@@ -74,7 +74,7 @@ export const envDevel = (): boolean => {
 export const apiURL = () => {
   switch (process.env.NODE_ENV) {
     case 'development': {
-      return 'http://localhost:10000/'
+      return '/api/'
     }
     case 'production': {
       return '/api/'
@@ -85,7 +85,7 @@ export const apiURL = () => {
   }
 }
 
-export function configureStore(initialState: ApplicationState): {store: Store<ApplicationState>, persistor: Persistor} {
+export function configureStore(initialState: ApplicationState): { store: Store<ApplicationState>, persistor: Persistor } {
 
   const rootReducer = combineReducers({
     menu: menuReducer,
@@ -118,7 +118,7 @@ export function configureStore(initialState: ApplicationState): {store: Store<Ap
     thunkMiddleware
   )
 
-  let enchancers: StoreEnhancer<{dispatch: unknown;}, {}>;
+  let enchancers: StoreEnhancer<{ dispatch: unknown; }, {}>;
 
   switch (process.env.NODE_ENV) {
     case 'development': {
