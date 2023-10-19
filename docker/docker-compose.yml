@@ -33,6 +33,35 @@ services:
     volumes:
       - database:/var/db:rw
     restart: "no"
+  devapi:
+    build:
+      context: ../api
+      dockerfile: ../api/dev.Dockerfile
+    depends_on:
+      backend:
+        condition: service_completed_successfully
+    ports:
+      - "10000:10000"
+    volumes:
+      - database:/var/db:ro
+      - ../api:/usr/src/app
+    networks:
+      - raspored
+    profiles:
+      - dev
+  devfrontend:
+    build:
+      context: ../frontend
+      dockerfile: ../frontend/dev.Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ../frontend/src:/usr/src/app/src
+    networks:
+      - raspored
+    profiles:
+      - dev
 networks:
   raspored:
 volumes:
