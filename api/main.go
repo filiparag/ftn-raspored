@@ -24,6 +24,9 @@ func main() {
 
 	router := route.Router()
 	mRouter := middleware.Middleware(router)
+	if os.Getenv("DEV") == "true" {
+		mRouter = middleware.CorsHeaderMiddleware(mRouter)
+	}
 	http.Handle("/", mRouter)
 	fmt.Println("Serving API on :10000")
 	log.Fatal(http.ListenAndServe(":10000", nil))

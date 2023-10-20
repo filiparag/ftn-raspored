@@ -13,11 +13,15 @@ services:
     volumes:
       - ./nginx:/etc/nginx:ro
     restart: always
+    profiles:
+      - prod
   frontend:
     build: ../frontend
     networks:
       - raspored
     restart: "no"
+    profiles:
+      - prod
   api:
     build: ../api
     depends_on:
@@ -28,12 +32,15 @@ services:
     networks:
       - raspored
     restart: always
+    profiles:
+      - prod
   backend:
     build: ../backend
     volumes:
       - database:/var/db:rw
     restart: "no"
-  devapi:
+## Dev profile
+  api-dev:
     build:
       context: ../api
       dockerfile: ../api/dev.Dockerfile
@@ -41,28 +48,29 @@ services:
       backend:
         condition: service_completed_successfully
     ports:
-      - "10000:10000"
+      - "10001:10000"
     volumes:
       - database:/var/db:ro
       - ../api:/usr/src/app
     networks:
-      - raspored
+      - devraspored
     profiles:
       - dev
-  devfrontend:
+  frontend-dev:
     build:
       context: ../frontend
       dockerfile: ../frontend/dev.Dockerfile
     ports:
-      - "3000:3000"
+      - "3001:3000"
     restart: unless-stopped
     volumes:
       - ../frontend/src:/usr/src/app/src
     networks:
-      - raspored
+      - devraspored
     profiles:
       - dev
 networks:
   raspored:
+  devraspored:
 volumes:
   database:

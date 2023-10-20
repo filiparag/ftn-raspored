@@ -1,5 +1,7 @@
 FROM golang:1.21.1
 
+ENV DEV=true
+
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 
