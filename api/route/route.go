@@ -11,6 +11,9 @@ func Router() *mux.Router {
 		"/",
 		controller.Root).Methods("GET")
 	routes.HandleFunc(
+		"/version",
+		controller.Version).Methods("GET")
+	routes.HandleFunc(
 		"/casovi",
 		controller.Classes).Methods("GET")
 	routes.HandleFunc(

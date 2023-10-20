@@ -80,7 +80,7 @@ export const initialState: ApplicationState = {
   existingFilters: [] as FilterEntry[],
   preferences: {
     telemetry: true,
-    version: [0, 1, 8],
+    version: [0, 1, 9],
   },
 };
 

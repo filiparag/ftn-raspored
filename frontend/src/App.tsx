@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { Store } from 'redux'
-import { ApplicationState } from './store'
+import { ApplicationState, apiURL } from './store'
 import ReactGA from 'react-ga';
 import Menu from './components/Menu'
 import Page from './components/Page'
@@ -29,12 +29,41 @@ export const randomKey = (): string => {
 }
 
 const App: React.FC<AppProps> = ({ store }) => {
-  
+
   const telemetry = store.getState().preferences.telemetry
 
   const existingFilters = store.getState().existingFilters
 
   const dispatch = useDispatch()
+
+  fetch(`${apiURL()}version`)
+    .then(response => response.text())
+    .then(version => {
+      if (
+        localStorage.getItem('version') !== version &&
+        existingFilters.length > 0
+      ) {
+        dispatch(showPrompt({
+          header: 'Aplikacija je ažurirana',
+          body: <>Postojeći filteri više neće raditi</>,
+          size: 'tiny',
+          actions: [{
+            name: 'U redu',
+            color: 'blue',
+            icon: 'check',
+            action: () => {
+              localStorage.setItem('version', version)
+              dispatch(viewPage(PageName.FILTERS))
+              if (telemetry)
+                ReactGA.event({
+                  category: 'Filters',
+                  action: 'Invalidate previous version'
+                })
+            }
+          },]
+        }))
+      }
+    })
 
   const pareseURL = (hash: string) => {
     const params = hash.split('#').filter(h => h.length > 0).map((p: string) => {

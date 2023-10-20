@@ -11,8 +11,14 @@ func Root(w http.ResponseWriter, r *http.Request) {
 		"/casovi?[predmet, vrstaNastave, semestar, studijskaGrupa, studijskiProgram, vremeOdPre, " +
 		"vremeOdPosle,vremeDoPre, vremeDoPosle, grupa, dan, izvodjac]+\n" +
 		"/ical?[predmet, vrstaNastave, semestar, studijskaGrupa, studijskiProgram, vremeOdPre, " +
-		"vremeOdPosle,vremeDoPre, vremeDoPosle, grupa, dan, izvodjac]+\n"
+		"vremeOdPosle,vremeDoPre, vremeDoPosle, grupa, dan, izvodjac]+\n" +
+		"/version\n"
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "API endpoints:")
 	fmt.Fprint(w, routes)
+}
+
+func Version(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "2023-10-20")
 }
