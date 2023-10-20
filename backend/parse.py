@@ -64,8 +64,13 @@ def parsePage(p):
             semester = int(words[w-1]['text'])
             if study_program == '':
                 wn = w + 1
-                while wn < len(words) and words[wn]['text'] != 'Studijska' and \
-                        (len(words[wn]['text']) > 1 or words[wn]['text'].islower()):
+                while wn < len(words):
+                    if words[wn]['text'] in ['Studijska', 'Modul:', 'Stručna']:
+                        break
+                    if not (len(words[wn]['text']) > 1 or words[wn]['text'].islower()):
+                        break
+                    if wn > w + 1 and words[wn]['text'] == 'Nastava':
+                        break
                     study_program += ' ' + words[wn]['text']
                     wn += 1
                 study_program = study_program[1:]
@@ -73,19 +78,28 @@ def parsePage(p):
                     study_program = study_program.removeprefix("Studijski program: ")
                     study_program = study_program + ' - master'
 
-        if words[w]['text'] == 'grupa:' or \
-                words[w]['text'] == 'grupe:':
+        if words[w]['text'] == 'Modul:' or \
+            (words[w]['text'] == 'Stručna' and words[w+1]['text'] == 'oblast:' ):
             group_name = ''
-            wn = w + 1
-            while wn < len(words) and words[wn]['text'] != 'Studijska' and \
-                    (len(words[wn]['text']) > 1 or words[wn]['text'].islower()):
-                print(words[wn]['text'], end=' ')
+            wn = w + (2 if words[w+1]['text'] == 'oblast:' else 1)
+            while wn < len(words):
+                if words[wn]['text'] in ['Studijska', 'Modul:', 'Stručna']:
+                        break
+                if not (len(words[wn]['text']) > 1 or words[wn]['text'].islower()):
+                    break
+                if wn > w + 1 and words[wn]['text'] == 'Nastava':
+                    break
                 group_name += ' ' + words[wn]['text']
                 wn += 1
-            print()
-            study_groups.append(group_name[1:])
+            group_name = '%s %s' % (
+                group_name[1:],
+                '- stručna oblast' if words[w+1]['text'] == 'oblast:' else '- modul',
+            )
+            print(group_name)
+            study_groups.append(group_name)
 
     if len(study_groups) == 0:
+        print(wildcard)
         study_groups.append(wildcard)
 
     tables = p.extract_tables()
@@ -121,12 +135,12 @@ def parsePage(p):
 
             group_col = 1 if block_classes else 0
             groups = class_curr[group_col]
-            
+
             # Fix group and time column mixup
             if groups is not None:
-                split1 = groups.split() 
+                split1 = groups.split()
                 if len(split1) > 1 and ':' in split1[1]:
-                    groups = split1[0]                 
+                    groups = split1[0]
                     class_curr[group_col + 1] = split1[1]
 
             # Grupa 'SVI' = None
@@ -286,7 +300,7 @@ for f in files:
     if csum == f[2] and not '--force' in opts:
         print('skip')
         continue
-    
+
     with open('database/scripts/clean.sql', 'r') as db_clean:
         sql_db.executescript(db_clean.read().replace( \
         '$IZVORNI_DOKUMENTI', f"({f[0]})"))
