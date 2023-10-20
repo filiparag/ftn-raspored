@@ -74,7 +74,7 @@ export const envDevel = (): boolean => {
 export const apiURL = () => {
   switch (process.env.NODE_ENV) {
     case 'development': {
-      return '/api/'
+      return 'http://localhost:10001/'
     }
     case 'production': {
       return '/api/'
