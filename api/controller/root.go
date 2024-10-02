@@ -20,5 +20,5 @@ func Root(w http.ResponseWriter, r *http.Request) {
 
 func Version(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "2023-10-20")
+	fmt.Fprintln(w, "2024-10-02")
 }
