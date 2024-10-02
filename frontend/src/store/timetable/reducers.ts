@@ -19,7 +19,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
         let i=1;
         while (
           i<array.length &&
-          !(array[i].timeStart > entry.timeStart && 
+          !(array[i].timeStart > entry.timeStart &&
           array[i-1].timeStart <= entry.timeStart)
         ) {
           i = i + 1;
@@ -43,7 +43,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
           const similar = findSimilarEntry(day, entry)
           if (similar !== -1)
             day.entries[similar].groups.push(...entry.groups)
-          else 
+          else
             day.entries.splice(
               search(day.entries, entry),
               0,
@@ -75,7 +75,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
       }
 
       for (const c of action.payload) {
-      
+
         const entry: TimetableEntry = {
           id: c['id'],
           subject: c['predmet'],
@@ -95,7 +95,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
           const dayOfWeek = classDate.getDay() === 0 ? 6 : classDate.getDay() - 1
           const dateString = `${dayNames[dayOfWeek]}, ` +
                               `${classDate.getDate()}. ` +
-                              `${monthNames[classDate.getMonth() + 1]} ` +
+                              `${monthNames[classDate.getMonth()]} ` +
                               `${classDate.getFullYear()}.`
           if (dayDiff < 0)
             continue
@@ -109,7 +109,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
                 timetable[dayDiff], entry, null, dateString
               )
             }
-            
+
           }
         } else {
           timetable[c['dan']] = insert(
@@ -120,7 +120,7 @@ export const timetableReducer: Reducer<TimetableList> = (state: TimetableList = 
       }
 
       return timetable
-      
+
     }
     default: {
       return state
